@@ -1,0 +1,18 @@
+<ol class="breadcrumb">
+  <li><%= link_to "Decisions", admin_decisions_path %></li>
+  <li><%= link_to @decision.title, admin_decision_path(@decision.id) %></li>
+  <li><%= link_to "Formulas", admin_decision_formulas_path(@decision.id) %></li>
+  <li class="active"><%= @formula.title %></li>
+</ol>
+<b>Title: </b><%= @formula.title %>
+<br>
+<b>Equation: </b><%= @formula.equation %>
+<br>
+<br>
+<div class="btn-group" role="group">
+  <%= link_to "Edit", edit_admin_decision_formula_path(id: @formula.id),
+                      class: "btn btn-sm btn-default" %>
+  <%= link_to "Delete", admin_decision_formula_path(id: @formula.id),
+        method: :delete, class: "btn btn-sm btn-danger",
+        data: {confirm: "Are you sure you want to delete formula?"} %>
+</div>

@@ -1,0 +1,52 @@
+<div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 col-xs-10 col-xs-offset-1">
+  <ol class="breadcrumb">
+    <li><%= link_to "Decisions", admin_decisions_path %></li>
+    <li><%= link_to @decision.title, admin_decision_path(@decision.id) %></li>
+    <li><%= link_to "Formulas", admin_decision_formulas_path(@decision.id) %></li>
+    <li class="active">
+      <%= ['new','create'].
+          include?(action_name) ? "New formula" : session[:formula_title]
+      %>
+    </li>
+  </ol>
+  <%= simple_form_for [:admin, @decision, @formula] do |f| %>
+    <%= f.error_notification %>
+    <%= f.input :title, label: "Formula title", required: true %>
+    <%= f.input :equation, label: "Equation", required: true %>
+
+  <div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading">Available variables</div>
+    <% if @result %>
+      <div class="panel-body">
+        Calculated result: <%= @result %>
+      </div>
+    <% end %>
+    <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Value For Preview</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @decision.variables.order(:order).each do |variable| %>
+          <tr>
+            <td><%= variable.name %></td>
+            <td><%= text_field_tag "sample[#{variable.name}]", params.fetch(:sample, {}).fetch(variable.name, ''), style: 'width: 80%' %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  </div>
+
+  <div class="btn-group" role="group">
+    <%= f.button :submit, "Save" %>
+    <%= f.button :submit, name: :preview, value: 'Preview' %>
+    <%= link_to "Cancel", admin_decision_formulas_path, class: "btn btn-danger" %>
+  </div>
+<% end %>
+<br>
+<br>

@@ -1,0 +1,28 @@
+<ol class="breadcrumb">
+  <li><%= link_to "Decisions", admin_decisions_path %></li>
+  <li><%= link_to @decision.title, admin_decision_variables_path %></li>
+  <li><%= link_to "Variables", admin_decision_variables_path(@decision.id) %></li>
+  <li class="active"><%= @variable.name %></li>
+</ol>
+<b>Name: </b><%= @variable.name %>
+<br>
+<b>Title: </b><%= @variable.title %>
+<br>
+<b>Description: </b><%= @variable.description %>
+<br>
+<b>Type: </b><%= @variable.type %>
+<br>
+<b>Default: </b><%= @variable.default %>
+<br>
+<b>Order: </b><%= @variable.order %>
+<br>
+<b>Pro: </b><%= @variable.pro %>
+<br>
+<br>
+<div class="btn-group" role="group">
+  <%= link_to "Edit", edit_admin_decision_variable_path(id: @variable.id),
+                      class: "btn btn-sm btn-default" %>
+  <%= link_to "Delete", admin_decision_variable_path(id: @variable.id),
+        method: :delete, class: "btn btn-sm btn-danger",
+        data: {confirm: "Are you sure you want to delete variable?"} %>
+</div>

@@ -1,0 +1,10 @@
+<%= simple_form_for [:admin, @decision] do |f| %>
+  <%= f.error_notification %>
+  <%= f.input :title, label: "Title", required: true %>
+  <%= f.input :description, label: "Description", required: true %>
+  
+  <div class="btn-group" role="group" aria-label="...">
+    <%= f.button :submit, "Save" %>
+    <%= link_to "Cancel", :back, class: "btn btn-danger" %>
+  </div>
+<% end %>

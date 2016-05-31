@@ -1,0 +1,25 @@
+<div class="center">
+  <h4>You&#39;re Done: Congratulations!</h4>
+  <br>
+  <h5 class="blue_text">Your Home Purchase Budget:</h5>
+  <p class="blue_text"><b><%= number_to_currency(session[:will_spend], precision: 0)%></b></p>
+  <!-- <p class="blue_text">Oops! You forgot to set a home purchase budget</p> -->
+  <!-- <%= link_to "Go back", make_decision_decision_path %> -->
+  <br>
+  <%= image_tag "desi-upgrade-transparent no upgrade.png", size: "120x120",
+                class: "img-responsive center-block" %>
+  <p class="blue_text">Share your results:</p>
+  <p style="color: grey">Send <b>your budget</b> to yourself &amp; others <b>you select</b>
+    to help you stick to your home purchase budget.</p>
+    <a href="mailto:?subject=Check%20out%20Decision%20Fish&body=I used www.DecisionFish.com to decide how much I can afford to spend on a new home. My decision: <%= number_to_currency(session[:will_spend], precision: 0)%>. Yay, me!"><i class="fa fa-envelope-o fa-3x blue_text"></i></a>
+    <!-- <%= link_to '<i data-toggle="modal" data-target="#myModal" class="fa fa-envelope-o fa-3x blue_text"></i>'.html_safe,
+                send_email_decision_path(id: session[:decision_id])%> -->
+</div>
+<br>
+
+<div class="nav-btns">
+  <%= link_to "BACK", understand_results_decision_path(direction: "back"), class: "left_nav_btn btn btn-info" %>
+  <%= link_to "NEXT", "/pages/next_steps", class: "right_nav_btn btn btn-info" %>
+</div>
+<br>
+<br>

@@ -1,0 +1,33 @@
+<ol class="breadcrumb">
+  <li><%= link_to "Decisions", admin_decisions_path %></li>
+  <li><%= link_to @decision.title, admin_decision_path(@decision.id) %></li>
+  <li class="active">Formulas</li>
+</ol>
+<%= link_to "Add formula", new_admin_decision_formula_path %>
+<hr>
+<div class="table-responsive">
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Equation</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @formulas.each do |formula| %>
+        <tr>
+          <td><%= link_to formula.title, admin_decision_formula_path(id: formula.id) %></td>
+          <td><%= formula.equation.truncate(50, separator: ' ') %></td>
+          <td><%= link_to "edit", edit_admin_decision_formula_path(id: formula.id) %></td>
+          <td>
+            <%= link_to "delete", admin_decision_formula_path(id: formula.id),
+                  method: :delete, class: "text-danger",
+                  data: {confirm: "Are you sure you want to delete formula?"} %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

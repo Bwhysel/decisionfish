@@ -1,0 +1,174 @@
+<h4 align="center">Other Scenarios</h4>
+<p style='color: grey;'>
+  Your budget is the maximum home price you've chosen. <%= number_to_percentage(session[:min_down_pmt] * 100, precision: 0) %> Down is maximum home price assuming <%= number_to_percentage(session[:min_down_pmt] * 100, precision: 0) %> Down.
+</p>
+<%= simple_form_for :home_values, url: other_scenarios_decision_path(decision_id: @decision.id), method: :get do |f| %>
+
+  <% if flash[:notice] && flash[:notice] != 'Signed in successfully.' && flash[:notice] != 'Signed out successfully.'%>
+    <div class="alert alert-warning">
+      <%= flash[:notice] %>
+    </div>
+  <% end %>
+
+<table align="center">
+  <thead>
+    <tr>
+      <td></td>
+      <td class="blue_text"><b>Your Budget</b></td>
+      <td class="blue_text"><b><%= number_to_percentage(session[:min_down_pmt] * 100, precision: 0) %> Down</b></td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><b>Uses</b></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td class="detailed_results_item other_scenarios_home_price" data-toggle="tooltip" data-container="body" data-placement="bottom" title="<%= set_tooltip_pro_pages("Home Price") %>">Home Price</td>
+      <td>
+        <%= text_field_tag "home_values[left_value]", params.fetch(:home_values, {}).fetch(:left_value, ''), value: @home_value_left, class: "form-control input-sm update_home_value", id: "update_home_value_field", type: 'text', data: {autonumeric: {aSign: '$', mDec: 0}} %>
+      </td>
+      <td><%= number_to_currency((@home_value_right + 50) / 1000 * 1000, precision: 0, negative_format: "(%u%n)")%></td>
+    </tr>
+    <tr>
+      <td class="detailed_results_item" data-toggle="tooltip" data-container="body" data-placement="bottom" title="<%= set_tooltip_pro_pages("Closing &amp; Move-In") %>">Closing &amp; Move-In</td>
+      <td><%= number_to_currency(@closing_cost, precision: 0, negative_format: "(%u%n)")%></td>
+      <td><%= number_to_currency(@closing_cost, precision: 0, negative_format: "(%u%n)")%></td>
+    </tr>
+    <tr>
+      <td class="detailed_results_item" data-toggle="tooltip" data-container="body" data-placement="bottom" title="<%= set_tooltip_pro_pages("Loan Fees/Pts") %>">Loan Fees/Pts</td>
+      <td><%= number_to_currency(@loan_fees_pts_left, precision: 0, negative_format: "(%u%n)") %></td>
+      <td><%= number_to_currency(@loan_fees_pts_right, precision: 0, negative_format: "(%u%n)") %></td>
+    </tr>
+    <tr>
+      <td>Total</td>
+      <td><%= number_to_currency(@uses_total_left, precision: 0, negative_format: "(%u%n)") %></td>
+      <td><%= number_to_currency(@uses_total_right, precision: 0, negative_format: "(%u%n)") %></td>
+    </tr>
+    <tr>
+      <td><b>Sources</b></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td class="detailed_results_item" data-toggle="tooltip" data-container="body" data-placement="bottom" title="<%= set_tooltip_pro_pages("Loan Amount") %>">Loan Amount</td>
+      <td><%= number_to_currency(@loan_amount_left, precision: 0, negative_format: "(%u%n)") %></td>
+      <td><%= number_to_currency(@loan_amount_right, precision: 0, negative_format: "(%u%n)") %></td>
+    </tr>
+    <tr>
+      <td class="detailed_results_item" data-toggle="tooltip" data-container="body" data-placement="bottom" title="<%= set_tooltip_pro_pages("Cash") %>">Cash</td>
+      <td><%= number_to_currency(@cash_now, precision: 0, negative_format: "(%u%n)")%></td>
+      <td><%= number_to_currency(@cash_now, precision: 0, negative_format: "(%u%n)")%></td>
+    </tr>
+    <tr>
+      <td>Total</td>
+      <td><%= number_to_currency(@sources_total_left, precision: 0, negative_format: "(%u%n)") %></td>
+      <td><%= number_to_currency(@sources_total_right, precision: 0, negative_format: "(%u%n)") %></td>
+    </tr>
+    <tr>
+      <td><b>Monthly Payments</b></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td class="detailed_results_item" data-toggle="tooltip" data-container="body" data-placement="bottom" title="<%= set_tooltip_pro_pages("Principal &amp; Interest") %>">Principal &amp; Interest</td>
+      <td><%= number_to_currency(@principal_and_interest_left, precision: 0, negative_format: "(%u%n)") %></td>
+      <td><%= number_to_currency(@principal_and_interest_right, precision: 0, negative_format: "(%u%n)") %></td>
+    </tr>
+    <tr>
+      <td class="detailed_results_item" data-toggle="tooltip" data-container="body" data-placement="bottom" title="<%= set_tooltip_pro_pages("PMI") %>">PMI</td>
+      <td><%= number_to_currency(@pmi_left, precision: 0, negative_format: "(%u%n)") %></td>
+      <td><%= number_to_currency(@pmi_right, precision: 0, negative_format: "(%u%n)") %></td>
+    </tr>
+    <tr>
+      <td>Escrow</td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;Property taxes</td>
+      <td><%= number_to_currency(@property_taxes_left, precision: 0, negative_format: "(%u%n)") %></td>
+      <td><%= number_to_currency(@property_taxes_right, precision: 0, negative_format: "(%u%n)") %></td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;Home Owners Ins.</td>
+      <td><%= number_to_currency(@home_owners_ins_left, precision: 0, negative_format: "(%u%n)") %></td>
+      <td><%= number_to_currency(@home_owners_ins_right, precision: 0, negative_format: "(%u%n)") %></td>
+    </tr>
+    <tr>
+      <td>Total</td>
+      <td><%= number_to_currency(@monthly_payments_total_left, precision: 0, negative_format: "(%u%n)") %></td>
+      <td><%= number_to_currency(@monthly_payments_total_right, precision: 0, negative_format: "(%u%n)") %></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td class="detailed_results_item" data-toggle="tooltip" data-container="body" data-placement="bottom" title="<%= set_tooltip_pro_pages("Add&#39;l Home Expenses") %>">Add&#39;l Home Expenses</td>
+      <td><%= number_to_currency(@add_home_expenses, precision: 0, negative_format: "(%u%n)") %></td>
+      <td><%= number_to_currency(@add_home_expenses, precision: 0, negative_format: "(%u%n)") %></td>
+    </tr>
+    <tr>
+      <td class="detailed_results_item" data-toggle="tooltip" data-container="body" data-placement="bottom" title="<%= set_tooltip_pro_pages("Interest Deduction") %>">Interest Deduction</td>
+      <td><%= number_to_currency(@interest_deduction_left, precision: 0, negative_format: "(%u%n)") %></td>
+      <td><%= number_to_currency(@interest_deduction_right, precision: 0, negative_format: "(%u%n)") %></td>
+    </tr>
+    <tr>
+      <td>Net Housing Expense</td>
+      <td><%= number_to_currency(@net_housing_expense_left, precision: 0, negative_format: "(%u%n)")%></td>
+      <td><%= number_to_currency(@net_housing_expense_right, precision: 0, negative_format: "(%u%n)")%></td>
+    </tr>
+    <tr>
+      <td><b>Statistics</b></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td class="detailed_results_item" data-toggle="tooltip" data-container="body" data-placement="bottom" title="<%= set_tooltip_pro_pages("Down Payment") %>">Down Payment</td>
+      <td><%= number_to_currency(@down_payment_left, precision: 0, negative_format: "(%u%n)") %></td>
+      <td><%= number_to_currency(@down_payment_right, precision: 0, negative_format: "(%u%n)") %></td>
+    </tr>
+    <tr>
+      <td class="detailed_results_item" data-toggle="tooltip" data-container="body" data-placement="bottom" title="<%= set_tooltip_pro_pages("Down pmt as &#37;") %>">Down pmt as &#37;</td>
+      <td style="background-color: <%= @down_payment_as_pers_color_left %>"><%= number_to_percentage((@down_payment_as_pers_left * 100), precision: 0) %></td>
+      <td style="background-color: <%= @down_payment_as_pers_color_right %>"><%= number_to_percentage((@down_payment_as_pers_right * 100), precision: 0) %></td>
+    </tr>
+    <tr>
+      <td class="detailed_results_item" data-toggle="tooltip" data-container="body" data-placement="bottom" title="<%= set_tooltip_pro_pages("DTI (Front End)") %>">DTI (Front End)</td>
+      <td style="background-color: <%= @dti_front_end_color_left %>" ><%= number_to_percentage((@dti_front_end_left * 100), precision: 0) %></td>
+      <td style="background-color: <%= @dti_front_end_color_right %>" ><%= number_to_percentage((@dti_front_end_right * 100), precision: 0) %></td>
+    </tr>
+    <tr>
+      <td class="detailed_results_item" data-toggle="tooltip" data-container="body" data-placement="bottom" title="<%= set_tooltip_pro_pages("DTI (Back End)") %>">DTI (Back End)</td>
+      <td style="background-color: <%= @dti_back_end_color_left %>"><%= number_to_percentage((@dti_back_end_left * 100), precision: 0) %></td>
+      <td style="background-color: <%= @dti_back_end_color_right %>"><%= number_to_percentage((@dti_back_end_right * 100), precision: 0) %></td>
+    </tr>
+    <tr>
+      <td class="detailed_results_item" data-toggle="tooltip" data-container="body" data-placement="bottom" title="<%= set_tooltip_pro_pages("Change In Housing Expense") %>">Change In Housing Expense</td>
+      <td><%= number_to_currency(@change_in_housing_exp_left, precision: 0, negative_format: "(%u%n)") %></td>
+      <td><%= number_to_currency(@change_in_housing_exp_right, precision: 0, negative_format: "(%u%n)") %></td>
+    </tr>
+    <tr>
+      <td class="detailed_results_item" data-toggle="tooltip" data-container="body" data-placement="bottom" title="<%= set_tooltip_pro_pages("New Savings Rate") %>">New Savings Rate</td>
+      <td style="background-color: <%= @saving_rate_color_left %>" ><%= number_to_percentage((@new_savings_rate_left * 100), precision: 0) %></td>
+      <td style="background-color: <%= @saving_rate_color_right %>" ><%= number_to_percentage((@new_savings_rate_right * 100), precision: 0) %></td>
+    </tr>
+    <tr>
+      <td class="detailed_results_item" data-toggle="tooltip" data-container="body" data-placement="bottom" title="<%= set_tooltip_pro_pages("Future Wealth") %>">Future Wealth</td>
+      <td><%= number_to_currency(@future_wealth_left, precision: 0, negative_format: "(%u%n)") %></td>
+      <td><%= number_to_currency(@future_wealth_right, precision: 0, negative_format: "(%u%n)") %></td>
+    </tr>
+  </tbody>
+</table>
+<p align="center"><%= f.button :submit, name: :update, value: 'UPDATE YOUR BUDGET', style: 'visibility: hidden;', id: 'update_home_value_btn' %></p>
+
+<div class="nav-btns">
+  <%= link_to "BACK", bank_debt_to_income_tests_decision_path, class: "left_nav_btn btn btn-info" %>
+  <%= link_to "NEXT", charts_decision_path, class: "right_nav_btn btn btn-info" %>
+  <p align="center"><%= link_to "ASSUMPTIONS", assumptions_decision_path(back_to_assumptions: 'true') %></p>
+</div>
+<br>
+<% end %>

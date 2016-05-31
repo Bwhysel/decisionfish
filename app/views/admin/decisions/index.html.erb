@@ -1,0 +1,30 @@
+<ol class="breadcrumb">
+  <li class="active">Decisions</li>
+</ol>
+<div class="teble-responsive">
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @decisions.each do |decision| %>
+        <tr>
+          <td><%= link_to decision.title, admin_decision_path(decision.id) %></td>
+          <td><%= decision.description.truncate(300, separator: ' ') %></td>
+          <td><%= link_to "Manage formulas",
+                  admin_decision_formulas_path(decision) %></td>
+          <td><%= link_to "Manage variables",
+                  admin_decision_variables_path(decision) %></td>
+          <td><%= link_to "edit", edit_admin_decision_path(decision.id) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+</div>

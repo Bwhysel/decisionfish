@@ -1,0 +1,37 @@
+<ol class="breadcrumb">
+  <li><%= link_to "Decisions", admin_decisions_path %></li>
+  <li><%= link_to @decision.title, admin_decision_path(@decision.id) %></li>
+  <li class="active">Variables</li>
+</ol>
+<%= link_to "Add variable", new_admin_decision_variable_path %>
+<hr>
+<div class="table-responsive">
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Order</th>
+        <th>Type</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @variables.each do |variable| %>
+        <tr>
+          <td><%= link_to variable.name, admin_decision_variable_path(id: variable.id) %></td>
+          <td><%= variable.description %></td>
+          <td><%= variable.order %></td>
+          <td><%= variable.type == "FloatVariable" ? "Float" : "Integer" %></td>
+          <td><%= link_to "edit", edit_admin_decision_variable_path(id: variable.id) %></td>
+          <td>
+            <%= link_to "delete", admin_decision_variable_path(id: variable.id),
+                  method: :delete, class: "text-danger",
+                  data: {confirm: "Are you sure you want to delete variable?"} %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,2 @@
+class IntegerVariable < Variable
+end

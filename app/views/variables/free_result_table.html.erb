@@ -1,0 +1,50 @@
+<h4 class="center">Here&#39;s What You Told Me:</h4>
+<p class="center">Did I hear you right?</p>
+<table align="center">
+    <tr>
+      <td>1. Income</td>
+      <td><%= number_to_currency(session[:income_month], precision: 0) %></td>
+    </tr>
+    <tr>
+      <td>2. Current Housing Costs </td>
+      <td><%= number_to_currency(session[:spend_month], precision: 0) %></td>
+    </tr>
+    <tr>
+      <td>3. Debt Payments</td>
+      <td><%= number_to_currency(session[:debt_month], precision: 0) %></td>
+    </tr>
+    <tr>
+      <td>4. Saving</td>
+      <td><%= number_to_currency(session[:saving_month], precision: 0) %></td>
+    </tr>
+    <tr>
+      <td>5. Cash</td>
+      <td><%= number_to_currency(session[:cash_now], precision: 0) %></td>
+    </tr>
+</table>
+
+<br>
+<br>
+<div class="center">
+
+  <% if flash[:notice] && flash[:notice] != 'Signed in successfully.' && flash[:notice] != 'Signed out successfully.' %>
+    <div class="alert alert-warning">
+      <%= flash[:notice] %>
+    </div>
+  <% end %>
+
+  <%= link_to "CHANGE YOUR ANSWERS",
+              decision_variable_path(decision_id: @decision.id,
+                                     id: @variables.first.id, direction: "back"),
+              class: "btn btn-default" %>
+  <br>
+  <br>
+  <%= link_to "SEE ALL OF THE ASSUMPTIONS", decision_variables_path, class: "btn btn-default" %>
+</div>
+<br>
+<div class="nav-btns">
+  <%= link_to "BACK", decision_variable_path(decision_id: @decision.id, id: @variable.id, direction: "back"), class: "left_nav_btn btn btn-info" %>
+  <%= link_to "DECIDE!", make_decision_decision_path(id: @decision.id), class: "right_nav_btn btn btn-info" %>
+</div>
+<br>
+<br>

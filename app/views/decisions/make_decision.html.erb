@@ -1,0 +1,58 @@
+<h4 class="center">Well done! Now, let&#39;s make a decision.</h4>
+<h5 class="blue_text center">How much can I afford to spend on a new home?</h5>
+<br>
+<br>
+<div class="banks_may_tell_container">
+  <h5 class="blue_text">Banks May Tell You:</h5>
+  <h3 style="color: red">
+    <b><%= number_to_currency(@banks_may_tell_you,
+                           precision: 0) %></b>
+  </h3>
+  <p style='color: grey' class="banks_may_tell_text" data-toggle="tooltip" data-placement="bottom" title="Banks can't verify your budget, so they rely on debt and income to determine what they can lend you  and what's 'affordable'.
+In some cases, the figure they calculate is so high that it can make you House Poor.
+This means there's too little money left over after housing expenses to save for retirement and other goals.">Based on income, debt and cash,<br> could make you "house poor"</p>
+</div>
+
+<div align='right' class="df_suggests_container">
+  <h5 class="blue_text">Decision Fish suggests:</h5>
+  <h3 style="color: green">
+    <b><%= number_to_currency(@decision_fish_suggests,
+                              precision: 0) %></b>
+  </h3>
+  <p style="color: grey" class="decision_fish_suggests_text" data-toggle="tooltip" data-placement="bottom" title="I calculated the amount you can afford. This will keep housing expenses low enough so that you can save for the future.
+What can you do to increase what you can afford? Cut expenses, reduce your debt, save more cash or increase your income.">Leaves extra <%= number_to_currency((@detailed_results_net_housing_expense_left - @detailed_results_net_housing_expense_right), precision: 0)%> in your budget each <br>
+     month to save and for rainy days</p>
+</div>
+
+<h5 class="blue_text center" style="clear: both"><b>You decide:</b></h5>
+<p class="center">What is the maximum you will spend on a new home?</p>
+
+<div id="budget_form_container">
+<%= simple_form_for :variable_value, html: { id: "budget_form" }, url: understand_results_decision_path,
+                    method: :get do |f| %>
+  <div class="row">
+    <div class="col-xs-6 col-xs-offset-3">
+      <div class="input-group">
+        <span class="input-group-addon">$</span>
+        <%= f.input :value, as: :string, label: false, placeholder: "5,000", input_html: { data: {autonumeric: {aSign: '', mDec: 0}}, id: "budget_field", min: '0', max: 10000000, step: 1000, value: @will_spend_value }, required: true %>
+      </div>
+    </div>
+  </div>
+  <p align='center' style='color: red'><%= flash[:notice] %></p>
+
+  <% if @other_scenarios_net_housing_expense_left < @detailed_results_net_housing_expense_left %>
+    <p align='center' class="you_decide_text" style='color: grey' data-toggle="tooltip" data-placement="top" title="Take the calculations above and what you've learned so far to decide the maximum you intend to spend on your new home! You can always change it later. Remembers, lenders make money by lending money; only you can decide what you can truly afford.">Good job! This saves <%= number_to_currency((@detailed_results_net_housing_expense_left - @other_scenarios_net_housing_expense_left), precision: 0)%> more per month than the bank advice.</p>
+  <% else %>
+    <p align='center' class="you_decide_text" style='color: grey' data-toggle="tooltip" data-placement="top" title="Take the calculations above and what you've learned so far to decide the maximum you intend to spend on your new home! You can always change it later. Remembers, lenders make money by lending money; only you can decide what you can truly afford.">Are you sure? Banks may not lend you enough.</p>
+  <% end %>
+
+  <p align="center"><%= f.button :submit, name: :update, value: 'UPDATE YOUR BUDGET', style: 'visibility: hidden;', id: 'update_budget_btn' %></p>
+
+  <div class="nav-btns">
+    <%= link_to "BACK", free_result_table_decision_variables_path(decision_id: @decision.id, direction: "back"), class: "left_nav_btn btn btn-info" %>
+    <%= f.button :submit, "NEXT", class: "right_nav_btn btn btn-info" %>
+  </div>
+  <br>
+  <br>
+<% end %>
+</div>

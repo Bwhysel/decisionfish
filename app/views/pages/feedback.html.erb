@@ -1,0 +1,35 @@
+<h4 align="center">What&#39;s on your mind?</h4>
+<form>
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" value="">
+        Help me with a different decision.
+    </label>
+  </div>
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" value="">
+        I have a suggestion, compliment or criticism.
+    </label>
+  </div>
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" value="">
+        Help!
+    </label>
+  </div>
+  <textarea class="form-control" rows="3" placeholder="Dear Desi,"></textarea>
+  <br>
+  <div class="input-group">
+    <div class="input-group-addon">Signed, </div>
+    <input type="email" class="form-control" placeholder="youremail@domain.com">
+  </div>
+</form>
+<br>
+
+<div class="nav-btns">
+  <%= link_to "BACK", decisions_path, class: "left_nav_btn btn btn-info" %>
+  <%= link_to "SEND", "", class: "right_nav_btn btn btn-info" %>
+</div>
+<br>
+<br>

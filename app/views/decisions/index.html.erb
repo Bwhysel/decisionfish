@@ -1,0 +1,42 @@
+<h4 class="center">Which Decision Will We Make Today?</h4>
+<ul  id="decisions_list">
+  <li class="blue_text with_squircle"><b class="text_next_to_squircle"><%= @decisions.first.description %></b></li>
+  <%= link_to "FREE VERSION", decision_path(@decisions.first.id), class: "free_pro_margin" %>
+  <%= link_to "PRO VERSION", assumptions_decision_path(@decisions.first.id), class: "pro-btn" %>
+  <br>
+  <br>
+  <li class="disabled_link with_squircle"> <span class="text_next_to_squircle">Is it time to refinance my mortgage? [Coming soon] </span></li>
+  <%= link_to "FREE VERSION", "", class: "disabled_link free_pro_margin" %>
+  <%= link_to "PRO VERSION", "", class: "disabled_link pro-btn" %>
+  <br>
+  <br>
+  <li class="disabled_link with_squircle"> <span class="text_next_to_squircle">Should I rent or buy a home? [Coming soon]</span></li>
+  <%= link_to "FREE VERSION", "", class: "disabled_link free_pro_margin" %>
+  <%= link_to "PRO VERSION", "", class: "disabled_link pro-btn" %>
+  <br>
+  <br>
+  <li class="disabled_link with_squircle"> <span class="text_next_to_squircle">How should I save for retirement? [Coming soon] </span></li>
+  <%= link_to "FREE VERSION", "", class: "disabled_link free_pro_margin" %>
+  <%= link_to "PRO VERSION", "", class: "disabled_link pro-btn" %>
+  <br>
+  <br>
+  <li class="disabled_link with_squircle"> <span class="text_next_to_squircle">How should I finance an unexpected expense? [Coming soon] </span></li>
+  <%= link_to "FREE VERSION", "", class: "disabled_link free_pro_margin" %>
+  <%= link_to "PRO VERSION", "", class: "disabled_link pro-btn" %>
+  <br>
+  <br>
+  <li class="disabled_link with_squircle"> <span class="text_next_to_squircle">What should I do with my tax refund? [Coming soon]</span></li>
+  <%= link_to "FREE VERSION", "", class: "disabled_link free_pro_margin" %>
+  <%= link_to "PRO VERSION", "", class: "disabled_link pro-btn" %>
+  <br>
+  <br>
+  <li class="blue_text with_squircle"><b class="text_next_to_squircle">Another decision? Ask me anything!</b></li>
+  <%= link_to "ASK  <i class='fa fa-envelope' aria-hidden='true'></i>".html_safe, "mailto:desi@decisionfish.com?subject=Website%20Decision%20Request", class: 'btn btn-default', id: 'suggest_btn' %>
+</ul>
+<br>
+
+<div class="nav-btns">
+  <%= link_to "BACK", "/pages/desi", class: "left_nav_btn btn btn-info" %>
+</div>
+<br>
+<br>

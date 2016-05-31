@@ -1,0 +1,21 @@
+<div class="panel panel-default">
+  <div class="panel-body">
+    <h5>Enter email that will receive your result.</h5>
+    <%= simple_form_for :emails, url: send_email_decision_path(id: session[:decision_id]), method: :get do |f| %>
+    <%= text_field_tag "emails[email]", params.fetch(:emails, {}).fetch(:email, ''), placeholder: 'myfriend@email.com', class: "form-control input-sm", type: 'email' %>
+    <br>
+    <% if flash[:notice] && flash[:notice] != 'Signed in successfully.' && flash[:notice] != 'Signed out successfully.'%>
+      <div class="alert alert-warning alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <%= flash[:notice] %>
+      </div>
+    <% end %>
+  </div>
+  <div class="panel-footer">
+    <div class="btn-group" role="group" aria-label="...">
+      <%= f.button :submit, "SEND", class: "btn btn-info" %>
+      <%= link_to "CANCEL", '/pages/next_steps', class: "btn btn-danger" %>
+    <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+<ol class="breadcrumb">
+  <li><%= link_to "Decisions", admin_decisions_path %></li>
+  <li class="active"><%= @decision.title %></li>
+</ol>
+<b>Title: </b><%= @decision.title %>
+<br>
+<b>Description: </b><%= @decision.description %>
+<br>
+<%= link_to "Manage formulas", admin_decision_formulas_path(@decision) %>
+<br>
+<%= link_to "Manage variables", admin_decision_variables_path(@decision) %>
