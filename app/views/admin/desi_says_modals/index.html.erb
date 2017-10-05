@@ -1,0 +1,26 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Bubbles</h1>
+
+<table class='table-with-entity'>
+  <thead>
+    <tr>
+      <th>Module</th>
+      <th>Path</th>
+      <th>Content</th>
+      <th colspan="2"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @desi_says_modals.each do |desi_says_modal| %>
+      <tr>
+        <td><%= desi_says_modal.module %></td>
+        <td><%= desi_says_modal.slug %></td>
+        <td><%= desi_says_modal.content %></td>
+        <td><%= link_to 'Edit', edit_admin_desi_says_modal_path(desi_says_modal), role: 'edit-link' %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+

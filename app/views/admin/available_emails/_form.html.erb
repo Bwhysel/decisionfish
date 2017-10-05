@@ -1,0 +1,22 @@
+<%= form_with(model: [:admin, available_email], local: true) do |form| %>
+  <% if available_email.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(available_email.errors.count, "error") %> prohibited this available_email from being saved:</h2>
+
+      <ul>
+      <% available_email.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :email_pattern %>
+    <%= form.text_field :email_pattern, id: :available_email_email_pattern %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

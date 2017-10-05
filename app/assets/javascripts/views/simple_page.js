@@ -1,0 +1,359 @@
+App.Views.SimplePage = Backbone.View.extend({
+  el: 'body > .container-original',
+  templates: {},
+  desiModalTpl: JST['templates/simple_pages/desi_modal'],
+  confirmModalTpl: JST['templates/simple_pages/confirm_modal'],
+  loginTpl: JST['templates/simple_pages/login_modal'],
+  sectionModalTpl: JST['templates/simple_pages/section_modal'],
+  circleProgressTpl: JST['templates/simple_pages/circle_progress'],
+  selectModalTpl: JST['templates/simple_pages/select_modal'],
+  randomTextTpl: JST['templates/simple_pages/random_text'],
+
+  initialize: function(options){
+  },
+
+  events: {
+    'click [role=goto-link]': 'gotoLink',
+    'click [role=goto-back]': 'gotoBack',
+    'click [role=login-link]': 'clickLoginLink',
+    'click [role=logout-link]': 'clickLogoutLink',
+    'click .ask-desi': 'openDesiModal',
+  },
+
+  render: function(page_slug){
+    if (!this.templates[page_slug])
+      this.templates[page_slug] = JST['templates/simple_pages/' + page_slug];
+
+    if (this.templates[page_slug]){
+      App.transitPage(this.templates[page_slug]({}));
+      App.utils.setPageHeight(this.el);
+    }else {
+      console.log(`NOT IMPLEMENTED PAGE: ${page_slug}`)
+    }
+
+  },
+
+  gotoLink: function(event){
+    event.preventDefault();
+    let target = event.currentTarget;
+    App.backAction = target.className && (target.className.indexOf('icon-back') >= 0);
+    App.router.navigate(target.getAttribute('href'), {trigger: true})
+    return false;
+  },
+
+  gotoBack: function(event){
+    App.backAction = true;
+    //if (Backbone.history.length > 1){
+      let oldPages = Backbone.history.pastFragments;
+      const countPages = oldPages.length;
+      let lastIndex = countPages -1;
+      let prevFragment = oldPages[lastIndex-2];
+      let curFragment = oldPages[lastIndex];
+      let safePath = event ? event.currentTarget.dataset.safePath : null;
+      if (countPages <= 2 || (prevFragment == curFragment)){
+        Backbone.history.length -= 0;
+        App.router.navigate(safePath || 'menu', {trigger: true})
+      }else {
+        Backbone.history.length -= 2;
+        window.history.back();
+      }
+    //} else {
+    //  App.router.navigate('menu', {trigger: true})
+    //}
+  },
+
+  parseContent: function(txt){
+    txt = txt.replace('[YOU_BOTH]', App.family.length > 1 ? 'you both' : 'you');
+    return txt.replace('[NAME]', App.family.length ? App.family.at(0).get('name') : 'user');
+  },
+
+  openDesiModal: function(event, fnClose){
+    let data;
+    if (typeof event == 'string'){
+      data = {
+        content: event
+      }
+    }else{
+      data = _.clone(event.currentTarget.dataset);
+      data.content = data.text || App.bubbles[data.content];
+    }
+    data.desi = data.desi || 'says'
+    let modalTitle = data.modalTitle ? data.modalTitle : `Desi ${data.desi},`
+    App.utils.createModal(
+      'modal', {afterClose: fnClose}, this.desiModalTpl, {
+        title: modalTitle, body: this.parseContent(data.content),
+        cancelTitle: 'OK', btnTitle: false
+      }
+    )
+  },
+
+  openDesiYesNoModal: function(content, okFunc, cancelFunc, opts){
+    if (!opts) { opts = {} }
+    let data = {
+      title: "Desi says,", body: content,
+      btnTitle: (opts.btnTitle || 'NO'), cancelTitle: (opts.cancelTitle || 'YES')
+    }
+    const modal = App.utils.createModal(
+      'modal', { afterClose: cancelFunc }, this.desiModalTpl, data
+    )
+    $('[role=submit-modal]', modal.dialog).on('click', (evenet) => {
+      if (okFunc) { okFunc(); }
+      modal.close();
+    })
+    return modal;
+  },
+
+  openConfirmationDialog: function(data, okFunc, cancelFunc, validateFunc){
+    if (!data.cancelTitle) { data.cancelTitle = 'CANCEL' }
+    const modal = App.utils.createModal(
+      'confirm-modal', {afterClose: cancelFunc}, this.confirmModalTpl, data
+    )
+    $('[role=submit-modal]', modal.dialog).on('click', (event) => {
+      if (!validateFunc || validateFunc()){
+        modal.close();
+        okFunc();
+      }
+    })
+    if (data.reversedFooterBtns){
+      $(modal.dialog).find('.modal-footer').css('flex-direction', 'row-reverse');
+    }
+    return modal;
+  },
+
+  openSectionModal: function(data, okFunc, cancelFunc){
+    if (!data.btnTitle) { data.btnTitle = 'OK'}
+    if (!data.cancelTitle) { data.cancelTitle = null }
+    if (!data.title) { data.title = false }
+    const modal = App.utils.createModal(
+      'section-modal', { afterClose: cancelFunc }, this.sectionModalTpl, data
+    )
+    $('[role=submit-modal]', modal.dialog).on('click', (evenet) => {
+      modal.close();
+      if (okFunc) { okFunc(); }
+    })
+    return modal;
+  },
+
+
+  clickLoginLink: function(event){
+    this.openLogin()
+  },
+
+  clickLogoutLink: function(event){
+    $.ajax({
+      type: 'POST', url: '/logout',
+      headers: {'X-CSRF-Token': $('meta[name=csrf-token]').attr('content')},
+      success: (xhr, status) => {
+        App.storage.logout();
+      }
+    })
+  },
+
+  sendConfirmationLink: function(email, from_signup){
+    $.ajax({
+      type: 'POST', url: '/login', data: {
+        email: email,
+        from_signup: from_signup
+      },
+      complete: (xhr, status) => {
+        let msg, data;
+        if (xhr.status == 200){
+          data = JSON.parse(xhr.response);
+          msg = data.msg;
+          App.storage.set('email_sent');
+        }else{
+          msg = 'Something whent wrong.'
+        }
+        App.simplePage.openDesiModal(msg)
+      }
+    })
+  },
+
+  openLogin: function(email, approved){
+    let with_email = email && email.length
+    let opts = {};
+    let emailRegexp = Backbone.Validation.patterns.email;
+    if (with_email) {
+      opts.content = 'Welcome back!<br/>Want to login to pick up where you left off?';
+      opts.btnTitle = 'YES';
+      opts.cancelTitle = 'NO';
+    } else {
+      opts.content = this.loginTpl({});
+      opts.btnTitle = 'SUBMIT';
+      opts.cancelTitle = 'CANCEL';
+      opts.reversedFooterBtns = true;
+    }
+    let modal = App.simplePage.openConfirmationDialog(opts,
+      () => { // submit fn
+        this.sendConfirmationLink(email, with_email);
+      },
+      null, // cancel fn
+      ()=> { // validate fn
+        const flag = emailRegexp.test(email)
+        $('.error-msg', modal.dialog).text(flag ? '' : 'Not valid email address')
+        return flag;
+      }
+    )
+    if (!with_email){
+      $(modal.dialog).find('.modal-footer').css('flex-direction', 'row-reverse');
+      let $input = $('input', modal.dialog);
+      $input.on('keyup', () => {
+        email = $input[0].value;
+      })
+    }
+  },
+
+  selectModal: function(modalId, variants, selected, submitFn){
+    let modal = App.utils.createModal(modalId, {
+        beforeClose: function(next){
+          $('h1').focus();
+          next();
+        }
+      }, this.selectModalTpl, {
+        id: modalId,
+        variants: variants,
+        selected: selected
+      }
+    )
+    if (modal){
+      $('[role=submit-modal]', modal.dialog).on('click', (event) => {
+        modal.close();
+        const row = $('.select-option.active', modal.dialog);
+        submitFn(row[0].dataset.id);
+      })
+      const choices = $('.select-option', modal.dialog)
+      choices.on('click', (event) => {
+        const p = $(event.currentTarget);
+        p.addClass('active').siblings('.active').removeClass('active');
+      })
+      choices.on('keydown', function(event){
+        const code = event.keyCode;
+        const curP = $(event.currentTarget);
+        let p;
+        if (code == 38){ // UP
+          p = curP.prev()
+          if (!p.length) p = $(choices[choices.length])
+        }else if (code == 40){ // DOWN
+          p = curP.next()
+          if (!p.length) p = $(choices[0])
+        }
+        if (p) p.focus().trigger('click')
+      });
+    }
+  },
+
+  lastTextIndexes: {
+    jokes: [],
+    encouragments: []
+  },
+
+  getRandomText: function(kind){
+    let flag = false;
+    const n = App[kind].length;
+    let newIndex;
+    while (!flag){
+      newIndex = Math.floor(Math.random()*n);
+      flag = this.lastTextIndexes[kind].indexOf(newIndex) < 0;
+    }
+    //console.log(newIndex, '<-',this.lastTextIndexes[kind]);
+    this.lastTextIndexes[kind].push(newIndex);
+    // Do not repeat recent texts
+    if (this.lastTextIndexes[kind].length > 5){ this.lastTextIndexes[kind].splice(0,1); }
+    return App[kind][newIndex];
+  },
+
+  showRandomText: function(kind, delayFn, opts){
+    if (!opts) { opts = {} }
+    let bal = $('.random-text-holder');
+    if (bal.length > 0){
+      if (delayFn) {
+        this.debug(`interupt '${kind}'; other hint is shown`)
+        delayFn(0.5);
+      }
+      return false;
+    }
+    const txt = this.parseContent(this.getRandomText(kind));
+    $('body').append($(this.randomTextTpl({text: txt})));
+    this.debug(`show '${kind}'`);
+    bal = $('.random-text-holder');
+    setTimeout(()=>{ bal.css('opacity', '1'); }, 1000)
+    // HIDING PROCEDURE
+    bal.on('click', (event)=>{
+      if (this.autoHide){
+        bal.css('opacity', '0');
+        if (delayFn && opts.cyclic) {
+          this.debug(`delay '${kind}'`)
+          delayFn();
+        }
+        clearTimeout(this.autoHide);
+        this.autoHide = null;
+        setTimeout(()=>{ bal.remove(); }, 1000);
+      }
+      if (opts.afterRun){ opts.afterRun() };
+    })
+    this.autoHide = setTimeout(()=>{
+      this.debug(`auto-hide '${kind}'`)
+      bal.trigger('click');
+      this.autoHide = null;
+    }, Math.max(txt.split(' ').length * 800, 10000));
+  },
+
+  delayShowJoke: function(delayMinutes){
+    if (!delayMinutes) { delayMinutes = 5 }
+    setTimeout(()=>{
+      this.showRandomText('jokes', (delayFactor)=>{ this.delayShowJoke(delayFactor); }, {cyclic: true});
+    }, delayMinutes * 60000)
+  },
+
+  delayShowEncouragment: function(factor){
+    if (!factor) { factor = 1; }
+    if (this.delayedEncouragments){
+      clearTimeout(this.delayedEncouragments)
+      this.delayedEncouragments = null;
+      this.debug('stop old encouragments process');
+    }
+    this.delayedEncouragments = setTimeout(()=>{
+      this.showRandomText('encouragments', (delayFactor)=>{
+        this.delayedEncouragments = this.delayShowEncouragment(delayFactor);
+      }, {
+        afterRun: ()=> {
+          this.debug('destroy timer');
+          this.delayedEncouragments = null;
+        }
+      });
+    }, factor * 3 * 60000); // every 1.5 minutes
+  },
+
+  delayedEncouragments: null,
+
+  startEncouragmentProcess: function(){
+    this.debug('encouragments initialized');
+    if (!this.interruptEventInstalled){
+      this.interruptEventInstalled = true;
+      const fn = (event)=>{
+        // do not restart encouragment when:
+        // - the baloon was clicked
+        // - some baloon is shown at the moment;
+        if (event.target.className && (event.target.className.indexOf('random-text')>=0) || this.delayedShow) {return false;}
+        if (this.delayedEncouragments){
+          this.debug('interrupt Encouragment by activity');
+          clearTimeout(this.delayedEncouragments);
+          this.delayedEncouragments = null;
+          $('.random-text-holder').remove();
+          this.delayShowEncouragment();
+        }
+      }
+      $('body').on('click, keyup', fn);
+      $('body').on('change input[type=checkbox]', fn);
+    }
+
+    this.delayShowEncouragment();
+  },
+
+  debugT0: new Date().getTime(),
+  debug: function(text){
+    const diff = Math.round((new Date().getTime() - this.debugT0) / 1000);
+    //console.log('('+diff+'s)', text)
+  }
+
+})

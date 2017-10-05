@@ -1,0 +1,12 @@
+<div class='screen-center'>
+  <p><a href='/auth/google_oauth2'>Sign in with Google</a></p>
+  <!--<%= form_tag admin_sign_in_path, {method: 'POST'} do %>
+    <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+    <p><input type='password' name='password'/></p>
+    <%#= recaptcha_tags %>
+    <p><button type='submit'>LOGIN</button></p>
+  <% end %>-->
+  <% if flash[:alert] %>
+    <p><%= flash[:alert] %></p>
+  <% end %>
+</div>

@@ -1,0 +1,13 @@
+<% _.each(fields, (attrs, field) => {%>
+  <div class='form-group form-group-horizontal'>
+    <label>
+      <%= attrs.title %>
+    </label>
+    <span class='static-number'><%= App.utils.toMoney(attrs.suggested) %></span>
+    <span class='columned flexed'>
+      <span class='icon-arrow-down' role='decrease'></span>
+      <span class='icon-arrow-up' role='increase'></span>
+      <input type='text' name='<%= field %>'/>
+    </span>
+  </div>
+<% }) %>

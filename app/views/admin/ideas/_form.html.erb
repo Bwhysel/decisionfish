@@ -1,0 +1,54 @@
+<%= form_with(model: [:admin, idea], local: true) do |form| %>
+  <% if idea.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(idea.errors.count, "error") %> prohibited this idea from being saved:</h2>
+
+      <ul>
+      <% idea.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+
+  <div class="field">
+    <%= form.label :reported %>
+    <%= form.check_box :reported, id: :idea_reported %>
+  </div>
+
+  <div class="field">
+    <%= form.label :approved %>
+    <%= form.check_box :approved, id: :idea_approved %>
+  </div>
+
+  <div class="field">
+    <%= form.label :need %>
+    <%= form.select :need, [['All', 'all']] + Idea::TITLES.to_a.collect(&:reverse), { include_blank: false }, id: :idea_need %>
+    <%= form.select :saves_money, Idea::SAVES_MONEY.to_a.collect(&:reverse), { include_blank: false }, id: :idea_saves_money %>
+  </div>
+
+  <div class="field">
+    <%= form.label :content %>
+    <%= form.text_area :content, id: :idea_content, cols: 50, rows: 5 %>
+  </div>
+
+  <div class="field">
+    <%= form.label :user_id, 'User #' %>
+    <%= form.number_field :user_id, id: :idea_user_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :user_name %>
+    <%= form.text_field :user_name, id: :idea_user_name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :user_email %>
+    <%= form.text_field :user_email, id: :idea_user_email %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

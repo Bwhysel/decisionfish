@@ -1,0 +1,64 @@
+Hi, <%= @name %>!
+
+<p>You asked me to help you keep track of your spending. Here’s how we’re doing:</p>
+
+<% unless @too_fast.blank? %>
+<p><b>Spending too fast (slow down!):</b></p>
+
+<table>
+  <thead>
+    <tr>
+      <td width="160"><b>Category</b></td>
+      <td><b>Remaining</b></td>
+      <td></td>
+    </tr>
+  </thead>
+  <tbody>
+    <% @too_fast.each do |category, remaining| %>
+    <tr>
+      <td><%= category %></td>
+      <td style='text-align: right'>
+        <%= (remaining < 0 ? '-' : '') + ("$%.2f" % remaining.abs) %>
+      </td>
+      <td>
+        <% if remaining < 0 %>
+          (Overspent!)
+        <% end %>
+      </td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+<p>&nbsp;</p>
+<% end %>
+
+<% unless @too_slow.blank? %>
+<p><b>Spending just right (or too little!):</b></p>
+
+<table>
+  <thead>
+    <tr>
+      <td width="160"><b>Category</b></td>
+      <td><b>Remaining</b></td>
+    </tr>
+  </thead>
+  <tbody>
+    <% @too_slow.each do |category, remaining| %>
+    <tr>
+      <td><%= category %></td>
+      <td style='text-align: right'><%= "$%.2f" % remaining %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+<p>&nbsp;</p>
+<% end %>
+
+<p>This reminds me of a little joke: <%= @joke %></p>
+<p>Come visit me at <a href="www.decisionfish.com">www.decisionfish.com</a>!</p>
+<p>
+  Love,<br/>
+  Desi<br/>
+  <%= image_tag attachments['fish.png'].url, width: 50 %>
+</p>
+

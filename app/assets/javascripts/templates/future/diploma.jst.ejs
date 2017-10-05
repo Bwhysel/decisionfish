@@ -1,0 +1,33 @@
+<p class='diploma-heading'><%= name_pair %>'s Financial Plan</p>
+<div class='diploma-branch'></div>
+
+<div class='diploma-data-row'>
+  <div class='diploma-data-element'>
+    <span class='diploma-small-heading'>Monthly savings</span>
+    <span class='diploma-value' data-name='savings'>$1,200</span>
+  </div>
+  <div class='diploma-data-element'>
+    <span class='diploma-small-heading'>Retirement age</span>
+    <span class='diploma-value' data-name='retire_age'>65</span>
+  </div>
+</div>
+
+<% if (App.family.childrenYears.length) { %>
+<div class='diploma-data-row'>
+  <div class='diploma-data-element diploma-single-element'>
+    <span class='diploma-small-heading'>Share of Kid's College</span>
+    <span class='diploma-value' data-name='parent_contribute'>25%</span>
+  </div>
+</div>
+<% } %>
+
+<div class='diploma-data-row'>
+  <div class='diploma-data-element diploma-single-element'>
+    <span class='diploma-small-heading'>Retirement funding</span>
+    <span class='diploma-value'>FUNDED TO AGE <span data-name="until_age">99/97</span></span>
+  </div>
+</div>
+
+<div class='diploma-data-row'>
+  <div class='diploma-value diploma-main-value'>RETIREMENT <span data-name="success">SAFE</span></div>
+</div>

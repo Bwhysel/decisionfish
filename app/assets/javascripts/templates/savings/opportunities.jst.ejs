@@ -1,0 +1,28 @@
+<div id='opportunities-screen'>
+  <span class='icon-back' role='goto-link' href='/efund_ready'></span>
+  <div class='wrapper'>
+    <h1>Admire Your Opportunities</h1>
+    <div class='wrapper-container'>
+      <p>
+        Here are the priorities for debt repayment and investing, based on how much money I'd expect you to earn from each.
+        <% if (want_efund) { %>
+          <br/><br/>Bank Savings is first priority because you said you want to build your Emergency Fund.
+        <% } %>
+      </p>
+
+      <div class='panel panel-wide' style='padding-bottom: 0;'>
+        <p class='text-center'><strong>Earnings Per $100 Invested</strong><span class='icon ask-desi' data-desi='says' data-content="savings_opportunities"></span></p>
+
+        <div class='svg-area'>
+          <svg></svg>
+        </div>
+
+      </div>
+
+      <p class='wide-row text-right'>
+        <button class='blue-button' id='next-btn' role='goto-link' href='/savings_plan'>NEXT</button>
+      </p>
+    </div>
+  </div>
+
+</div>

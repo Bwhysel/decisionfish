@@ -1,0 +1,61 @@
+<div id='select-needs-screen' %>
+  <span class='icon-back' role='goto-link' href='budget_intro'></span>
+  <div class='wrapper'>
+    <h1>Are You Meeting Your<br/>Needs?
+      <span class='icon ask-desi' data-desi='says' data-content='budget'></span>
+    </h1>
+
+    <div class='wrapper-container'>
+      <p>
+        We're going to create a Happy Budget<sup>®</sup>, a spending plan that meets your needs, including your monthly Savings Goal.
+      </p>
+      <br/>
+      <p>Below are seven human needs. Select the needs that are already being met for you<%= isSingle ? '' : ' both'%>.</p>
+      <br/>
+      <div class='squares-containers'>
+        <div class='squares-container'>
+          <div class='square square-disabled' data-need='basics'>
+            <span class='insquare-icon icon-basics'></span>
+            <span class='menu-text'>Basics</span>
+          </div>
+          <div class='square square-disabled' data-need='love'>
+            <span class='insquare-icon icon-love'></span>
+            <span class='menu-text'>Love & Friendship</span>
+          </div>
+        </div>
+
+
+        <div class='squares-container squares-container-wide'>
+          <div class='square square-disabled' data-need='expert'>
+            <span class='insquare-icon icon-expert'></span>
+            <span class='menu-text'>Being Good at Something</span>
+          </div>
+          <div class='square square-disabled' data-need='control'>
+            <span class='insquare-icon icon-helm'></span>
+            <span class='menu-text'>In Control Of Your Life</span>
+          </div>
+          <div class='square square-disabled' data-need='helping'>
+            <span class='insquare-icon icon-ribbon'></span>
+            <span class='menu-text'>Helping Others</span>
+          </div>
+        </div>
+
+        <div class='squares-container'>
+          <div class='square square-disabled' data-need='fun'>
+            <span class='insquare-icon icon-kite'></span>
+            <span class='menu-text'>Leisure & Fun</span>
+          </div>
+          <div class='square square-disabled' data-need='respect'>
+            <span class='insquare-icon icon-handshake'></span>
+            <span class='menu-text'>Respect & Pride</span>
+          </div>
+        </div>
+      </div>
+
+      <p class='text-right'>
+        <button class='blue-button' role='goto-link' href='/budget_expenses'>NEXT</button>
+      </p>
+    </div>
+  </div>
+
+</div>

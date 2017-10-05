@@ -1,91 +1,79 @@
 Rails.application.routes.draw do
-  devise_for :users, path: 'admin'
+
+
 
   namespace :admin do
-    resources :decisions do
-      resources :formulas, :variables
+    resources :jokes
+    resources :encouragments
+    resources :desi_says_modals
+    resources :ideas do
+      get 'pending', on: :collection
+      get 'reported', on: :collection
     end
+    resources :available_emails
 
-    root 'decisions#index'
+    get 'login' => 'base#login'
+    post 'sign_in' => 'base#sign_in'
+    get 'logout' => 'base#logout'
   end
 
-  resources :decisions, only: [:index, :show] do
-    member do
-      get 'assumptions'
-      get 'make_decision'
-      get 'understand_results'
-      get 'done'
-      get 'detailed_results'
-      get 'other_scenarios'
-      get 'bank_debt_to_income_tests'
-      get 'upload_csv'
-      post 'import_csv'
-      get 'charts'
-      get 'send_email'
-    end
+  get '/auth/:provider/callback', to: 'admin/base#sign_in'
 
-    resources :variables, only: [:index, :show] do
-      collection do
-        get 'free_result_table'
-      end
-    end
-  end
 
-  root 'pages#show', page: 'welcome'
-  get "/pages/:page" => "pages#show"
+  root to: 'home#index'
 
-  # The priority is based upon order of creation: first created -> highest priority.
-  # See how all your routes lay out with "rake routes".
+  get '/additional_content' => 'home#additional_content'
 
-  # You can have the root of your site routed with "root"
-  # root 'welcome#index'
+  post 'ask/desi'
 
-  # Example of regular route:
-  #   get 'products/:id' => 'catalog#view'
+  post 'signup'              => 'user#create'
+  post 'login'               => 'user#login'
+  post 'logout'              => 'user#logout'
+  post 'reset'               => 'user#reset'
+  post 'position'            => 'user#save_position'
+  get  'position'            => 'user#get_position'
+  get   'verify'             => 'user#verify'
+  post  'resend_pin'         => 'user#resend_pin'
+  post  'verify_pin'         => 'user#verify_pin'
+  patch '/user/update_phone' => 'user#update_phone'
+  get   '/user/profile'      => 'user#profile'
+  get '/ideas/get'           => 'user#get_idea'
+  post '/ideas/give'         => 'user#give_idea'
+  post '/ideas/report'       => 'user#report_idea'
+  post '/ideas/like'         => 'user#like_idea'
 
-  # Example of named route that can be invoked with purchase_url(id: product.id)
-  #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
+  get '/finance_details/:step' => 'home#index'
+  patch '/finance_details'     => 'people#update_details'
 
-  # Example resource route (maps HTTP verbs to controller actions automatically):
-  #   resources :products
+  patch  '/people/children' => 'people#update_children'
+  post   '/people'          => 'people#create'
+  patch  '/people/:id'      => 'people#update'
+  delete '/people/:id'      => 'people#destroy'
 
-  # Example resource route with options:
-  #   resources :products do
-  #     member do
-  #       get 'short'
-  #       post 'toggle'
-  #     end
-  #
-  #     collection do
-  #       get 'sold'
-  #     end
-  #   end
+  post '/import/widget' => 'mx#widget'
+  get '/import/connections' => 'mx#connections'
+  get '/import/connections/:id' => 'mx#get_connection'
+  delete '/import/connections/:id' => 'mx#remove_connection'
+  get '/import/balances' => 'mx#get_balances'
+  get '/import/loans' => 'mx#get_loans'
+  get '/import/accounts_length' => 'mx#get_accounts_length'
 
-  # Example resource route with sub-resources:
-  #   resources :products do
-  #     resources :comments, :sales
-  #     resource :seller
-  #   end
+  post '/big_decision/solve' => 'big_decision#solve'
+  post '/different_decisions/solve' => 'big_decision#solve_different'
+  post '/defaults' => 'big_decision#defaults'
 
-  # Example resource route with more complex sub-resources:
-  #   resources :products do
-  #     resources :comments
-  #     resources :sales do
-  #       get 'recent', on: :collection
-  #     end
-  #   end
+  get '/future_history/:step' => 'home#index'
 
-  # Example resource route with concerns:
-  #   concern :toggleable do
-  #     post 'toggle'
-  #   end
-  #   resources :posts, concerns: :toggleable
-  #   resources :photos, concerns: :toggleable
+  get '/future_assumptions/:step'  => 'home#index'
+  get '/different_decisions/:step' => 'home#index'
+  get '/budget_walkthrough/:step'  => 'home#index'
+  get '/savings_loans/:step'       => 'home#index'
 
-  # Example resource route within a namespace:
-  #   namespace :admin do
-  #     # Directs /admin/products/* to Admin::ProductsController
-  #     # (app/controllers/admin/products_controller.rb)
-  #     resources :products
-  #   end
+  patch '/budget_needs'      => 'people#update_budget_needs'
+  patch '/budget_categories' => 'people#update_budget_categories'
+  patch '/budget_tracking' => 'people#update_tracking_info'
+  patch '/loans' => 'people#update_loans'
+
+  get ':page' => 'home#index'
+  #get 'hello_world', to: 'hello_world#index'
 end

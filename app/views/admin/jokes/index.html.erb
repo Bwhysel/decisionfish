@@ -1,0 +1,22 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Jokes</h1>
+
+<table class='table-with-entity'>
+  <thead>
+  </thead>
+
+  <tbody>
+    <% @jokes.each do |joke| %>
+      <tr>
+        <td><%= joke.content %></td>
+        <td><%= link_to 'Edit', edit_admin_joke_path(joke), role: 'edit-link' %></td>
+        <td><%= link_to 'Destroy', admin_joke_path(joke), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Joke', new_admin_joke_path %>

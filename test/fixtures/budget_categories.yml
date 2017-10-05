@@ -1,0 +1,43 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  housing: 1
+  trasportation: 1
+  health_care: 1
+  insurance: 1
+  groceries: 1
+  dining_out: 1
+  personal_care: 1
+  clothing: 1
+  entertaining: 1
+  fitness: 1
+  education: 1
+  charity: 1
+  vacation: 1
+  fun: 1
+  everything: 1
+  credit_card: 1
+  savings: 1
+  fun_category: MyString
+
+two:
+  user_id: 1
+  housing: 1
+  trasportation: 1
+  health_care: 1
+  insurance: 1
+  groceries: 1
+  dining_out: 1
+  personal_care: 1
+  clothing: 1
+  entertaining: 1
+  fitness: 1
+  education: 1
+  charity: 1
+  vacation: 1
+  fun: 1
+  everything: 1
+  credit_card: 1
+  savings: 1
+  fun_category: MyString

@@ -1,0 +1,23 @@
+<span class='icon-back' role='goto-link' href='/menu'></span>
+<div class='wrapper'>
+  <h1>Let's Create a<br/>Happy Budget<sup>®</sup>!<span class='icon ask-desi' data-desi='says' data-content="budget_intro"></span></h1>
+
+  <div class='wrapper-container'>
+    <p class='text-center'>
+      Humans (and certain fish) need to have their needs met to be happy.
+    </p>
+    <p><%= App.family.length > 1 ? `Get ${App.family.at(1).get('name')}. ` : "" %>Find a quiet space. We're going to design a budget that:</p>
+    <ul>
+      <li>Meets your <strong>needs</strong></li>
+      <li>You can <strong>live with</strong></li>
+      <li>Makes you <strong>happy</strong></li>
+    </ul>
+    <div>
+      <p class='text-center'><span class='img-fish-happy'></span></p>
+    </div>
+
+    <p class='text-right'>
+      <button class='blue-button' role='goto-link' href='/budget'>NEXT</button>
+    </p>
+  </div>
+</div>

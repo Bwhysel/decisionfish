@@ -1,0 +1,37 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  basics_met: false
+  love_met: false
+  respect_met: false
+  control_met: false
+  expert_met: false
+  helping_met: false
+  fun_met: false
+  basics_value: 1
+  love_value: 1
+  respect_value: 1
+  control_value: 1
+  expert_value: 1
+  helping_value: 1
+  fun_value: 1
+  none_value: 1
+
+two:
+  user_id: 1
+  basics_met: false
+  love_met: false
+  respect_met: false
+  control_met: false
+  expert_met: false
+  helping_met: false
+  fun_met: false
+  basics_value: 1
+  love_value: 1
+  respect_value: 1
+  control_value: 1
+  expert_value: 1
+  helping_value: 1
+  fun_value: 1
+  none_value: 1

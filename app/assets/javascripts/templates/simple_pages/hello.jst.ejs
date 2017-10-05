@@ -1,0 +1,26 @@
+<div id='hello-screen' %>
+  <div class='hello-top-wave'></div>
+  <div class='wrapper'>
+    <div class='header-fish'></div>
+    <h1>Hi! I'm DESI the Decision Fish.</h1>
+    <div class='wrapper-container'>
+    <p style='margin-bottom: 0;' class='text-center'><span style='width: 100%;'>I'm here to help you make wise<br/> money decisions!</span></p>
+    <ul>
+      <li>Step-by-step help</li>
+      <li>Relevant, bite-sized education</li>
+      <li>I do the math for you</li>
+      <li>I'm on your side</li>
+      <li style='display:flex;align-items:center;'>Tap &nbsp;<span class='icon ask-desi inline' data-desi='says' data-content='hello'></span>&nbsp; if you need help</li>
+    </ul>
+    <p class='justified-footer'>
+      <button class='blue-button' role='goto-link' href='/menu'>NEXT</button>
+
+      <% if (App.authorized){ %>
+        <button class='green-button' role='logout-link' href='javascrtip:void(0);'>LOGOUT</button>
+      <% } else { %>
+        <button class='green-button' role='login-link' href='javascrtip:void(0);'>LOGIN</button>
+      <% } %>
+    </p>
+    </div>
+  </div>
+</div>

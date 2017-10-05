@@ -1,0 +1,94 @@
+<div id='future-assumptions-screen'>
+  <span class='icon-back' role='goto-link' href='/<%= prevStep %>'></span>
+  <div class='wrapper'>
+    <h1>
+      All the little<br/>assumptions that<br/>make a big difference
+      <span class="icon ask-desi" data-desi='says' data-content="future_assumptions"></span>
+    </h1>
+    <div class='wrapper-container'>
+      <div class='panel panel-wide'>
+        <h3><%= data.insurance.title %></h3>
+        <% _.each(data.insurance.fields, (field) => { %>
+          <% let attrs = fields[field] %>
+          <div class='form-group form-group-horizontal'>
+            <label>
+              <%= attrs.label %><span class='icon-question' title="<%= attrs.hint %>"></span>
+            </label>
+            <input type='text' name='<%= field %>' data-type='<%= attrs.type %>'/>
+          </div>
+        <% }) %>
+      </div>
+      <div class='panel panel-wide'>
+        <div class='form-group form-group-horizontal form-group-header'>
+          <h3><%= data.pensions.title %></h3>
+          <% if (name2) { %>
+            <div class='columned'><%= name1 %></div>
+            <div class='columned'><%= name2 %></div>
+          <% } %>
+        </div>
+        <% _.each(data.pensions.fields, (field) => { %>
+          <% let attrs = fields[field] %>
+          <% let f1 = attrs.related[0] %>
+          <% let f2 = attrs.related[1] %>
+          <div class='form-group form-group-horizontal'>
+            <label>
+              <%= attrs.label %>&nbsp;<span class='icon-question' title="<%= attrs.hint %>"></span>
+            </label>
+            <% let field_type = fields[f1].type %>
+            <% let input_type = field_type == 'age' ? 'number' : 'text' %>
+            <% if (name2) { %>
+              <div class='columned'>
+                <input type='<%= input_type %>' name='<%= f1 %>' data-type='<%= field_type %>'/>
+              </div>
+              <div class='columned'>
+                <input type='<%= input_type %>' name='<%= f2 %>' data-type='<%= field_type %>'/>
+              </div>
+            <% } else { %>
+              <input type='<%= input_type %>' name='<%= f1 %>' data-type='<%= field_type %>'/>
+            <% } %>
+          </div>
+        <% }) %>
+      </div>
+      <div class='panel panel-wide'>
+        <div class='form-group form-group-horizontal form-group-header'>
+          <h3><%= data.investments.title %></h3>
+          <div class='columned'>Returns</div>
+          <div class='columned'>Allocations</div>
+        </div>
+
+        <% _.each(data.investments.fields, (field) => { %>
+          <% let attrs = fields[field] %>
+          <div class='form-group form-group-horizontal'>
+            <label>
+              <%= attrs.label %>
+              <% if (attrs.hint) { %>
+                &nbsp;<span class='icon-question' title='<%= attrs.hint %>'></span>
+              <% } %>
+            </label>
+            <% if (attrs.related) { %>
+              <% let f1 = attrs.related[0] %>
+              <% let f2 = attrs.related[1] %>
+              <div class='columned'>
+                <input type='text' name='<%= f1 %>' data-type='<%= fields[f1].type %>' data-target='rt_avg'/>
+              </div>
+              <div class='columned'>
+                <input type='text' name='<%= f2 %>' data-type='<%= fields[f2].type %>' data-target='rt_avg' data-limit='p100'/>
+              </div>
+            <% } else { %>
+              <div class='columned'>
+                <input type='text' <%= (attrs.readonly) ? 'disabled' : '' %> name='<%= field %>' data-type='<%= attrs.type %>'/>
+              </div>
+              <div class='columned'></div>
+            <% } %>
+          </div>
+        <% }) %>
+      </div>
+
+      <p class='justified-footer wide-row'>
+        <button class='blue-button' id='next-btn' role='goto-link' href='/<%= nextStep %>'>NEXT</button>
+        <button class='btn-gray' role='reset'>RESET</button>
+      </p>
+    </div>
+  </div>
+
+</div>

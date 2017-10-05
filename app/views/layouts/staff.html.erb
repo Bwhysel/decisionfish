@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Decision Fish:HQ</title>
+    <%= csrf_meta_tags %>
+    <!--<meta name="viewport" content="width=device-width">-->
+
+    <%= stylesheet_link_tag 'scaffolds', media: 'all' %>
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=PY4eeBQv3y">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png?v=PY4eeBQv3y">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png?v=PY4eeBQv3y">
+    <link rel="manifest" href="/manifest.json?v=PY4eeBQv3y">
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg?v=PY4eeBQv3y" color="#2E3192">
+    <link rel="shortcut icon" href="/favicon.ico?v=PY4eeBQv3y">
+    <meta name="theme-color" content="#ffffff">
+  </head>
+
+  <body>
+    <% if admin_authorized? %>
+      <%= render partial: 'shared/admin_menu' %>
+    <% end %>
+
+    <%= yield %>
+
+    <%= javascript_include_tag 'staff' %>
+  </body>
+</html>

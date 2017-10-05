@@ -1,0 +1,33 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Approved:</strong>
+  <%= @idea.approved %>
+  &nbsp;&nbsp;
+  <strong>Reported:</strong>
+  <%= @idea.reported %>
+</p>
+
+<p>
+  <strong>Need:</strong>
+  <%= @idea.need_s %>
+  (<%= @idea.saves_money_s %>)
+</p>
+
+<p>
+  <strong>Content:</strong>
+  <%= @idea.content.html_safe %>
+</p>
+
+<p>
+  <strong>User:</strong>
+  <%= @idea.user_id %>
+  /
+  <%= @idea.user_name %>
+  /
+  <%= @idea.user_email %>
+</p>
+
+
+<%= link_to 'Edit', edit_admin_idea_path(@idea) %> |
+<%= link_to 'Back', admin_idea_back_path(@idea) %>

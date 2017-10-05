@@ -1,0 +1,91 @@
+<p class='text-center'>
+  <span style='width: 100%;'>
+  Here is what you told me.<br/>
+  Does everything look OK?
+  </span>
+</p>
+
+<div class='panel countable'>
+  <h3>Investments/Savings</h3>
+  <div class='form-group form-group-horizontal'>
+    <label><%= this.stepsData['cash'].title %>
+      &nbsp;<span class='icon-question' title="<%= this.stepsData['cash'].hint %>"></span>
+    </label>
+    <input type='text' name='cash'/>
+  </div>
+  <div class='form-group form-group-horizontal'>
+    <label><%= this.stepsData['college_savings'].title %>
+      &nbsp;<span class='icon-question' title="<%= this.stepsData['college_savings'].hint %>"></span>
+    </label>
+    <input type='text' name='college_savings'/>
+  </div>
+  <div class='form-group form-group-horizontal'>
+    <label><%= this.stepsData['retirement_savings'].title %>
+      &nbsp;<span class='icon-question' title="<%= this.stepsData['retirement_savings'].hint %>"></span>
+    </label>
+    <input type='text' name='retirement_savings'/>
+  </div>
+  <hr/>
+  <div class='form-group form-group-horizontal'>
+    <label>Total Savings</label>
+    <span class='static-number' role='total-amount' data-name='totalInvests'></span>
+  </div>
+</div>
+
+<div class='panel countable'>
+  <h3>Debt</h3>
+  <div class='form-group form-group-horizontal'>
+    <label><%= this.stepsData['credit_cards'].title %>
+      &nbsp;<span class='icon-question' title="<%= this.stepsData['credit_cards'].hint %>"></span>
+    </label>
+    <input type='text' name='credit_cards'/>
+  </div>
+  <div class='form-group form-group-horizontal'>
+    <label><%= this.stepsData['student_loans'].title %>
+      &nbsp;<span class='icon-question' title="<%= this.stepsData['student_loans'].hint %>"></span>
+    </label>
+    <input type='text' name='student_loans'/>
+  </div>
+  <div class='form-group form-group-horizontal'>
+    <label><%= this.stepsData['other_debts'].title %>
+      &nbsp;<span class='icon-question' title="<%= this.stepsData['other_debts'].hint %>"></span>
+    </label>
+    <input type='text' name='other_debts'/>
+  </div>
+  <hr/>
+  <div class='form-group form-group-horizontal'>
+    <label>Total Debt</label>
+    <span class='static-number' role='total-amount' data-name='totalDebt'></span>
+  </div>
+  <br/>
+  <div class='form-group form-group-horizontal'>
+    <label>Your Financial Net Worth:</label>
+    <span class='static-number' role='financial-net'></span>
+  </div>
+</div>
+
+<div class='panel countable'>
+  <h3>Home Ownership</h3>
+  <div class='form-group form-group-horizontal'>
+    <label><%= this.stepsData['home_value'].title %>
+      &nbsp;<span class='icon-question' title="<%= this.stepsData['home_value'].hint %>"></span>
+    </label>
+    <input type='text' name='home_value'/>
+  </div>
+  <div class='form-group form-group-horizontal'>
+    <label><%= this.stepsData['mortgage'].title %>
+      &nbsp;<span class='icon-question' title="<%= this.stepsData['mortgage'].hint %>"></span>
+    </label>
+    <input type='text' name='mortgage'/>
+  </div>
+  <hr/>
+  <div class='form-group form-group-horizontal'>
+    <label>Home Equity</label>
+    <span class='static-number' role='total-amount' data-name='totalHome'></span>
+  </div>
+  <br/>
+  <div class='form-group form-group-horizontal'>
+    <label>Your Total Net Worth</label>
+    <span class='static-number' role='total-net'></span>
+  </div>
+</div>

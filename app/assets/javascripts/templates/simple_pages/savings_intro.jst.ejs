@@ -1,0 +1,24 @@
+<span class='icon-back' role='goto-link' href='/menu'></span>
+<div class='wrapper'>
+  <h1>Make Your Money<br/>Make More Money!</h1>
+
+  <div class='wrapper-container'>
+    <p class='text-center'>
+      <span>Congratulations! You now have a Happy Budget<sup>®</sup> that lets you save <%= App.utils.toMoney(App.budgetCategories.get('savings')) %> every month.</span>
+    </p>
+    <p>You can make money with this money. How? Pay back debt and invest!</p>
+    <p><%= App.family.length > 1 ? `Get ${App.family.at(1).get('name')}. ` : "" %>Find a quiet space. We're going to create an investment plan that:</p>
+    <ul>
+      <li>Earns you money</li>
+      <li>Gives you control over your future</li>
+      <li>Prepares you for a rainy day</li>
+    </ul>
+    <div>
+      <p class='text-center'><span class='img-fish-with-papers'></span></p>
+    </div>
+
+    <p class='text-right'>
+      <button class='blue-button' role='goto-link' href='/savings_loans/credit_cards'>NEXT</button>
+    </p>
+  </div>
+</div>

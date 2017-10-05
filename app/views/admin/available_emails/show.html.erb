@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Email pattern:</strong>
+  <%= @available_email.email_pattern %>
+</p>
+
+<p>
+  <strong>Used count:</strong>
+  <%= @available_email.used_count %>
+</p>
+
+<%= link_to 'Edit', edit_admin_available_email_path(@available_email) %> |
+<%= link_to 'Back', admin_available_emails_path %>

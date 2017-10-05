@@ -1,0 +1,41 @@
+<div id='loans-screen'>
+  <span class='icon-back' role='goto-link' href='/<%= prevStep %>'></span>
+  <div class='wrapper'>
+    <h1>Tell Me About Your<br/><%= data.title %></h1>
+    <div class='wrapper-container'>
+      <p>
+        You said you had <%= data.targetValue %> for your <%= data.title %>. I'll need a little more information, please.
+      </p>
+      <div class='panel panel-wide'>
+        <div class='form-group'>
+          <h3>
+            <span class='panel-col1'><%= data.label %></span>
+            <span class='panel-col2'>Balance</span>
+            <span class='panel-col3'>Interest<br/>Rate (APR)</span>
+            <span class='icon ask-desi inline' data-desi='says' data-content="<%= data.hint %>"></span>
+          </h3>
+        </div>
+        <div role='loans'>
+        </div>
+        <span role='add-loan' class='icon-plus' style='margin: 1rem 0 1rem;'></span>
+        <hr>
+        <div class='form-group form-group-horizontal'>
+          <label>Total</label>
+          <span class='number-field' role='total-amount'>$0</span>
+          <span class='number-field'></span>
+          <span style='flex-basis: 15%;'></span>
+        </div>
+      </div>
+
+      <p class='wide-row justified-footer'>
+        <button class='blue-button' id='next-btn' role='goto-link' href='/<%= nextStep %>'>NEXT</button>
+        <span class='flexed' style='margin-bottom: 0;'>
+          <button class='btn-gray' id='import-btn'>IMPORT</button>
+          &nbsp;
+          <span style='position: relative; top: 0;' class="icon ask-desi" data-desi="promises" data-content="import_details"></span>
+        </span>
+      </p>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>minus copy 3</title>
+    <defs></defs>
+    <g id="Future" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Big_Decision_safe" transform="translate(-75.000000, -315.000000)" fill="#464654">
+            <g id="minus" transform="translate(74.000000, 314.000000)">
+                <g id="x" stroke-width="1" transform="translate(17.000000, 17.000000) rotate(-45.000000) translate(-17.000000, -17.000000) translate(1.000000, 1.000000)">
+                    <path d="M16,-1.29674049e-13 C7.17784615,-1.29674049e-13 -1.29674049e-13,7.17723077 -1.29674049e-13,16 C-1.29674049e-13,24.8227692 7.17784615,32 16,32 C24.8221538,32 32,24.8227692 32,16 C32,7.17723077 24.8221538,-1.29674049e-13 16,-1.29674049e-13 Z M16,30.7692308 C7.85661538,30.7692308 1.23076923,24.1433846 1.23076923,16 C1.23076923,7.85661538 7.85661538,1.23076923 16,1.23076923 C24.1433846,1.23076923 30.7692308,7.85661538 30.7692308,16 C30.7692308,24.1433846 24.1433846,30.7692308 16,30.7692308 Z" id="Shape"></path>
+                </g>
+                <polygon id="Triangle" points="17 21 13 15 21 15"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

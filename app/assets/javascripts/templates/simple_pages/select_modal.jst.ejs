@@ -1,0 +1,19 @@
+<div id="<%= id %>" class="modal simple-modal select-modal">
+  <div class="modal-dialog animated">
+    <div class="modal-content">
+      <div class="modal-body">
+        <% let i = 0; %>
+        <% _.each(variants,(item, key) => { %>
+          <p tabIndex='<%= 10 + i %>' class="select-option <%= key == selected ? 'active' : ''%>" data-id='<%= key %>'>
+            <%= item %>
+          </p>
+          <% i += 1 %>
+        <% }) %>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-gray" role='close-modal'>CANCEL</button>
+        <button class="btn" role='submit-modal'>OK</button>
+      </div>
+    </div>
+  </div>
+</div>

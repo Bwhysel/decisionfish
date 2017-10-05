@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  guid: MyString
+  user_id: 1
+  mx_user_id: 1
+  amount: 9.99
+  top_level_category: MyString
+  category: MyString
+
+two:
+  guid: MyString
+  user_id: 1
+  mx_user_id: 1
+  amount: 9.99
+  top_level_category: MyString
+  category: MyString

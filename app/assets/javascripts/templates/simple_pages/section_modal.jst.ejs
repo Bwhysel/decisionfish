@@ -1,0 +1,15 @@
+<div id="section-modal" class="modal simple-modal">
+  <div class="modal-dialog animated">
+    <div class="modal-content">
+      <div class="modal-body">
+        <% if (title) { %><span class='img-fish-with-papers'></span>
+        <h3><%= title %></h3><% } %>
+        <p><%= content %></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" role='submit-modal'><%= btnTitle %></button>
+        <% if (cancelTitle) {%><button class="btn" role='close-modal'><%= cancelTitle %></button><% } %>
+      </div>
+    </div>
+  </div>
+</div>

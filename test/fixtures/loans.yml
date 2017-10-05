@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  credit_cards: 1
+  credit_cards_names: MyString
+  student_loans: 1
+  sudent_loans_names: MyString
+  other_debts: 1
+  other_debts_names: 
+
+two:
+  user_id: 1
+  credit_cards: 1
+  credit_cards_names: MyString
+  student_loans: 1
+  sudent_loans_names: MyString
+  other_debts: 1
+  other_debts_names: 

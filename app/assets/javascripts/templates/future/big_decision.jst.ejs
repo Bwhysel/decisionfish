@@ -1,0 +1,87 @@
+<span class='icon-back' role='goto-link' href='/finance_details/total'></span>
+<div id='big-decision-screen' class='wrapper'>
+  <h1>Let's make the Big<br/>Decisions together:</h1>
+  <div class='wrapper-container'>
+    <div class='panel panel-wide'>
+      <div class='gradient-bar'>
+        <div class='gradient-bar-inner'> </div>
+        Your retirement years
+        <div class='gradient-triangle' role='triangle'>
+          <div class='gradient-triangle-inner'> </div>
+        </div>
+      </div>
+      <!--<h3 style='margin-bottom: 0; margin-top: 0;'><span class="icon ask-desi" data-desi='says' data-content="big_decision" style='z-index: 1;'></span></h3>-->
+      <p class='text-hint flexed no-margin' style='justify-content: baseline; flex-wrap: wrap;'  role='retirement-funded'>Money lasts until age<% if (name2) { %>s<% } %>:&nbsp;
+        <span role='age1'><%= age1 %></span><% if (name2) { %> (<%= name1 %>),&nbsp;<span role='age2'><%= age2 %></span> (<%= name2 %>)<% } %>&nbsp;
+        <span class="icon ask-desi inline" data-desi='says' data-content="big_decision" style='z-index: 1;'></span>
+      </p>
+      <p class='text-hint flexed no-margin hidden' style='justify-content: baseline; flex-wrap: wrap;' role='retirement-overfunded'>
+        Overfunded! Spend More/Retire Earlier?&nbsp;
+        <span class="icon ask-desi inline" data-desi='says' data-content="big_decision" style='z-index: 1;'></span>
+      </p>
+    </div>
+
+    <div class='retirement-safety-row hidden' role='safe-state'>
+      <span class='img-fish-retirement-safe'></span>
+      <span>
+        <span class='success-msg'>Retirement Safe</span>
+        <br/>
+        Good job!
+      </span>
+      <span class="icon ask-desi" data-desi='says' data-content="big_decision_safe"></span>
+    </div>
+    <div class='retirement-safety-row' role='unsafe-state'>
+      <span class='img-fish-retirement-unsafe'></span>
+      <span>
+        <span class='error-msg'>Retirement Unsafe</span>
+        <br/>
+        Change decision(s).
+      </span>
+      <span class="icon ask-desi" data-desi='says' data-content="big_decision_unsafe"></span>
+    </div>
+    <div class='panel panel-wide'>
+      <p class='text-hint'><span role='savings-percent'>0</span>% of after-tax income.<span role='savings-percent-warning'>You sure you can save this much?</span></p>
+      <h3>Future Monthly Savings<span class="icon ask-desi" data-desi='says' data-content="big_decision_savings"></span></h3>
+      <div class='goals-row' data-target='monthly_savings'>
+        <input class='goal-value' role='monthly_savings' value='$<%= decisions.monthly_savings %>'/>
+        <span class='flexed no-margin'>
+          <span class='icon-arrow-down' role='decrease'></span>
+          &nbsp;
+          <span class='icon-arrow-up' role='increase'></span>
+        </span>
+        <span class='icon-magic-wand' role='target-solve'></span>
+      </div>
+    </div>
+    <div class='panel panel-wide'>
+      <p class='text-hint' role='retirement-warning'>Are you sure you'll be able to work this long?</p>
+      <h3>Retirement age<span class="icon ask-desi" data-desi='says' data-content="big_decision_age"></span></h3>
+      <div class='goals-row' data-target='retire_age'>
+        <input type='name' class='goal-value' role='retire_age' value='<%= decisions.retire_age %>%'/>
+        <span>
+          <span class='icon-arrow-down' role='decrease'></span>
+          &nbsp;
+          <span class='icon-arrow-up' role='increase'></span>
+        </span>
+        <span class='icon-magic-wand' role='target-solve'></span>
+      </div>
+    </div>
+    <% if (withChildren) { %>
+    <div class='panel panel-wide'>
+      <p class='text-hint' role='retirement-warning'>FYI: Financial Aid assumes an Expected family Contribution.</p>
+      <h3>Your Share of Kid's College <span class="icon ask-desi" data-desi='says' data-content="big_decision_percentage"></span></h3>
+      <div class='goals-row' data-target='parent_contribute'>
+        <input type='text' class='goal-value' role='parent_contribute' value='<%= decisions.parent_contribute %>%'/>
+        <span>
+          <span class='icon-arrow-down' role='decrease'></span>
+          &nbsp;
+          <span class='icon-arrow-up' role='increase'></span>
+        </span>
+        <span class='icon-magic-wand' role='target-solve'></span>
+      </div>
+    </div>
+    <% } %>
+    <p class='text-right'>
+      <button class='blue-button' id='next-btn' role='goto-link' href='/future_history/children'>NEXT</button>
+    </p>
+  </div>
+</div>

@@ -1,0 +1,59 @@
+<div id='meet-plans-screen' %>
+  <span class='icon-back' role='goto-link' href="<%= revised ? '/budget_spend' : '/budget_expenses' %>"></span>
+  <div class='wrapper'>
+    <h1><% if (revised) { %>
+      Let's Make Sure Your<br/>Budget Will Make You Happy
+      <% } else { %>
+      Does Your Spending<br/>Plan Meet Your Needs?
+      <% } %></h1>
+
+    <div class='wrapper-container'>
+      <p class='text-center'>
+        <% if (revised) { %>
+        Here's a summary of your changes to your spending.
+        <% } else { %>
+        Here's how you are allocating your spending among your different needs.
+        <% } %>
+      </p>
+
+      <div class='panel panel-wide'>
+        <div class='form-group form-group-horizontal'>
+          <h3>
+            <% if (revised) { %>
+            <span>Need</span>
+            <span>New Spending</span>
+            <% } else { %>
+            <span>Met Need?</span>
+            <span>Monthly Spending</span>
+            <% } %>
+          </h3>
+        </div>
+        <% _.each(data, (attrs, field) => { %>
+          <div class='form-group form-group-horizontal'>
+            <div class='fuel-progress' style='width: <%= attrs.percent %>%'></div>
+            <span class='label-group'>
+              <label><% if (!attrs.disabled) { %><input class='checkbox' type='checkbox' name='<%= field %>' <%= attrs.checked %>><% } %><%= attrs.title %>
+              <span class='icon-question' title="<%= attrs.content %>"></span>
+              </label>
+            </span>
+            <% if (revised) { %>
+              <span class='static-hint-number'><%= attrs.diff %></span>
+            <% } %>
+            <span class='static-number no-margin'><%= attrs.value %></span>
+          </div>
+        <% }) %>
+        <hr/>
+        <div class='form-group form-group-horizontal'>
+          <label>Total Spending</label>
+          <span class='static-number'><%= total %></span>
+        </div>
+      </div>
+
+
+      <p class='wide-row justified-footer'>
+        <button class='blue-button' role='goto-link' href="<%= revised ? '/budget_congratulations' : '/budget_intro_2' %>">NEXT</button>
+      </p>
+    </div>
+  </div>
+
+</div>

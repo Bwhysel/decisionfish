@@ -1,0 +1,16 @@
+<div id="modal" class="modal desi-modal simple-modal">
+  <div class="modal-dialog animated">
+    <div class="modal-content">
+      <div class="modal-header">
+        <strong><%= title %></strong>
+      </div>
+      <div class='modal-fish-ok'></div>
+      <div class="modal-body"><%= body %></div>
+
+      <div class="modal-footer">
+        <button class="btn btn-primary" role='close-modal'><%= cancelTitle %></button>
+        <% if (btnTitle) { %><button class="btn" role='submit-modal'><%= btnTitle %></button><% } %>
+      </div>
+    </div>
+  </div>
+</div>

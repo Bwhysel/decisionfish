@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  monthly_savings: 1
+  retire_age: 1
+  parent_contribute: 9.99
+
+two:
+  user_id: 1
+  monthly_savings: 1
+  retire_age: 1
+  parent_contribute: 9.99

@@ -1,0 +1,250 @@
+@import "components/variables";
+
+.icon-magic-sphere {
+  background-image: image-url('icons/magic.svg');
+  background-size: 65%;
+}
+
+.icon-budget {
+  background-image: image-url('icons/budget.svg');
+  background-size: 65%;
+}
+
+.icon-piggy-bank {
+  background-image: image-url('icons/piggy.svg');
+  background-size: 65%;
+}
+
+.icon-home {
+  background-image: image-url('icons/home.svg');
+  background-size: 50%;
+}
+
+.icon-student {
+  background-image: image-url('icons/student.svg');
+  background-size: 50%;
+}
+
+.icon-car {
+  background-image: image-url('icons/car.svg');
+  background-size: 60%;
+}
+
+.icon-gift {
+  background-image: image-url('icons/gift.svg');
+  background-size: 45%;
+}
+
+.icon-umbrella {
+  background-image: image-url('icons/umbrella.svg');
+  background-size: 50%;
+}
+
+.icon-home {
+  background-image: image-url('icons/home.svg');
+  background-size: 50%;
+}
+
+.icon-career {
+  background-image: image-url('icons/stairs.svg');
+  background-size: 50%;
+}
+
+.icon-back {
+  position: absolute;
+  top: 1%;
+  left: 4%;
+  background: image-url('icons/back.svg') no-repeat;
+  background-size: 45% 90%;
+  background-position: center;
+  width: 3rem;
+  height: 3rem;
+  -webkit-tap-highlight-color: transparent;
+
+  cursor: pointer;
+  z-index: 9;
+}
+
+.icon-next {
+  background: image-url('icons/next.svg') no-repeat;
+  transform: rotate(180deg);
+  background-size: 45% 90%;
+  background-position: center;
+  width: 2rem;
+  height: 2rem;
+  top: 12%;
+  position: absolute;
+  right: 13%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.icon-cross {
+  background: image-url('icons/x.svg') no-repeat;
+  background-size: 100%;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.icon-plus {
+  background: image-url('icons/plus.svg') no-repeat;
+  background-size: 100%;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: inline-block;
+  margin-left: 0.5rem;
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+.icon-arrow-down {
+  background: image-url('icons/arrow-down.svg') no-repeat;
+  background-size: 100%;
+  width: 2rem;
+  height: 2rem;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.icon-arrow-up {
+  background: image-url('icons/arrow-up.svg') no-repeat;
+  background-size: 100%;
+  width: 2rem;
+  height: 2rem;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.icon-magic-wand {
+  background: image-url('icons/magic-wand.svg') no-repeat;
+  background-size: 100%;
+  width: 2rem;
+  height: 2rem;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.icon-question {
+  background: image-url('icons/question.svg') no-repeat;
+  background-size: 100%;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: inline-block;
+  margin-left: 0.5rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.icon-download {
+  background: image-url('icons/download.svg') no-repeat;
+  background-size: 100%;
+  width: 2rem;
+  height: 3rem;
+  position: absolute;
+  right: 4.5%;
+  top: 4rem;
+  z-index: 100;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.icon-basics {
+  background-image: image-url('icons/basics-need.svg');
+  background-size: 55%;
+}
+
+.icon-love {
+  background-image: image-url('icons/heart.svg');
+  background-size: 50%;
+}
+
+.icon-expert {
+  background-image: image-url('icons/crown.svg');
+  background-size: 55%;
+}
+
+.icon-handshake {
+  background-image: image-url('icons/handshake.svg');
+  background-size: 60%;
+}
+
+.icon-helm {
+  background-image: image-url('icons/helm.svg');
+  background-size: 55%;
+}
+
+.icon-kite {
+  background-image: image-url('icons/kite.svg');
+  background-size: 50%;
+}
+
+.icon-ribbon {
+  background-image: image-url('icons/ribbon.svg');
+  background-size: 50%;
+}
+
+.icon-like {
+  background: image-url('icons/like.svg') no-repeat;
+  background-size: 100%;
+  width: 2rem;
+  height: 2rem;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.icon-report {
+  background: image-url('icons/flag.svg') no-repeat;
+  background-size: 100%;
+  width: 1.5rem;
+  height: 1.75rem;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-device-width: $screen-sm) {
+  .icon-cross, .icon-back {
+    width: 5rem;
+    height: 5rem;
+  }
+  .icon-plus {
+    width: 4.5rem;
+    height: 4.5rem;
+    margin-left: 2rem;
+  }
+
+  .icon-arrow-down, .icon-arrow-up, .icon-magic-wand {
+    width: 5rem;
+    height: 5rem;
+  }
+  .icon-question {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .icon-download {
+    width: 4rem;
+    height: 6rem;
+    right: 4.5%;
+    top: 6rem;
+  }
+  .icon-report {
+    width: 3rem;
+    height: 3.5rem;
+  }
+  .icon-like {
+    width: 4rem;
+    height: 4rem;
+  }
+  .icon-next {
+    width: 5rem;
+    height: 5rem;
+    top: 18%;
+  }
+}

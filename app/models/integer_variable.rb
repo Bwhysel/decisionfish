@@ -1,2 +1,0 @@
-class IntegerVariable < Variable
-end

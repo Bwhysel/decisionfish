@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Decision Fish</title>
+    <%= csrf_meta_tags %>
+    <!--<meta name="viewport" content="width=device-width">-->
+
+    <%= stylesheet_link_tag    'home', media: 'all' %>
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=PY4eeBQv3y">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png?v=PY4eeBQv3y">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png?v=PY4eeBQv3y">
+    <link rel="manifest" href="/manifest.json?v=PY4eeBQv3y">
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg?v=PY4eeBQv3y" color="#2E3192">
+    <link rel="shortcut icon" href="/favicon.ico?v=PY4eeBQv3y">
+    <meta name="theme-color" content="#ffffff">
+	<script type="text/javascript">
+	      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	      ga('create', 'UA-75299921-2', 'auto');
+	 </script>
+  </head>
+
+  <body>
+      <div id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div id='menu-panel' class='panel'>
+        <a href='/hello'>Home</a>
+        <a href='/future_intro' class='module-start'>Start over</a>
+
+        <a href='javascript:void(0);' class='privacy-link'>Privacy</a>
+        <a href='/ask' class='help-link'>Help</a>
+        <% if authorized? %><a href='/reset' class='reset-link'>RESET</a><% end %>
+        <br/>
+        <a href='/login' class='login-logout'></a>
+      </div>
+
+    <div class='container container-original'>
+      <%= yield %>
+    </div>
+
+    <% if authorized? %>
+      <span id='uid'></span>
+    <% end %>
+    <%= javascript_include_tag 'home' %>
+  </body>
+</html>

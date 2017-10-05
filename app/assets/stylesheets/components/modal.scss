@@ -1,0 +1,153 @@
+@import "components/variables";
+
+body.modal-open {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+body.modal-open .modal{
+  display: flex !important;
+}
+
+.modal {
+  display: none;
+  background: rgba(0, 0, 0, .30);
+  z-index: 999;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+  flex-direction: column;
+  justify-content: center;
+
+  color: $dark-blue;
+}
+
+.modal .modal-dialog {
+  position: relative;
+  width: 32rem;
+  border-radius: 0.6rem;
+  -webkit-box-shadow: 0 0.3rem 0.9rem rgba(0, 0, 0, .5);
+  box-shadow: 0 0.3rem 0.9rem rgba(0, 0, 0, .5);
+  background: #fff;
+  margin: 0 auto;
+}
+
+.desi-modal .modal-content {
+  //display: flex;
+  //flex-direction: column;
+  //justify-content: space-between;
+  //min-height: 23rem;
+  padding: 1.5rem 2rem 1rem 15%;
+
+  //align-items: flex-start;
+}
+
+
+.desi-modal .modal-body {
+  text-align: left;
+  margin: 0.5rem 0;
+}
+
+.desi-modal .modal-footer {
+  width: 100%;
+  text-align: right;
+}
+
+.modal .modal-fish-ok{
+  position: absolute;
+  top: -3rem;
+  left: -5%;
+  width: 17%;
+  height: 8rem;
+  background: image-url('fish/modal_ok.png') no-repeat top;
+  background-size: 100%;
+}
+
+.simple-modal p {
+  padding: 1rem 2rem;
+  cursor: pointer;
+  outline: none;
+}
+.simple-modal p:first-child {
+  margin-top: 1.5rem;
+}
+.simple-modal p.active {
+  background-color: $dark-blue;
+  color: white;
+}
+.simple-modal .modal-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+}
+.simple-modal.desi-modal .modal-footer {
+  padding: 0.5rem 0;
+  flex-direction: row-reverse;
+}
+
+#section-modal {
+  h3 {
+    text-align: center;
+    margin-bottom: 0;
+    //margin-top: 9rem;
+    margin-top: 4rem;
+  }
+  p {
+    padding: 1rem 2rem;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .img-fish-with-papers {
+    position: absolute;
+    top: -2rem;
+    left: 35%;
+    width: 30%;
+    height: 5rem;
+  }
+}
+
+@media (max-device-width: $screen-sm) {
+  .desi-modal .modal-header {
+    font-size: 3.2rem;
+  }
+  .desi-modal .modal-body {
+    font-size: 2.5rem;
+    margin-top: 1.5rem 0;
+  }
+  .desi-modal .modal-content {
+    padding: 4rem 5rem 4rem 20%;
+  }
+
+  .modal .modal-fish-ok{
+    top: -7rem;
+    width: 21%;
+    height: 20rem;
+  }
+  .modal .modal-dialog {
+    width: 87%;
+  }
+  .simple-modal .modal-footer {
+    padding: 1.5rem 3.5rem;
+  }
+  .simple-modal.desi-modal .modal-footer {
+    padding: 1.5rem 0;
+  }
+  .simple-modal p {
+    padding: 2.5rem 3.5rem;
+  }
+  #section-modal p {
+    padding: 3rem 7rem;
+  }
+  #section-modal .img-fish-with-papers{
+    width: 54%;
+    top: -11rem;
+    left: 23%;
+    height: 17rem;
+  }
+}

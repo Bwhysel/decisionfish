@@ -1,0 +1,21 @@
+<% if (links.backSpecial){ %>
+  <span class='icon-back' role='goto-back' data-safe-path='<%= links.back %>'></span>
+<% } else { %>
+  <span class='icon-back' role='goto-link' href='<%= links.back %>'></span>
+<% } %>
+<div id='<%= container_id %>' class='wrapper'>
+  <a role='download-link' href="#" target="_blank"><span class='icon-download'></span></a>
+  <h1><%= title %></h1>
+  <div class='wrapper-container'>
+
+    <div id="diploma-placeholder"></div>
+
+    <br/>
+    <p class='wide-row'><a href="javascript:void(0);" data-modal-title='Legal information' data-content='legal_info' class='ask-desi'>Legal information</a></p>
+    <br/>
+    <p class='justified-footer wide-row'>
+      <button class='blue-button' id='next-btn' role='goto-link' href='<%= links.next %>'>NEXT</button>
+      <button class='btn-gray' id='next-btn' role='goto-link' href='<%= links.intro %>'>START OVER</button>
+    </p>
+  </div>
+</div>

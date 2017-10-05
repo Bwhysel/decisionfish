@@ -1,0 +1,51 @@
+<div id='savings-plan-screen'>
+  <span class='icon-back' role='goto-link' href='/savings_opportunities'></span>
+  <div class='wrapper'>
+    <h1>
+      Let's Create<br/>Your Investment Plan
+    </h1>
+    <div class='wrapper-container'>
+      <div class='panel panel-wide'>
+         <p class='text-center'><strong>Your Earnings</strong><span class='icon ask-desi' data-desi='says' data-content="savings_plan"></span></p>
+         <div class='retirement-safety-row hidden' role='safe-state'>
+          <span class='img-fish-retirement-safe'></span>
+          <span>
+            Your money will net you <span role='earnings'></span>.<br/>Sweet!
+          </span>
+          <span></span>
+        </div>
+        <div class='retirement-safety-row' role='unsafe-state'>
+          <span class='img-fish-retirement-unsafe'></span>
+          <span style='flex-basis: 77%;'>
+            <span>You're giving up the opportunity to earn <span role='earnings-more'></span> more. Is that OK?</span>
+          </span>
+        </div>
+        <p class='earnings-bar'>
+          <span class='text-center earnings-bar-made' role='earnings'></span>
+          <span class='text-center earnings-bar-more' role='earnings-more'></span>
+        </p>
+      </div>
+
+      <div class='panel panel-wide'>
+        <div class='form-group form-group-horizontal'>
+          <h3>
+            <span style='flex-basis: 5%;'></span>
+            <span style='flex-basis: 51%;' class='columned'>Suggested amount</span>
+            <span style='flex-basis: 43%;' class='columned'>Your amount</span>
+          </h3>
+        </div>
+        <div role='plan-fields'></div>
+        <hr/>
+        <div class='form-group form-group-horizontal'>
+          <label>Total</label>
+          <span class='static-number' role='total-amount'></span>
+        </div>
+      </div>
+
+      <p class='justified-footer wide-row'>
+        <button class='blue-button' id='next-btn' role='goto-link' href='/savings_month_plan'>NEXT</button>
+      </p>
+    </div>
+  </div>
+
+</div>

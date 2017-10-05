@@ -1,0 +1,5 @@
+<p class='circle-progress'>
+  <% for(let i=0; i<stepsCount; i++){ %>
+    <span class='circle <%= stepIndex == i ? "current" : stepIndex > i ? "passed" : "" %>'></span>
+  <% } %>
+</p>

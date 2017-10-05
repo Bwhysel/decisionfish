@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  email: MyString
+  phone: MyString
+  email_confirmed: MyString
+  phone_confirmed: MyString
+  persistence_token: MyString
+  perishable_token: MyString
+  last_request_at: MyString
+  last_login_at: MyString
+
+two:
+  email: MyString
+  phone: MyString
+  email_confirmed: MyString
+  phone_confirmed: MyString
+  persistence_token: MyString
+  perishable_token: MyString
+  last_request_at: MyString
+  last_login_at: MyString

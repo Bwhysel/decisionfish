@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  need: MyString
+  user_name: MyString
+  user_email: MyString
+  saves_money: 1
+  reported: false
+  approved: false
+
+two:
+  user_id: 1
+  need: MyString
+  user_name: MyString
+  user_email: MyString
+  saves_money: 1
+  reported: false
+  approved: false

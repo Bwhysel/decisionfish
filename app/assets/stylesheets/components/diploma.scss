@@ -1,0 +1,225 @@
+@import "components/variables";
+
+// Congratulations
+#diploma {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  position: relative;
+}
+
+.diploma-outer-frame {
+  background-image: image-url('bg/diploma-center-frame.png');
+  background-repeat: repeat;
+  background-size: 100% 2.1rem;
+  box-shadow: 0 0.1rem 0.5rem 0 rgba(91,92,131,0.40);
+  padding: 4.2rem 3.9rem 3.6rem;
+  position: relative;
+}
+
+.diploma-roof, .diploma-footer {
+  display: block;
+  background-size: 100%;
+  z-index: 1;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  background-repeat: no-repeat;
+}
+
+.diploma-roof {
+  background-image: image-url('bg/diploma-roof.png');
+  height: 6.6rem;
+  top: 0;
+}
+.diploma-footer {
+  background-image: image-url('bg/diploma-footer.png');
+  height: 4.6rem;
+  bottom: 1.5rem;
+}
+
+.diploma-container {
+  border: none;
+  //border-image: image-url('bg/diploma-frame-compressor.png') 90 repeat repeat;
+  //border-color: $dark-blue;
+  background-image: image-url('bg/diploma-inner.png');
+  background-repeat: repeat;
+  //background-color: #ffe;
+  //border-style: inset;
+  //border-width: 4rem;
+  display: block;
+  height: auto;
+  text-align: center;
+  //font-family: Georgia, serif;
+  padding: 1rem 1rem 3.5rem;
+  position: relative;
+}
+
+.diploma-heading {
+  font-family: "Birch", Georgia, serif;
+  font-size: 3.5rem;
+}
+
+.diploma-small-heading {
+  font-family: Georgia, serif;
+  font-weight: 100;
+  font-size: 1.4rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+.diploma-value {
+  font-family: "BebasNeue Bold", Tahoma, sans-serif;
+  font-weight: bold;
+  font-size: 1.8rem;
+  &.diploma-main-value {
+    font-size: 3.8rem;
+    margin-top: 1rem;
+  }
+}
+
+.diploma-data-row {
+  margin-right: -2rem;
+  margin-left: -2rem;
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 1rem
+}
+
+.diploma-data-element {
+  flex-basis: 49%;
+  &.diploma-single-element {
+    flex-basis: 100%;
+  }
+}
+
+.diploma-stamp {
+  background-image: image-url('future/diploma-stamp.png');
+  background-repeat: no-repeat;
+  background-size: 100%;
+  display: block;
+  position: absolute;
+  width: 7rem;
+  height: 9.5rem;
+  left: 38%;
+  bottom: -5rem;
+  z-index: 2;
+}
+
+.diploma-branch {
+  background-image: image-url('future/branch.png') !important;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  display: block;
+  //margin: 0.5rem auto 1.5rem;
+  //width: 7rem;
+  //height: 3rem;
+  margin: 0 auto 1rem;
+  width: 5rem;
+  height: 2rem;
+}
+
+.diploma-subheader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+#savings-final-screen {
+  .diploma-container {
+    text-align: left;
+    padding-right: 1.4rem;
+    padding-left: 1.4rem;
+  }
+
+  .diploma-value.diploma-main-value {
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+}
+
+.diploma-form-row{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  //font-size: 2.1rem;
+
+  .col-1 {
+    flex-basis: 40%;
+  }
+  .col-2 {
+    flex-basis: 25%;
+    text-align: right;
+  }
+  .col-3 {
+    flex-basis: 40%;
+    text-align: right;
+  }
+  .col-12 {
+    flex-basis: 60%;
+  }
+  .col-23 {
+    flex-basis: 61%;
+    text-align: right;
+  }
+}
+
+@media (max-device-width: $screen-sm) {
+  .diploma-outer-frame {
+    background-size: 100% 2.6rem;
+    padding: 5rem 5.6rem 4rem;
+  }
+
+  .diploma-roof {
+    height: 6.6rem;
+  }
+
+  .diploma-heading {
+    font-size: 4.5rem;
+  }
+
+  .diploma-container {
+    padding: 2rem 5.4rem 11rem;
+  }
+
+  .diploma-stamp {
+    width: 17rem;
+    height: 22rem;
+    left: 30%;
+    bottom: -11rem;
+  }
+
+  .diploma-branch {
+    margin: 1rem auto 3rem;
+    width: 11rem;
+    height: 4rem;
+  }
+
+  .diploma-data-row {
+    margin-bottom: 2rem;
+  }
+
+  .diploma-value {
+    font-size: 3.4rem;
+    &.diploma-main-value {
+      font-size: 6rem;
+      margin-top: 2rem;
+    }
+  }
+
+  .diploma-small-heading {
+    font-size: 2.1rem;
+    margin-bottom: 1rem;
+  }
+
+  #budget-final-screen .diploma-container {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
+
+  #savings-final-screen {
+    .diploma-value.diploma-main-value {
+      margin-top: 0;
+      margin-bottom: 2rem;
+    }
+  }
+}

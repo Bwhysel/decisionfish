@@ -1,0 +1,36 @@
+<div id='finance-details-screen'>
+  <span class='icon-back' role='goto-link' href='/<%= prevStep %>'></span>
+  <div class='wrapper'>
+    <h1>Tell me a bit<br/> about your finances</h1>
+    <div class='wrapper-container'>
+      <% if (this.onLastPage){ %>
+        <div role='partial-placeholder'></div>
+      <% } else { %>
+        <p class='text-center'>
+          To help you plan to reach your goals, I need to know your starting point.
+        </p>
+        <p><%= data.title %></p>
+        <div class='panel'>
+          <p><%= data.hint %></p>
+
+          <div class='form-group active'>
+            <input type='text' name='<%= step %>'/>
+          </div>
+        </div>
+        <div data-source='steps-progress'></div>
+      <% } %>
+
+      <p class='wide-row justified-footer'>
+        <button class='blue-button' id='next-btn' role='goto-link' href='/<%= nextStep %>'>NEXT</button>
+        <span class='flexed' style='margin-bottom: 0;'>
+          <button class='btn-gray' id='import-btn'>IMPORT</button>
+          &nbsp;
+          <span style='position: relative; top: 0;' class="icon ask-desi" data-desi="promises" data-content="import_details"></span>
+        </span>
+      </p>
+
+      <div id='addAccount'></div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,17 @@
+<p class='diploma-heading'><%= name_pair %>'s Happy Budget<sup>®</sup></p>
+<div class='diploma-branch'></div>
+
+<% pairs.forEach(function(pair){ %>
+  <div class='diploma-data-row'>
+    <% pair.forEach(function(category){ %>
+    <div class='diploma-data-element <%= pair.length == 1 ? "diploma-single-element" : '' %>'>
+      <span class='diploma-small-heading'><%= titles[category] %></span>
+      <span class='diploma-value' data-name='<%= category%>'></span>
+    </div>
+    <% }) %>
+  </div>
+<% }) %>
+
+<div class='diploma-data-row'>
+  <div class='diploma-value diploma-main-value'>Total <span data-name="at_income_r"></span></div>
+</div>

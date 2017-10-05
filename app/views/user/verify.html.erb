@@ -1,0 +1,39 @@
+<%# 1. Successful send. %>
+<div class='wrapper-container centered-container'>
+  <% if @error %>
+    <p><%= @error.html_safe %></p>
+    <p>Try again later.</p>
+    <%# 4. Not send. Other status. Some problem with sending. Try again this page later or change your phone.%>
+  <% else %>
+
+    <%= form_tag verify_pin_path, {role: 'submit-pin-form', method: 'post'} do %>
+      <%= hidden_field_tag :authenticity_token, form_authenticity_token -%>
+      <p>
+        I just sent you a code to <%= @masked_phone %> for your security.
+        Please input it below.
+        <br/>
+      </p>
+      <p style='display: flex; align-items: center;'>
+        <input type='text' name='pin' class='form-control'/>
+        <button disabled type='submit' class='blue-button'>SUBMIT</button>
+      </p>
+    <% end %>
+    <% if @next_submit_after %>
+      <p>You will be able to submit PIN in <span data-countdown='<%= @next_submit_after %>' data-target='submit-pin-form'></span>.</p>
+    <% end %>
+    <p></p>
+
+    <% unless @next_submit_after %>
+      <p role='resend-link'>
+        <%= link_to 'Resend me the code', verify_path %>
+      </p>
+      <% if @next_resend_after %>
+        <p><%= @send_msg + ' ' if @send_msg %>You will be able to resend PIN in <span data-countdown='<%= @next_resend_after %>' data-target='resend-link'></span>.</p>
+      <% end %>
+    <% end %>
+
+    <% unless current_user.phone_verified? %>
+      <p><%= link_to 'Oops, I need to change number', 'javscript:void(0);', role: 'change-phone-number' %></p>
+    <% end %>
+  <% end %>
+</div>

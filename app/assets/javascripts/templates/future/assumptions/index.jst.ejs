@@ -1,0 +1,36 @@
+<div id='future-assumptions-screen'>
+  <span class='icon-back' role='goto-link' href='/<%= prevStep %>'></span>
+  <div class='wrapper'>
+    <h1>
+      All the little<br/>assumptions that<br/>make a big difference
+      <span class="icon ask-desi" data-desi='says' data-content="future_assumptions"></span>
+    </h1>
+    <div class='wrapper-container'>
+      <% _.each(data, (item, section_key) => { %>
+        <div class='panel panel-wide'>
+          <h3><%= item.title %></h3>
+          <% _.each(item.fields, (field) => { %>
+            <% let attrs = fields[field] %>
+            <% if (!attrs) return; %>
+            <div class='form-group form-group-horizontal'>
+              <label>
+                <%= attrs.label %>
+                <% if (attrs.hint) { %>
+                  <span class='icon-question' title='<%= attrs.hint %>'></span>
+                <% } %>
+              </label>
+
+              <input type='<%= attrs.type == "age" ? "number" : "text" %>' name='<%= field %>' class="<%= field == 'college_type' ? 'long' : '' %>" data-type="<%= attrs.type %>" <%= (attrs.readonly || attrs.type=='selected') ? 'disabled' : '' %> />
+            </div>
+          <% }) %>
+        </div>
+      <% }) %>
+
+      <p class='justified-footer wide-row'>
+        <button class='blue-button' id='next-btn' role='goto-link' href='/<%= nextStep %>'>NEXT</button>
+        <button class='btn-gray' role='reset'>RESET</button>
+      </p>
+    </div>
+  </div>
+
+</div>

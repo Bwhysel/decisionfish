@@ -1,0 +1,75 @@
+<div id='budget-spend-screen'>
+  <span class='icon-back' role='goto-link' href='/budget_walkthrough/fun'></span>
+  <div class='wrapper'>
+    <h1>
+      Let's Create Your<br/>Happy Budget<sup>®</sup>
+    </h1>
+    <div class='wrapper-container' style='padding-bottom: 0;'>
+      <div class='panel panel-wide'>
+        <h3>Savings</h3>
+        <div class='flexed'>
+          <span class="icon ask-desi inline" data-desi='says' data-content="budget_spend"></span>
+          <div class='savings-progress-block'>
+            <div class='proposed-stick'><span class='proposed-stick-content'>Proposed<br/><span role='savings-value'></span></span></div>
+            <div class='savings-progress'></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class='scrollable-area'>
+    <div class='wrapper-container'>
+      <div class='retirement-safety-row wide-row hidden' role='safe-state'>
+        <span class='img-fish-retirement-safe'></span>
+        <span>
+          Good job!
+        </span>
+        <span></span>
+      </div>
+      <div class='retirement-safety-row wide-row' role='unsafe-state'>
+        <span class='img-fish-retirement-unsafe'></span>
+        <span style='flex-basis: 70%;'>
+          <span>Adjust your spending so that your proposed savings equals your <%= goal %> goal.</span>
+        </span>
+      </div>
+
+      <div class='panel panel-wide'>
+        <div class='form-group form-group-horizontal'>
+          <h3>
+            <span>Category</span>
+            <span>Proposed Spending</span>
+          </h3>
+        </div>
+        <% _.each(fields, (attrs, field) => {%>
+          <div class='form-group form-group-horizontal'>
+            <label style='<%= field == "savings" || field == "credit_card" ? "flex-basis: 60%;" : '' %>'>
+              <%= attrs.title %>
+              <span class='icon-question' title="<%= this.model.getHint(field) %>"></span>
+            </label>
+            <% if (attrs.suggestion) { %><span class='spend-suggest <%= attrs.suggestKlass %>'><%= attrs.suggestion %></span><% } %>
+            <% if (field == 'credit_card') { %>
+            <span class='static-number' role='credit-card-value'></span>
+            <% } else if (field == 'savings') { %>
+            <span class='static-number' role='savings-value'></span>
+            <% } else { %>
+            <span>
+              <span class='icon-arrow-down' role='decrease'></span>
+              <span class='icon-arrow-up' role='increase'></span>
+            </span>
+            <input type='text' role='expense-field' name='<%= field %>' data-type="<%= attrs.type %>"/>
+            <% } %>
+          </div>
+        <% }) %>
+      </div>
+      <div class='img-change-ideas wide-row' role='goto-link' href='/ideas'>
+        <div class='img-fish-ok'></div>
+        <span>Give and get ideas</span>
+        <span class='icon-next'></span>
+      </div>
+      <p class='justified-footer wide-row'>
+        <button class='blue-button' id='next-btn' role='goto-link' href='/budget_finalize'>NEXT</button>
+      </p>
+    </div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,40 @@
+<div id='future-history-screen'>
+  <span class='icon-back' role='goto-link' href='/<%= prevStep %>'></span>
+  <div class='wrapper'>
+    <h1>The future history of<br/> your life</h1>
+    <div class='wrapper-container'>
+      <p class='text-center'>
+        <%= names %>, if all goes according to your plan:
+      </p>
+
+      <div class='panel'>
+        <div class='text-center'>
+          <div class='image-circle'>
+            <div class='on-panel-image <%= data.image %>'></div>
+          </div>
+        </div>
+        <% i = 0 %>
+        <% text.forEach(function(line) { %>
+        <p class='flexed'>
+          <%= line %><% ++i %>
+          <% if (data.hint && (i == text.length)){ %>
+            <span class="icon ask-desi inline" data-desi='says' data-content="<%= data.hint %>"></span>
+          <% } %>
+        </p>
+        <br/>
+        <% }) %>
+      </div>
+
+      <div data-source='steps-progress'></div>
+      <br/>
+
+      <p class='wide-row justified-footer'>
+        <button class='blue-button' id='next-btn' role='goto-link' href='/<%= nextStep %>'>NEXT</button>
+        <% if (this.onLastPage) { %>
+          <button class='btn-gray' id='next-btn' role='goto-link' href='/big_decision'>TRY AGAIN</button>
+        <% } %>
+      </p>
+    </div>
+  </div>
+
+</div>

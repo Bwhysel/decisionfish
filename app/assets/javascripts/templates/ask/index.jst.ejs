@@ -1,0 +1,24 @@
+<div id='ask-screen'>
+  <span class='icon-back' role='goto-back'></span>
+  <div class='wrapper'>
+    <h1>Drop me a line!</h1>
+    <form action='/ask/desi' method='POST' data-remote='true'>
+    <div class='wrapper-container'>
+      <div class='ask-options'>
+        <ul>
+          <li><input type='radio' value='0' name='ask_theme' id='ask_theme_0' checked/><label for='ask_theme_0'>Help me with different decision</label></li>
+          <li><input type='radio' value='1' name='ask_theme' id='ask_theme_1'/><label for='ask_theme_1'>I have a suggestion, compliment or criticism</label></li>
+          <li><input type='radio' value='2' name='ask_theme' id='ask_theme_2'/><label for='ask_theme_2'>Help!</label></li>
+          <li><input type='radio' value='3' name='ask_theme' id='ask_theme_3'/><label for='ask_theme_3'>Other</label></li>
+        </ul>
+        <div class='ask-fish'></div>
+      </div>
+      <p>Email for reply</p>
+      <input type='email' name='email' value='<%= email %>'>
+      <p>Dear Desi,</p>
+      <textarea name='text' role='user-ask-msg' rows='5'></textarea>
+        <p class='text-right'><button disabled type='submit' class='blue-button send-to-desi'>SEND</button></p>
+    </div>
+    </form>
+  </div>
+</div>

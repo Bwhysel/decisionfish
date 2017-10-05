@@ -1,0 +1,51 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  longevity_risk: 9.99
+  inflation: 9.99
+  college_age: 1
+  years_in_college: 9.99
+  college_inflation: 9.99
+  college_type: 1
+  income_growth: 9.99
+  income_growth2: 9.99
+  until_age: 1
+  yearly_pension_benefit1: 9.99
+  yearly_pension_benefit_begins_at_age1: 1
+  yearly_pension_benefit2: 9.99
+  yearly_pension_benefit_begins_at_age2: 1
+  retirement_expence_change: 1
+  rt_avg: 9.99
+  rt_re: 9.99
+  rt_loan: 9.99
+  ss_benefit_cut: 9.99
+  soc_sec_min_age: 1
+  mortgage_rate: 9.99
+  original_term: 1
+  mortgage_age: 1
+
+two:
+  user_id: 1
+  longevity_risk: 9.99
+  inflation: 9.99
+  college_age: 1
+  years_in_college: 9.99
+  college_inflation: 9.99
+  college_type: 1
+  income_growth: 9.99
+  income_growth2: 9.99
+  until_age: 1
+  yearly_pension_benefit1: 9.99
+  yearly_pension_benefit_begins_at_age1: 1
+  yearly_pension_benefit2: 9.99
+  yearly_pension_benefit_begins_at_age2: 1
+  retirement_expence_change: 1
+  rt_avg: 9.99
+  rt_re: 9.99
+  rt_loan: 9.99
+  ss_benefit_cut: 9.99
+  soc_sec_min_age: 1
+  mortgage_rate: 9.99
+  original_term: 1
+  mortgage_age: 1

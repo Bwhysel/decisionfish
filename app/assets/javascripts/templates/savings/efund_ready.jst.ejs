@@ -1,0 +1,43 @@
+<div id='efund-ready-screen'>
+  <span class='icon-back' role='goto-link' href='/efund'></span>
+  <div class='wrapper'>
+    <h1>Are You Ready for Anything?</h1>
+    <div class='wrapper-container'>
+      <p class='text-center'>
+        How much do you have in bank savings or checking accounts for emergencies?
+      </p>
+      <div class='panel panel-wide'>
+        <div class='flexed no-margin'>
+          <div class='form-group active' style='flex-basis: 80%;'>
+            <input type='text' name='current-savings' value='$0'>
+          </div>
+
+          <span class='icon ask-desi inline' data-desi='says' data-content="efund_ready"></span>
+        </div>
+      </div>
+
+      <div class='text-center'>
+        <h3>Progress vs Your Goal: </h3>
+        <p><span role='target-months'>0 Months</span> of Expenses</p>
+      </div>
+      <br/>
+      <div class='donut-area text-center'>
+        <svg class='donut-chart'>
+        </svg>
+        <span class='donut-text'>
+          <span role='efund-progress'></span><br/>Months<br/>Saved</span>
+        </span>
+      </div>
+      <br/>
+
+      <div class='text-center'>
+        <p role='efund-good-job'></p>
+      </div>
+      <br/>
+      <p class='wide-row text-right'>
+        <button class='blue-button' id='next-btn' role='goto-link' href='/savings_opportunities'>NEXT</button>
+      </p>
+    </div>
+  </div>
+
+</div>

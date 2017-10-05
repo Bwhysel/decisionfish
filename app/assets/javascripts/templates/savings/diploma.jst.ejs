@@ -1,0 +1,34 @@
+<p class='diploma-heading text-center'><%= name_pair %>'s Investment Plan</p>
+<div class='diploma-branch'></div>
+
+<p class='diploma-value diploma-subheader'><span>DEBT REPAYMENT</span>&nbsp;<span class='icon ask-desi inline' data-desi='says' data-content='savings_congratulations_debt'></span></p>
+<div class='diploma-form-row'>
+  <span class='col-1'></span>
+  <span class='col-23 diploma-small-heading'>This Month's Payment</span>
+</div>
+
+<% debts.forEach(function(attrs){ %>
+  <div class='diploma-form-row'>
+    <span class='col-12 diploma-small-heading'><%= attrs.title %></span>
+    <span class='col-3 diploma-value'><%= App.utils.toMoneyWithCents(attrs.thisMonth) %></span>
+  </div>
+<% }) %>
+
+<div class='diploma-form-row'>
+  <span class='diploma-value diploma-main-value col-12'>Total</span>
+  <span class='diploma-value diploma-main-value col-3'><%= App.utils.toMoneyWithCents(totalDebt) %></span>
+</div>
+
+<p class='diploma-value diploma-subheader'><strong>Investments</strong>&nbsp;<span class='icon ask-desi inline' data-desi='says' data-content='savings_congratulations_investments'></span></p>
+
+<% investments.forEach(function(attrs){ %>
+  <div class='diploma-form-row'>
+    <span class='col-12 diploma-small-heading'><%= attrs.title %></span>
+    <span class='col-3 diploma-value'><%= App.utils.toMoneyWithCents(attrs.thisMonth) %></span>
+  </div>
+<% }) %>
+
+<div class='diploma-form-row'>
+  <span class='diploma-value diploma-main-value col-1'>Total</span>
+  <span class='diploma-value diploma-main-value col-23'><%= App.utils.toMoneyWithCents(totalInvest) %></span>
+</div>
