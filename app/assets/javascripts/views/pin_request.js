@@ -1,5 +1,5 @@
 App.Views.PinRequest = Backbone.View.extend({
-  el: 'body > .container',
+  el: '#page-content > .container',
 
   initialize: function(options){
   },

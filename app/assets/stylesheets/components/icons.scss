@@ -65,6 +65,15 @@
   z-index: 9;
 }
 
+.icon-dropdown-arrow {
+  background: image-url('icons/dropdown-arrow.svg') no-repeat;
+  background-size: 60%;
+  background-position: center;
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+}
+
 .icon-next {
   background: image-url('icons/next.svg') no-repeat;
   transform: rotate(180deg);
@@ -210,41 +219,45 @@
 
 @media (max-device-width: $screen-sm) {
   .icon-cross, .icon-back {
-    width: 5rem;
-    height: 5rem;
+    width: 1.7rem;
+    height: 1.7rem;
+    top: 0.5%;
   }
   .icon-plus {
-    width: 4.5rem;
-    height: 4.5rem;
-    margin-left: 2rem;
+    width: 1.7rem;
+    height: 1.7rem;
+    margin-left: 0.8rem;
   }
 
   .icon-arrow-down, .icon-arrow-up, .icon-magic-wand {
-    width: 5rem;
-    height: 5rem;
+    //width: 5rem;
+    // /height: 5rem;
   }
   .icon-question {
-    width: 3rem;
-    height: 3rem;
+    width: 1.3rem;
+    height: 1.3rem;
+    min-width: 1.3rem;
+    min-height: 1.3rem;
+    margin-left: 0.05rem
   }
 
   .icon-download {
-    width: 4rem;
-    height: 6rem;
-    right: 4.5%;
-    top: 6rem;
+    width: 1.2rem;
+    height: 1.7rem;
+    right: 3.5%;
+    top: 2rem;
   }
   .icon-report {
-    width: 3rem;
-    height: 3.5rem;
+    //width: 3rem;
+    //height: 3.5rem;
   }
   .icon-like {
-    width: 4rem;
-    height: 4rem;
+    //width: 4rem;
+    //height: 4rem;
   }
   .icon-next {
-    width: 5rem;
-    height: 5rem;
-    top: 18%;
+    width: 2rem;
+    height: 2rem;
+    top: 13%;
   }
 }

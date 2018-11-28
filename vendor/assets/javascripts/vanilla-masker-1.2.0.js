@@ -229,7 +229,7 @@
   VMasker.toPercent = function(value, opts) {
     if (!opts) { opts = {} }
     opts.separator = '.';
-    value = value.toString().replace(/(^\.)|(\.$)/,'').replace(/[^\.0-9]/g, "");
+    value = value.toString().replace(/(^\.)|(\.$)/,'').replace(/[^\-\.0-9]/g, "");
     fValue = value.length ? parseFloat(value) : '';
     fValue = Math.round(fValue * 100)/100
     let r;
@@ -239,7 +239,7 @@
       r = '0.00';
     }else {
       let [money, cents] = fValue.toString().split(opts.separator)
-      money = (money || '0').substr(0,2);
+      money = (money || '0').substr(0,money[0]=='-' ? 3 : 2);
       if (cents){
         cents = cents.substr(0,2);
         if (cents.length == 1){ cents = cents + '0'}

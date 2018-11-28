@@ -7,6 +7,7 @@ App.Views.FinalPage = Backbone.View.extend({
 
   events: {
     'click [role=share-plan]': 'onShareClick',
+    'click button[target=blank]': 'onExternalClick',
   },
 
   onShareClick: function(event){
@@ -29,6 +30,12 @@ App.Views.FinalPage = Backbone.View.extend({
     }
   },
 
+  onExternalClick: function(event){
+    let btn = event.currentTarget
+    window.open(btn.getAttribute("href"), "_blank")
+    $(btn).blur()
+    return false;
+  },
   render: function(kind){
     this.kind = kind;
     let id = `${kind}-final-screen`

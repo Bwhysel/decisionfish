@@ -38,10 +38,7 @@ App.Views.ProjectedNetWorth = Backbone.View.extend({
 
     let non_zero_found = false;
     let compacted_data = _.filter(data, (d)=>{
-      let res = d.value > 0 || !non_zero_found;
-      non_zero_found = d.value == 0;
-      //return res;
-      return d.value > 0;
+      return d.value != null;
     });
 
     let maxYear = data[data.length-1].year;
@@ -61,15 +58,19 @@ App.Views.ProjectedNetWorth = Backbone.View.extend({
     const endYear = Math.max(deathAge, p4);
 
     let exSvg = this.$el.find('svg');
+    //console.log('svg')
     let externalWidth = exSvg.width();
-    const forDesktop = externalWidth < 700;
+    const forDesktop = screen.width > 700;
 
-    var margin = {top: 30, right: 0,
-      bottom: forDesktop ? 70 : 150,
-      left: forDesktop ? 100 : 200};
+    var margin = {
+      top: 30,
+      right: 0,
+      bottom: forDesktop ? 70 : 50,
+      left: forDesktop ? 100 : 80
+    };
 
     width = externalWidth - margin.left - margin.right;
-    height = (forDesktop ? 400 : 800) - margin.top - margin.bottom;
+    height = (forDesktop ? 450 : 320) - margin.top - margin.bottom;
     let svg = d3.select("svg").attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
                 .append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -86,13 +87,14 @@ App.Views.ProjectedNetWorth = Backbone.View.extend({
     // scale the range of the data
     //x.domain(d3.extent(data, (d) => { return d.year; }));
     x.domain([firstYear, endYear+10]);
-    y.domain([0, d3.max(data, (d) => { return d.value; })]);
+    y.domain([d3.min(data, (d) => { return d.value; }), d3.max(data, (d) => { return d.value; })]);
+    //y.domain([0, d3.max(data, (d) => { return d.value; })]);
 
     // add the area
-    svg.append("path").data([data]).attr("class", "area").attr("d", area);
+    svg.append("path").data([compacted_data]).attr("class", "area").attr("d", area);
 
     // add the X Axis
-    svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (height+15 ) + ")").call(
+    svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (height+(forDesktop ? 15 : 0) ) + ")").call(
       d3.axisBottom(x).tickValues(d3.range(data[0].year, Math.max(deathAge, endYear), 10))
     );
 
@@ -111,7 +113,7 @@ App.Views.ProjectedNetWorth = Backbone.View.extend({
     let xAxisLabel = svg.append("text").attr('class', 'axis-label')
             .text(`${name2 ? name1 + "'s" : 'Your'} Age`);
     let $label = this.$el.find('.axis-label')
-    xAxisLabel.attr("transform", "translate("+(width-$label.width())+","+(height+$label.height()*2.5)+")")  // centre below axis
+    xAxisLabel.attr("transform", "translate("+(width-$label.width())+","+(height+$label.height()*(forDesktop ? 2.5 : 1.8))+")")  // centre below axis
 
     if (points.length > 0){
       let pointTitles = {}
@@ -124,6 +126,9 @@ App.Views.ProjectedNetWorth = Backbone.View.extend({
         }
       })
 
+      const centrPointPos = (point) => {
+        return xFn(point) - (point.year == maxYear ? 5 : 0);
+      }
       const fnMakeCircleGroups = (rad1, rad2) => {
         let g = svg.selectAll("dot").data(points).enter().append("g")
                   .attr('class', 'circle-group')
@@ -136,13 +141,14 @@ App.Views.ProjectedNetWorth = Backbone.View.extend({
                     return `${hint}<br/><span class="acent">Age: ${year}<br/>Net worth: ${value}</span>`;
                   })
         g.append('circle').attr('class', 'outer-circle')
-          .attr('cx', (d) => {return xFn(d) - (d.year == maxYear ? 17 : 0); })
+          .attr('cx', centrPointPos)
           .attr('cy', yFn).attr('r', rad1);
         g.append('circle').attr('class', 'inner-circle')
-          .attr('cx', (d) => {return xFn(d) - (d.year == maxYear ? 17 : 0); })
+          .attr('cx', centrPointPos)
           .attr('cy', yFn).attr('r', rad2);
       }
-      fnMakeCircleGroups(forDesktop ? "10" : "25", forDesktop ? "5" : "12")
+      //fnMakeCircleGroups(forDesktop ? "10" : "25", forDesktop ? "5" : "12")
+      fnMakeCircleGroups("10", "5")
       tippy('.circle-group', {arrow: true, position: 'top'})
     }
 
@@ -150,7 +156,7 @@ App.Views.ProjectedNetWorth = Backbone.View.extend({
     let flag = this.$el.find('[role=finish-life]')
     const panel = flag.closest('.panel');
     flag.css('left', x(deathAge)+margin.left+parseInt(panel.css('padding-left')))
-        .css('top', y(0) - flag.height() + margin.top + parseInt(panel.css('padding-top')))
+        .css('top', y(0) + 2 - flag.height() + margin.top + parseInt(panel.css('padding-top')))
     let value = App.utils.toMoney(rawData[deathAge]);
     flag.attr('title', `Your money must last at least until<br><span class='acent'>Age: ${deathAge}<br/>Net worth: ${value}</span>`)
     tippy('[role=finish-life]', {arrow: true, position: 'left'})

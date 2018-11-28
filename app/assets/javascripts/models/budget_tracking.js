@@ -13,7 +13,7 @@ App.Models.BudgetTracking = Backbone.Model.extend({
   },
 
   restoreLocal: function(){
-    let temp = localStorage.getItem(this.key);
+    let temp = App.storage.getItem(this.key);
     if (!temp) return;
     this.set(JSON.parse(temp));
   },

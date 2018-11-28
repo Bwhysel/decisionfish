@@ -34,16 +34,47 @@ App.Models.Person = Backbone.Model.extend({
       { max: 100, msg: 'But you look so young! Please enter an age less than 100.' }
     ],
     email: [
-      { required: true, msg: 'Please tell me your email address' },
-      { pattern: 'email', msg: 'Not valid email address' }
+      //{ required: true, msg: 'Please tell me your email address' },
+      //{ pattern: 'email', msg: 'Not valid email address' },
+      {
+        fn: function(value, attr, computedState){
+          if ((App.family.at(0).get('id') == computedState.id) && !value){
+            return 'Please tell me your email address'
+          }
+          if (value && !Backbone.Validation.patterns.email.test(value)){
+            return 'Not valid email address';
+          }
+        }
+      }
     ],
     phone: [
-      { required: true, msg: 'Please tell me your phone' },
+      { required: true, msg: 'Please enter a valid cellphone number' },
+      {
+        fn: function(value, attr, computedState) {
+          const garbage = value ? value.replace(/[\d\(\)\+\-\s]/g, '') : ''
+          if (garbage.length){
+            return 'Please enter a valid cellphone number'
+          }
+        }
+      }
     ],
     income: [
       { required: true, msg: 'Please tell me your yearly income' },
-      { min: App.Models.Finances.prototype.minValue,
-        msg: `Please enter a number over ${App.utils.toMoney(App.Models.Finances.prototype.minValue)} or <a href='/ask'>contact me</a> for help`
+      {
+        fn: function(value, attr, computedState) {
+          let minVal = App.Models.Finances.prototype.minValue;
+          let c = 0;
+          let modelId = computedState.id;
+          App.family.each((person)=>{
+            c += 1;
+            if (person.get('id') == modelId) return;
+            minVal -= parseInt(person.get('income'));
+          })
+
+          if(value < minVal) {
+            return `I need total family income over ${App.utils.toMoney(minVal)}, please.  If you're temporarily unemployed, tell me the income you expect to earn eventually. Otherwise, <a href='/ask'>contact me</a>.`;
+          }
+        }
       },
       { max: App.Models.Finances.prototype.maxValue, msg: 'Too much' }
     ],
@@ -62,11 +93,15 @@ App.Models.Person = Backbone.Model.extend({
     this.syncParams([name]);
   },
 
+  getSyncData: function(){
+    return _.pick(this.attributes, 'name', 'age', 'sex', 'income')
+  },
+
   syncParams: function(names){
     if (this.get('synced') || !App.syncOn()) return false;
 
     const isFakeId = typeof this.id == 'string';
-    let data = _.pick(this.attributes, 'name', 'age', 'sex', 'income');
+    let data = this.getSyncData();
     let url = '/people';
     let type = 'POST'
     if (names && !isFakeId) {
@@ -98,7 +133,7 @@ App.Models.Person = Backbone.Model.extend({
   },
 
   saveLocal: function(){
-    let personIds = localStorage.getItem('persons');
+    let personIds = App.storage.getItem('persons');
     personIds = personIds ? JSON.parse(personIds) : []
     if (personIds.indexOf(this.id) < 0) {
       personIds.push(this.id)
@@ -109,25 +144,25 @@ App.Models.Person = Backbone.Model.extend({
 
   changeId: function(newId){
     //console.log('changeId')
-    let personIds = JSON.parse(localStorage.getItem('persons')) || [];
+    let personIds = JSON.parse(App.storage.getItem('persons')) || [];
     if (personIds.length){
       personIds[personIds.indexOf(this.id)] = newId;
     }else{
       personIds.push(newId);
     }
-    localStorage.removeItem('person_'+this.id);
+    App.storage.removeItem('person_'+this.id);
     App.storage.setItem('persons', JSON.stringify(personIds));
     this.id = this.attributes.id = newId;
     App.storage.setItem('person_'+this.id, JSON.stringify(this.attributes));
   },
 
   removeLocal: function(){
-    let personIds = JSON.parse(localStorage.getItem('persons'));
+    let personIds = JSON.parse(App.storage.getItem('persons') || '[]');
     if (personIds && personIds.indexOf(this.id) >= 0) {
       personIds.splice(personIds.indexOf(this.id), 1);
       App.storage.setItem('persons', JSON.stringify(personIds));
     }
-    localStorage.removeItem('person_'+this.id);
+    App.storage.removeItem('person_'+this.id);
 
     this.collection.remove(this);
 

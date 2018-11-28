@@ -20,23 +20,23 @@ App.Models.BudgetCategories = Backbone.Model.extend({
     credit_card:         0,
     savings:             0,
     fun_mx_category:     'hobbies',
-    synced:              false,
-    housing_spend:       false,
-    transportation_spend: false,
-    health_care_spend:   false,
-    insurance_spend:     false,
-    groceries_spend:     false,
-    dining_out_spend:    false,
-    personal_care_spend: false,
-    clothing_spend:      false,
-    entertaining_spend:  false,
-    fitness_spend:       false,
-    education_spend:     false,
-    charity_spend:       false,
-    vacation_spend:      false,
-    fun_spend:           false,
-    credit_card_spend:   false,
-    savings_spend:       false,
+    synced:              null,
+    housing_spend:       null,
+    transportation_spend: null,
+    health_care_spend:   null,
+    insurance_spend:     null,
+    groceries_spend:     null,
+    dining_out_spend:    null,
+    personal_care_spend: null,
+    clothing_spend:      null,
+    entertaining_spend:  null,
+    fitness_spend:       null,
+    education_spend:     null,
+    charity_spend:       null,
+    vacation_spend:      null,
+    fun_spend:           null,
+    credit_card_spend:   null,
+    savings_spend:       null,
     housing_diff:        0,
     transportation_diff:  0,
     health_care_diff:    0,
@@ -71,7 +71,7 @@ App.Models.BudgetCategories = Backbone.Model.extend({
   },
 
   restoreLocal: function(){
-    let temp = localStorage.getItem(this.key);
+    let temp = App.storage.getItem(this.key);
     if (!temp) return;
     temp = JSON.parse(temp)
     if (!temp.hasOwnProperty('transportation')){
@@ -197,9 +197,6 @@ App.Models.BudgetCategories = Backbone.Model.extend({
   },
 
   areBalanced: function(){ return this.balanceState() == 0; },
-  hasEnoughSavings: function() {
-    return this.get('savings') >= App.bigDecision.get('monthly_savings');
-  },
 
   recalcNeeds: function(){
     needVals = {};
@@ -212,7 +209,7 @@ App.Models.BudgetCategories = Backbone.Model.extend({
       }
     })
     _.each(needVals, (value, need) => {
-      App.budgetNeeds.updateValue(need, value);
+      App.budgetNeeds.updateParam(need, 'value', value);
     })
   },
 
@@ -312,7 +309,7 @@ App.Models.BudgetCategories = Backbone.Model.extend({
       need: 'none',
     },
     credit_card: {
-      title: 'Credit Card Min. Pmts.',
+      title: 'Crd Card & Loan Min Pmts',
       hint: 'Enter the minimum required payment on cards/loans.',
       need: 'control'
     },

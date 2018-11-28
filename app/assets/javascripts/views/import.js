@@ -21,19 +21,30 @@ App.Views.Import = Backbone.View.extend({
     return false;
   },
 
-  saveClick: function(){
-    let url = null;
+  saveClick: function(event){
+    //console.log('save click')
     switch(this.task){
       case 'balances': url = '/import/balances'; break;
       case 'loans': url = '/import/loans'; break;
       case 'tracking_accounts': url = '/import/accounts_length'; break;
+      case 'credit_charges': url = '/import/credit_charges'; break;
+      case 'dashboard': url = '/import/dashboard_data'; break;
     }
     if (url){
+      event.target.disabled = true;
       $.ajax({type: 'GET', dataType: 'json', url: url,
         success: (data) => {
-          if (this.saveFn) this.saveFn(data);
-          this.saveFn = null;
-          this.returnClick();
+          if (data.error){
+            this.returnClick();
+            App.simplePage.openDesiModal(data.error);
+          }else{
+            if (this.saveFn) this.saveFn(data);
+            this.saveFn = null;
+            this.returnClick();
+          }
+        },
+        complete: ()=>{
+          event.target.disabled = false;
         }
       })
     }else{
@@ -46,7 +57,7 @@ App.Views.Import = Backbone.View.extend({
 
   render: function(task, target, saveFn, returnFn){
     if (!App.authorized){
-      App.simplePage.openDesiModal('TODO: login modal with proper text');
+      location.reload()
     }else {
       App.transitPage(this.template({backLink: location.href}))
       this.setElement($(this.elc));
@@ -113,7 +124,7 @@ App.Views.Import = Backbone.View.extend({
 
   onAddConnect: function(guid){
     $.ajax({
-      type: 'GET', url: `/import/connections/${guid}`, dataType: 'json',
+      type: 'POST', url: `/import/connections`, dataType: 'json', data: { id: guid },
       success: (data)=>{
         data.guid = guid;
         this.connectionsList.removeClass('hidden');

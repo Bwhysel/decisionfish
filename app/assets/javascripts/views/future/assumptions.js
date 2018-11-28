@@ -273,8 +273,10 @@ App.Views.FutureAssumptions = Backbone.View.extend({
       const $input = $(input);
       $input.next().remove();
 
+      const fieldData = App.finAssumptions.fieldsData()[input.name]
+
       let err = income > App.finances.maxValue ? 'Too much' :
-                income < 0 ? 'No negative numbers, please' : null;
+                !fieldData.negative && income < 0 ? 'No negative numbers, please' : null;
       if (err){
         $input.addClass('error');
         $(`<p class='error-msg'>${err}</p>`).insertAfter($input);
@@ -312,7 +314,7 @@ App.Views.FutureAssumptions = Backbone.View.extend({
       },
       life_expectancy: {
         title: 'How Long Will You Live?',
-        fields: ['change_in_expenses', 'longevity_risk', 'life_expectancy1', 'life_expectancy2']
+        fields: ['retirement_expence_change', 'longevity_risk', 'life_expectancy1', 'life_expectancy2']
       },
       social_security: {
         title: 'Social Security',

@@ -14,6 +14,7 @@ App.Views.BigDecision = Backbone.View.extend({
     'click [role=decrease]': 'onDecreaseParam',
     'click [role=target-solve]': 'onTargetSolveClick',
     'keyup input': 'keyUpInput',
+    'click .gradient-bar': 'onChartClick'
   },
 
   render: function(){
@@ -33,15 +34,20 @@ App.Views.BigDecision = Backbone.View.extend({
     }))
     this.setElement($(this.elementSelector));
 
-    let additionalText = this.withChildren ? " and Retirement Age" : ", Retirement Age and Your Share of Kids' College"
+    let additionalText = !this.withChildren ? " and Retirement Age" : ", Retirement Age and Your Share of Kids' College"
     setTimeout(()=>{
-      this.firstModal = App.simplePage.openSectionModal({
-        title: 'Big Decisions',
-        content: `Let's make a savings plan that works. Adjust your Future Monthly Savings${additionalText} until you can Retire Safely. Play around and see what makes you happiest!`
-      }, () => {
-        this.firstCall = true;
-        this.solve('monthly_savings');
-      });
+      if (this.model.wasChanged){
+        this.income_stats = App.incomeStats;
+        this.showResult();
+      }else{
+        this.firstModal = App.simplePage.openSectionModal({
+          title: 'Big Decisions',
+          content: `Let's make a savings plan that works. Adjust your Future Monthly Savings${additionalText} until you can Retire Safely. Play around and see what makes you happiest!`
+        }, () => {
+          this.firstCall = true;
+          this.solve('monthly_savings');
+        });
+      }
     }, 20);
 
     this.gradient = this.$el.find('.gradient-bar-inner');
@@ -60,35 +66,43 @@ App.Views.BigDecision = Backbone.View.extend({
     }
 
     this.retireAgeMin = parseInt(App.family.at(0).get('age'))+1;
-    this.monthlySavingsMax = Math.round(parseInt(App.family.at(0).get('income')) / 12 / 2);
+    this.monthlySavingsMax = Math.round(0.8 * parseInt(App.family.at(0).get('income')) / 12 );
 
   },
 
-  keyUpInput: function(event, manual){
-    if (this.changeTimeout) { clearTimeout(this.changeTimeout) }
-      this.changeTimeout = setTimeout(() => {
+  onChartClick: function(event){
+    $(event.currentTarget).parent().find('.ask-desi').click()
+  },
 
-        const input = event.target
-        const name = input.getAttribute('role');
-        let v = input.value;
-        switch(name){
-        case 'monthly_savings':
-          v = v.replace(/\$|\s|\,/g, '');
-          v = v.length ? parseInt(v) : 0;
-          v = Math.min(v, this.monthlySavingsMax);
-          break;
-        case 'retire_age':
-          v = v.length ? parseInt(v) : 0;
-          v = Math.max(v, this.retireAgeMin);
-          break;
-        case 'parent_contribute':
-          v = v.length ? parseInt(v) : 0;
-          break;
-        }
-        this.model.updateParam(name, v);
-        this.setInputValue(name, v);
-        this.solve();
-        this.changeTimeout = null;
+  changeTimeouts: {},
+
+  keyUpInput: function(event, manual){
+    const input = event.target
+    const name = input.getAttribute('role');
+    if (this.changeTimeouts[name]) {
+      clearTimeout(this.changeTimeouts[name])
+      this.changeTimeouts[name] = null
+    }
+    this.changeTimeouts[name] = setTimeout(() => {
+      let v = input.value;
+      switch(name){
+      case 'monthly_savings':
+        v = v.replace(/\$|\s|\,/g, '');
+        v = v.length ? parseInt(v) : 0;
+        v = Math.min(v, this.monthlySavingsMax);
+        break;
+      case 'retire_age':
+        v = v.length ? parseInt(v) : 0;
+        v = Math.max(v, this.retireAgeMin);
+        break;
+      case 'parent_contribute':
+        v = v.length ? parseInt(v) : 0;
+        break;
+      }
+      this.model.updateParam(name, v);
+      this.setInputValue(name, v);
+      this.solve();
+      this.changeTimeouts[name] = null;
     }, 1000)
 
   },
@@ -111,6 +125,7 @@ App.Views.BigDecision = Backbone.View.extend({
         success: (data) => {
           delay = Math.max(0, delay-(new Date().getTime()-t0));
           this.income_stats = data.income_stats;
+          App.incomeStats = data.income_stats;
           let setValueToInput = false;
           App.retirementFunding.set(data.retirement_funding).saveLocal();
           if (data.value!=null && data.value!=undefined && target){
@@ -198,6 +213,7 @@ App.Views.BigDecision = Backbone.View.extend({
 
   setInputValue: function(target, value){
     if (target == 'monthly_savings'){
+      App.budgetCategories.updateParam('savings', value, {beforeDiff: true})
       value = App.utils.toMoney(value);
     }else if (target == 'parent_contribute'){
       value = '' + parseInt(value) + '%';

@@ -51,15 +51,15 @@ App.Models.FinanceAssumptions = Backbone.Model.extend({
 
   collegeTypeVariants: {
     0: 'Private Nonprofit 4Yr',
-    1: 'Public 4Yr In-State',
-    2: 'Public 4Yr Out-of-State',
-    3: 'Public 2Yr'
+    1: 'Public 4Yr',
+    2: 'Public 2Yr'
   },
   collegePricing: [
-    [ 20720, 11020, 20750, 8070  ],
-    [ 24650, 14970, 24060, 10940 ],
-    [ 29950, 18940, 28340, 13290 ],
-    [ 34020, 20530, 31410, 13790 ]
+    [ 19340, 11820, 10710 ],
+    [ 20390, 12970, 11420 ],
+    [ 23160, 16560, 13550 ],
+    [ 26860, 20700, 15680 ],
+    [ 34140, 22030, 16450 ]
   ],
 
   getCollegeType: function(){
@@ -84,7 +84,7 @@ App.Models.FinanceAssumptions = Backbone.Model.extend({
   },
 
   isEmpty: function(){
-    return localStorage.getItem(this.key) == undefined;
+    return App.storage.getItem(this.key) == undefined;
   },
 
   saveLocal: function(){
@@ -95,7 +95,7 @@ App.Models.FinanceAssumptions = Backbone.Model.extend({
   },
 
   restoreLocal: function(){
-    let temp = localStorage.getItem(this.key);
+    let temp = App.storage.getItem(this.key);
     if (!temp) return;
     temp = JSON.parse(temp);
     this.recalculatablesChangedByUsers = temp.recalculatablesChangedByUsers || {};
@@ -214,10 +214,11 @@ App.Models.FinanceAssumptions = Backbone.Model.extend({
         hint: `Set this higher to reduce the risk of running out of money. It determines the minimum age to which your money must last in order for me to consider your retirement plan "safe".  10% means that 10% of the population your age and sex will live to longer than the life expectancy age calculated below. See <a href="https://www.myabaris.com/tools/life-expectancy-calculator-how-long-will-i-live/" target="_blank">Life expectancy calculator</a>`,
         type: 'percent'
       },
-      change_in_expenses: {
+      retirement_expence_change: {
         label: 'Change in Expenses',
-        hint: `How much do you expect your monthly expenses to increase or decrease AFTER you retire. Consider your plans for travel, hobbies, healthcare expenses, medicare. It's fine to leave this at zero.`,
-        type: 'money'
+        hint: "How much do you expect your monthly expenses to increase or decrease AFTER you retire. Consider your plans for travel, hobbies, healthcare expenses, medicare. It&rsquo;s fine to leave this at zero.",
+        type: 'percent',
+        negative: true
       },
       soc_sec1: {
         label: `Est. Soc. Sec.${name2 ? ' ' + name1 : ''}`,

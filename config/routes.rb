@@ -4,13 +4,16 @@ Rails.application.routes.draw do
 
   namespace :admin do
     resources :jokes
-    resources :encouragments
+    resources :encouragements
     resources :desi_says_modals
     resources :ideas do
       get 'pending', on: :collection
       get 'reported', on: :collection
     end
-    resources :available_emails
+    resources :available_emails do
+      get 'import', on: :collection
+      post 'bulk_upload', on: :collection
+    end
 
     get 'login' => 'base#login'
     post 'sign_in' => 'base#sign_in'
@@ -41,6 +44,7 @@ Rails.application.routes.draw do
   post '/ideas/give'         => 'user#give_idea'
   post '/ideas/report'       => 'user#report_idea'
   post '/ideas/like'         => 'user#like_idea'
+  post '/remind_me'          => 'user#remind_me'
 
   get '/finance_details/:step' => 'home#index'
   patch '/finance_details'     => 'people#update_details'
@@ -52,11 +56,14 @@ Rails.application.routes.draw do
 
   post '/import/widget' => 'mx#widget'
   get '/import/connections' => 'mx#connections'
+  post 'import/connections' => 'mx#on_create_connection'
   get '/import/connections/:id' => 'mx#get_connection'
   delete '/import/connections/:id' => 'mx#remove_connection'
   get '/import/balances' => 'mx#get_balances'
+  get '/import/credit_charges' => 'mx#get_credit_charges'
   get '/import/loans' => 'mx#get_loans'
   get '/import/accounts_length' => 'mx#get_accounts_length'
+  get '/import/dashboard_data' => 'mx#get_dashboard_data'
 
   post '/big_decision/solve' => 'big_decision#solve'
   post '/different_decisions/solve' => 'big_decision#solve_different'
@@ -73,6 +80,8 @@ Rails.application.routes.draw do
   patch '/budget_categories' => 'people#update_budget_categories'
   patch '/budget_tracking' => 'people#update_tracking_info'
   patch '/loans' => 'people#update_loans'
+  patch '/investments' => 'people#update_investments'
+  get '/unsubscribe/:unsubscribe_hash' => 'people#cancel_tracking', :as => 'unsubscribe'
 
   get ':page' => 'home#index'
   #get 'hello_world', to: 'hello_world#index'

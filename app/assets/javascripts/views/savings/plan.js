@@ -16,11 +16,13 @@ App.Views.SavingsPlan = Backbone.View.extend({
     'click [role=fun-need-select]': 'selectFunNeed',
     'click [role=increase]': 'onIncreaseParam',
     'click [role=decrease]': 'onDecreaseParam',
-    'click #next-btn': 'onNextClick'
+    'click #next-btn': 'onNextClick',
+
   },
 
   render: function(){
-    App.transitPage(this.template());
+    this.targetInvested = App.bigDecision.get('monthly_savings')
+    App.transitPage(this.template({total: App.utils.toMoney(this.targetInvested)}));
     this.setElement($(this.elementSelector));
     this.$panel = this.$el.find('.panel');
     this.safeState = this.$el.find('[role=safe-state]');
@@ -36,10 +38,9 @@ App.Views.SavingsPlan = Backbone.View.extend({
 
   onNextClick: function(event){
     //=IF(N300<>0,"IF(N300>0," (Invest "&TEXT(N300,"$#,###")&" more)."," (You've invested "&TEXT(-N300,"$#,###")&" too much!)"),"")
-    let targetInvested = App.bigDecision.get('monthly_savings');
-    let diff = targetInvested - this.totalInvested;
+    let diff = this.targetInvested - this.totalInvested;
     if (diff != 0){
-      let content = `Please change your amounts so that the total is ${App.utils.toMoney(targetInvested)}.`;
+      let content = `Please change your amounts so that the total is ${App.utils.toMoney(this.targetInvested)}.`;
       content += diff > 0 ? ` Invest ${App.utils.toMoney(diff)} more.` : `You've invested ${App.utils.toMoney(-diff)} too much!`;
       App.simplePage.openDesiModal(content)
       event.stopPropagation()
@@ -56,7 +57,7 @@ App.Views.SavingsPlan = Backbone.View.extend({
     this.model.opportunities.forEach((opp, i)=>{
       let earnings = opp.earningsPer100 / 100.0;
       this.fields[opp.field] = {
-        rankID: i, title: opp.title,
+        rankID: i, title: opp.title, maxValue: opp.balance,
         suggested: opp.investment, custom: this.yourAmounts[opp.field],
         earnings: earnings
       };
@@ -90,6 +91,8 @@ App.Views.SavingsPlan = Backbone.View.extend({
     if (manual){ return };
 
     let val = App.utils.parseMoney(target.value);
+    val = Math.max(0, val);
+    val = Math.min(val, this.fields[target.name].maxValue);
     this.yourAmounts[target.name] = val;
     target.value = App.utils.toMoney(val);
 
@@ -138,8 +141,9 @@ App.Views.SavingsPlan = Backbone.View.extend({
     const $input = $(event.currentTarget).closest('.form-group').find('input');
     let v = App.utils.parseMoney($input.val()) + direction * this.increment;
     v = Math.max(0, v);
+    //v = Math.min(v, this.fields[$input[0].name].maxValue);
 
     $input.val(v).trigger('keyup');
-  },
+  }
 
 })

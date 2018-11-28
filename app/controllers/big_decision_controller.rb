@@ -4,7 +4,7 @@ class BigDecisionController < ApplicationController
     target = params[:target]
     opts = prepare_opts
     opts = get_assumption_params(opts)
-    Rails.logger.info "DECISION OPTS: #{opts.inspect}"
+    Rails.logger.debug "DECISION OPTS: #{opts.inspect}"
     solver = BigDecisionsSolver.new(opts)
     value, err = case target
     when 'monthly_savings'
@@ -16,6 +16,11 @@ class BigDecisionController < ApplicationController
     else
       [ nil, solver.solve_fail ]
     end
+    if authorized?
+      big_opts = opts.slice(:monthly_savings, :retire_age, :parent_contribute)
+      big_opts[target.to_sym] = value if target && big_opts.has_key?(target.to_sym)
+      BigDecision.set(current_user, big_opts)
+    end
     #Rails.logger.info "#{value} - #{target} - #{target.class.name}"
     data = {
       value: value,
@@ -25,8 +30,7 @@ class BigDecisionController < ApplicationController
       recalculated: solver.calculated_assumptions
     }
 
-    Rails.logger.info "CALCULATED: #{solver.calculated_assumptions}"
-    #Rails.logger.info "Result: #{data.inspect}. Err: #{err}."
+    Rails.logger.debug "CALCULATED: #{solver.calculated_assumptions}"
 
     render json: data.merge(result: (err.blank? ? 'ok' : 'error'), msg: err)
   end
@@ -34,9 +38,9 @@ class BigDecisionController < ApplicationController
   def solve_different
     opts = prepare_opts
     opts = get_assumption_params(opts)
-    Rails.logger.info "DECISION OPTS: #{opts.inspect}"
+    Rails.logger.debug "DECISION OPTS: #{opts.inspect}"
     data = DifferentDecisionsCalc.simulate(opts)
-    Rails.logger.info "Result: #{data.inspect}"
+    Rails.logger.debug "Result: #{data.inspect}"
     render json: data
   end
 
@@ -45,7 +49,7 @@ class BigDecisionController < ApplicationController
     opts[:assumptions] = FinanceAssumption::DEFAULTS.clone
     solver = BigDecisionsSolver.new(opts)
     solver.solve_fail
-    Rails.logger.info "CALCULATED: #{solver.calculated_assumptions}"
+    Rails.logger.debug "CALCULATED: #{solver.calculated_assumptions}"
     data = {
       retirement_funding: solver.retirement_funding,
       assumptions: opts[:assumptions],

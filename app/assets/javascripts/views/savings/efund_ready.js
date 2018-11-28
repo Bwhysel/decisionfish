@@ -9,6 +9,7 @@ App.Views.EfundReady = Backbone.View.extend({
   events: {
     'keyup input': 'onKeyUp',
     'click #next-btn': 'onNextClick',
+    'click #import-btn': 'onImportClick',
   },
 
   render: function(){
@@ -17,6 +18,7 @@ App.Views.EfundReady = Backbone.View.extend({
 
     App.utils.setPageHeight(this.el);
     this.progressText = this.$el.find('[role=efund-progress]')[0]
+    this.congratsText = this.$el.find('[role=efund-congrats]')
     this.efundHintText = this.$el.find('[role=efund-good-job]')[0]
     this.hint1 = "Great job! Your emergency fund is full: You're ready for (almost) anything!";
     this.hint2 = "A good start! Let's keep building it.";
@@ -43,12 +45,10 @@ App.Views.EfundReady = Backbone.View.extend({
   },
 
   resetInput: function(){
-
     this.months = this.model.get('efund_months');
     this.monthExp = App.retirementFunding.getMonthExp();
     this.targetMoney = this.model.getShortEfundTarget(0);
     this.$el.find('[role=target-months]').text(`${this.months} Month` + (this.months == 1 ? '' : 's'))
-
 
     const input = this.$el.find('input[name]')[0]
     input.value = this.model.getEfundCurrent();
@@ -62,40 +62,49 @@ App.Views.EfundReady = Backbone.View.extend({
   onKeyUp: function(event, manual){
     const input = event.target;
     value = App.utils.parseMoney(input.value);
-    this.targetMoney = this.model.getShortEfundTarget(value);
+    let progress
+    [ this.targetMoney, progress ] = this.model.getEfundProgress(value);
+
     let shortOfTarget = Math.max(0, this.targetMoney); // short version of getShortEfundTarget function
-    let progress = value * this.model.get('efund_months') / (value + this.targetMoney);
-    //console.log(value, this.monthExp, progress, this.targetMoney);
-    progress = parseFloat((Math.floor(progress * 10)/10).toFixed(1))
 
-
-
-    this.efundHintText.textContent = shortOfTarget == 0 ? this.hint1 : progress > 0 ? this.hint2 : this.hint3;
-    this.progressText.textContent = progress; //Math.round(progress*10)/10;
-
+    this.efundHintText.textContent = (progress != 0) && (shortOfTarget == 0) ? this.hint1 : progress > 0 ? this.hint2 : this.hint3;
     this.drawDonut(progress);
-
+    this.progressText.textContent = progress;
+    this.congratsText.toggleClass('hidden', this.targetMoney>0)
     if (manual) return;
 
     this.model.updateParam('efund_current', value);
   },
 
+  onImportClick: function(event){
+    App.importPage.render('balances', event.currentTarget, (data)=>{
+      console.log(data)
+      if (data.cash){
+        let currentSavings = data.cash + data.college_savings + data.retirement_savings;
+        this.$('input[name]').val(currentSavings).trigger('keyup')
+      }
+    }, ()=>{
+      this.render();
+    })
+  },
+
   prepareDonut: function(){
-    let width = this.$svg.width();
-    let height = width;
-    let radius = width/2;
-    this.svgEl = d3.select("svg").append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-    this.arc = d3.arc().outerRadius(radius).innerRadius(radius*0.75).startAngle(0);
-    this.arcBack = d3.arc().outerRadius(radius-1).innerRadius(radius*0.751).startAngle(0);
+    const width = this.$svg.width();
+    const height = width;
+    const radius = width/2;
+    const radScale = screen.width < 700 ? 0.85 : 0.75
+    const svgEl = d3.select("svg").append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
     this.tau = 2 * Math.PI;
-    // background arc
-    this.svgEl.append("path").datum({endAngle: this.tau}).style("fill", "#2E3192").attr("d", this.arcBack);
 
-    this.foreground = this.svgEl.append("path")
+    const arcBack = d3.arc().outerRadius(radius).innerRadius(radius*radScale).startAngle(0);
+    svgEl.append("path").datum({endAngle: this.tau}).style("fill", "#0DB09D").attr("d", arcBack);
+
+    this.arcProgress = d3.arc().outerRadius(radius).innerRadius(radius*radScale).startAngle(0);
+    this.foreground = svgEl.append("path")
         .datum({endAngle: 0 * this.tau})
-        .style("fill", '#0DB09D')
-        .attr("d", this.arc);
+        .style("fill", '#2E3192')
+        .attr("d", this.arcProgress);
   },
 
   drawDonut: function(progress){
@@ -110,7 +119,7 @@ App.Views.EfundReady = Backbone.View.extend({
       var interpolate = d3.interpolate(d.endAngle, newAngle);
       return (t)=> {
         d.endAngle = interpolate(t);
-        return this.arc(d);
+        return this.arcProgress(d);
       };
     };
   }

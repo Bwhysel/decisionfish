@@ -3,7 +3,7 @@ class BigDecision < ApplicationRecord
 
   DEFAULTS = {
     monthly_savings: 0,
-    retire_age: 70,
+    retire_age: 62,
     parent_contribute: 0
   }
 
@@ -27,16 +27,16 @@ class BigDecision < ApplicationRecord
   end
 
   def calc_opts
-    family = user.persons.to_a
+    family = user.ordered_persons.to_a
     opts = @opts || self.as_json
-    opts[:age1], opts[:age2] = family.collect(&:age)
+    opts[:age1], opts[:age2] = family.collect(&:age).collect(&:to_i)
     opts[:sex1], opts[:sex2] = family.collect(&:sex)
-    opts[:income1], opts[:income2] = family.collect(&:income)
-    opts[:children_years] = user.children
+    opts[:income1], opts[:income2] = family.collect(&:income).collect(&:to_i)
+    opts[:children_years] = user.get_children
     details = user.finance_details
-    opts[:liquid_net_worth] = details.get_liquid_net_worth
-    opts[:mortgage] = details.mortgage
-    opts[:home_value] = details.home_value
+    opts[:liquid_net_worth] = details&.get_liquid_net_worth || 0
+    opts[:mortgage] = details&.mortgage || 0
+    opts[:home_value] = details&.home_value || 0
     opts
   end
 
@@ -45,7 +45,7 @@ class BigDecision < ApplicationRecord
     opts[:assumptions] = user.finance_assumption_opts
     solver = BigDecisionsSolver.new(opts)
     solver.solve_fail
-    solver.retirement_funding
+    [ solver.retirement_funding, solver.income_stats ]
   end
 
 

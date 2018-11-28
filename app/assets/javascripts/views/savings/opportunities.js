@@ -30,14 +30,19 @@ App.Views.Opportunities = Backbone.View.extend({
     let exSvg = this.$el.find('svg');
     let externalWidth = exSvg.width();
 
-    const forDesktop = externalWidth < 700;
-    var margin = {top: parseInt(exSvg.css('margin-top')), right: 0, bottom: 0, left: forDesktop ? 150 : 340};
+    const forDesktop = screen.width > 700;
+    var margin = {
+      top: parseInt(exSvg.css('margin-top')),
+      right: 0,
+      bottom: 10,
+      left: forDesktop ? 150 : 140
+    };
     let width = externalWidth - margin.left - margin.right;
-    let height = categories.length * (forDesktop ? 25 : 55) //exSvg.height() - margin.top - margin.bottom - 100;
+    let height = categories.length * (forDesktop ? 25 : 20) //exSvg.height() - margin.top - margin.bottom - 100;
 
     let svg = d3.select("svg").attr("width", width + margin.left + margin.right)
                 .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
-                console.log()
+
     exSvg.css('height', height + 2.2 * (margin.top + margin.bottom))
 
 
@@ -58,10 +63,10 @@ App.Views.Opportunities = Backbone.View.extend({
 
     var bars = svg.append('g').attr('id', 'dollar-bars').selectAll(".bar").data(dollars).enter().append("g")
 
-    const txtOffset = forDesktop ? 5 : 10;
+    const txtOffset = forDesktop ? 5 : 3;
     //append rects
-    let barShift = forDesktop ? -8 : -19;
-    let textBarShift = forDesktop ? 7 : 15;
+    let barShift = forDesktop ? -8 : -5;
+    let textBarShift = forDesktop ? 7 : 5;
     bars.append("rect").attr("class", 'bar')
       .attr("y", (d,i) => {return yFn(i)+barShift;}).attr("x", 0).attr("width", 0);//.attr('height', '30')
     bars.append('text').attr("x", txtOffset).attr("y", (d,i)=>{ return yFn(i)+textBarShift; }).text('');

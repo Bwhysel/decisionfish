@@ -1,0 +1,22 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Encouragements</h1>
+
+<table class='table-with-entity'>
+  <thead>
+  </thead>
+
+  <tbody>
+    <% @encouragements.each do |encouragement| %>
+      <tr>
+        <td><%= encouragement.content %></td>
+        <td><%= link_to 'Edit', edit_admin_encouragement_path(encouragement), role: 'edit-link' %></td>
+        <td><%= link_to 'Destroy', admin_encouragement_path(encouragement), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Encouragement', new_admin_encouragement_path %>

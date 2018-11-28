@@ -1,5 +1,4 @@
 class MxUser < ApplicationRecord
-  has_many :transactions, class_name: 'MxTransaction'
   belongs_to :user
   enum notify_period: { daily: 0, weekly: 1, monthly: 2, over_spending: 3 }
 
@@ -17,22 +16,51 @@ class MxUser < ApplicationRecord
   }
 
   def self.for(our_user)
-    return our_user.mx_user if !our_user.mx_user.nil?
-    begin
-      atrium_user = Atrium::User.create(
-        identifier: "#{Rails.env[0..2]}_#{our_user.id}",
-        is_disabled: false,
-        metadata: {
-          name: our_user.persons.collect(&:name).join(" & ")
-        }.to_json
-      )
-    rescue Atrium::Error => e
-      Rails.logger.info "MX_ERROR: #{e.message}"
+    mx_user = our_user.mx_user
+    if mx_user
+      begin
+        atrium_user = Atrium::User.read(guid: mx_user.guid)
+      rescue Atrium::Error => e
+        if !e.message.include?("404:")
+          Rails.logger.info "MX_ERROR: #{e.message}"
+        end
+        mx_user.destroy
+        mx_user = nil
+      end
     end
+
+    return mx_user if mx_user.present?
+
+    atrium_user = generate_atrium_user(
+      "#{Rails.env[0..2]}_#{our_user.id}",
+      our_user.persons.collect(&:name).join(" & ")
+    )
+
     if atrium_user
       mx_user = our_user.build_mx_user(guid: atrium_user.guid, is_disabled: false)
       mx_user.save!
       mx_user
+    end
+  end
+
+  def self.generate_atrium_user(identifier, names)
+    begin
+      atrium_user = Atrium::User.create(
+        identifier: identifier,
+        is_disabled: false,
+        metadata: { name: names }.to_json
+      )
+    rescue Atrium::Error => e
+      if e.message.include?("409:") # An object with the given attributes already exists."
+        existed_user = Atrium::User.list.find{|u| u.identifier == identifier }
+        if existed_user
+          existed_user.delete
+          MxUser.find_by_guid(existed_user.guid)&.destroy
+          additional_call = true
+          result = generate_atrium_user(identifier, names)
+        end
+      end
+      result || !additional_call && Rails.logger.info("MX_ERROR: #{e.message}") && nil
     end
   end
 
@@ -49,7 +77,7 @@ class MxUser < ApplicationRecord
     pData = Hash.new{|k,v| k[v] = []}
     Atrium::User.read(guid: guid).accounts.each do |acc|
       type = acc.type
-      type += "::"+acc.subtype if acc.subtype
+      type += "::"+acc.subtype if acc.subtype && acc.subtype != 'NONE'
       pData[type].push(acc)
     end
 
@@ -73,7 +101,11 @@ class MxUser < ApplicationRecord
   def get_accounts_balances
     data = {}
     get_accounts.each do |key, arr|
-      data[key] = arr.collect(&:available_balance).sum.round
+      s = 0
+      arr.each do |acc|
+        s += acc.available_balance || acc.balance
+      end
+      data[key] = s.round
     end
     data
   end
@@ -86,9 +118,9 @@ class MxUser < ApplicationRecord
       data["#{kind}_names".to_sym] ||= []
       data["#{kind}_rates".to_sym] ||= []
       acc_data[kind].each do |acc|
-        data[kind].push(acc.available_balance.round)
+        data[kind].push((acc.available_balance || acc.balance).round)
         data["#{kind}_names".to_sym].push(acc.name)
-        data["#{kind}_rates".to_sym].push(acc.apr || 0)
+        data["#{kind}_rates".to_sym].push(acc.apr || acc.interest_rate || 0)
       end
     end
     #if acc = acc_data[:mortgage]
@@ -97,5 +129,8 @@ class MxUser < ApplicationRecord
     data
   end
 
+  def month_credit_charges
+    MxTransaction.month_credit_charges(self)
+  end
 
 end

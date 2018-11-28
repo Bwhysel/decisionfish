@@ -1,14 +1,15 @@
 App.Models.BigDecision = Backbone.Model.extend({
   key: 'big_decision',
+  wasChanged: false,
 
   defaults: {
-    retire_age:      70,
+    retire_age:      62,
     monthly_savings: 0,
     parent_contribute: 25
   },
 
   isEmpty: function(){
-    return localStorage.getItem(this.key) == undefined;
+    return App.storage.getItem(this.key) == undefined;
   },
 
   updateParam: function(attr, value){
@@ -19,11 +20,12 @@ App.Models.BigDecision = Backbone.Model.extend({
   },
 
   saveLocal: function(){
+    this.wasChanged = true;
     App.storage.setItem(this.key, JSON.stringify(this.attributes));
   },
 
   restoreLocal: function(){
-    const temp = localStorage.getItem(this.key);
+    const temp = App.storage.getItem(this.key);
     if (temp){ this.set(JSON.parse(temp)); }
   },
 

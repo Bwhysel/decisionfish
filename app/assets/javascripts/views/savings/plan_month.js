@@ -11,6 +11,7 @@ App.Views.SavingsMonthPlan = Backbone.View.extend({
   events: {
     'focusin input': 'selectInput',
     'keyup input': 'keyUpInput',
+    'click #import-btn': 'onImportClick'
   },
 
   render: function(){
@@ -28,7 +29,7 @@ App.Views.SavingsMonthPlan = Backbone.View.extend({
     const yourAmounts = this.model.get('your_amounts');
 
     this.model.opportunities.forEach((opp, i)=>{
-      if (!opp.isDebt) { return }
+      if (!opp.isDebt || !opp.balance) { return }
       this.fields[opp.field] = {
         title: opp.title, value: this.newCharges[opp.field],
         allocMinPmnt: opp.allocMinPmnt, yourAmount: yourAmounts[opp.field]
@@ -89,5 +90,17 @@ App.Views.SavingsMonthPlan = Backbone.View.extend({
     this.totalInput.textContent = App.utils.toMoneyWithCents(total);
   },
 
+  onImportClick: function(event){
+    App.importPage.render('credit_charges', event.currentTarget, (data)=>{
+      $.each(this.fields, (name, opts) => {
+        let v = data[opts.title];
+        if (v !== undefined){
+          this.model.updateParam('new_charges', v, name)
+        }
+      })
+    }, ()=>{
+      this.render();
+    })
+  }
 
 })

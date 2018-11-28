@@ -100,13 +100,15 @@ App.Views.DifferentDecisions = Backbone.View.extend({
     let exSvg = this.$el.find('svg');
     let externalWidth = exSvg.width();
 
-    const forDesktop = externalWidth < 700;
-    var margin = {top: 70, right: 20,
-      bottom: forDesktop ? 120 : 200,
-      left: forDesktop ? 120 : 200};
+    const forDesktop = screen.width > 700;
+    var margin = {
+      top: forDesktop ? 70 : 30,
+      right: 20,
+      bottom: forDesktop ? 120 : 100,
+      left: forDesktop ? 120 : 100};
 
     let width = externalWidth - margin.left - margin.right;
-    let height = (forDesktop ? 450 : 800) - margin.top - margin.bottom;
+    let height = (forDesktop ? 450 : 320) - margin.top - margin.bottom;
 
     let svg = d3.select("svg").attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
@@ -117,7 +119,7 @@ App.Views.DifferentDecisions = Backbone.View.extend({
     // set the ranges
     var x = d3.scaleLinear().range([0, width]);
     var y = d3.scaleLinear().range(descOrder ? [height, 0] : [0, height]);
-    const xFn = (d)=>{ return x(d.value); }
+    const xFn = (d)=>{ return Math.max(x(d.value), 0); }
     const yFn = (d)=>{ return y(d.key); }
 
     // scale the range of the data
@@ -127,7 +129,7 @@ App.Views.DifferentDecisions = Backbone.View.extend({
     //y.domain(yPoints)
 
    // add the X Axis
-    svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (height+45 ) + ")").call(
+    svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (height+(forDesktop ? 45 : 20) ) + ")").call(
       d3.axisBottom(x).tickValues([70, 80, 90, 100, 110])
     );
     svg.append("g").attr("class", "grid").attr("transform", "translate(0," + height + ")").call(
@@ -147,7 +149,7 @@ App.Views.DifferentDecisions = Backbone.View.extend({
     );
     svg.append("text").attr('class', 'axis-label')
       .attr('text-anchor', 'end')
-      .attr('x', width-50)
+      .attr('x', width-(forDesktop ? 50 : 0))
       .attr('y', height+margin.bottom*2/3)
       .text(`${age2 ? name1 + "'s" : 'Your'} Age When Money Runs Out`);
     svg.append("text").attr('class', 'axis-label')
@@ -159,7 +161,7 @@ App.Views.DifferentDecisions = Backbone.View.extend({
     var bars = svg.selectAll(".bar").data(data).enter().append("g")
 
     //append rects
-    let barShift = forDesktop ? -8 : -15
+    let barShift = forDesktop ? -8 : -6
     bars.append("rect").attr("class", (d) => {
         return 'bar ' + (d.value >= successBorder ? 'bar-success' : 'bar-fail');
       })
@@ -176,15 +178,18 @@ App.Views.DifferentDecisions = Backbone.View.extend({
     const anchor1 = !age2 || (age1 > age2) ? 'start' : 'end';
     const anchor1_start = anchor1 == 'start'
 
-    const offset = 40;
+    const
+      offset = forDesktop ? 40 : 20,
+      x_offset = forDesktop ? 10 : 4;
     const xAge1 = x(age1);
     svg.append("line").attr('class', 'life-gray')// attach a line
       .attr("x1", xAge1).attr("x2", xAge1)
       .attr("y1", -offset).attr("y2", height+offset);
 
+
     svg.append("text").attr('class', 'life-gray')
       .attr('text-anchor', anchor1)
-      .attr('y', -offset).attr('x', xAge1 + (anchor1 == 'start' ? 10 : -10))
+      .attr('y', -offset).attr('x', xAge1 + (anchor1 == 'start' ? x_offset : -x_offset))
       .text(age2 ? `${name1}'s Life Expectancy` : 'Life Expectancy')
 
     if (age2){
@@ -196,7 +201,7 @@ App.Views.DifferentDecisions = Backbone.View.extend({
       const anchor2 = anchor1_start ? 'end' : 'start'
       svg.append("text").attr('class', 'life-blue')
         .attr('text-anchor', anchor2)
-        .attr('y', -offset).attr('x', xAge2 + (anchor2 == 'start' ? 10 : -10))
+        .attr('y', -offset).attr('x', xAge2 + (anchor2 == 'start' ? x_offset : -x_offset))
         .text(`${name2}'s Life Expectancy`)
     }
 

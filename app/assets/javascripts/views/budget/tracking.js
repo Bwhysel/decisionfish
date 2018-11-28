@@ -9,11 +9,11 @@ App.Views.BudgetTracking = Backbone.View.extend({
 
   connectAccounts: function(event){
     App.importPage.render('tracking_accounts', null, (data)=>{
-      console.log(data);
+      //console.log(data);
       if (data.accounts > 0){
         this.haveAccounts = true;
       }else{
-        App.simplePage.openDesi({currentTarget: {dataset: {
+        App.simplePage.openDesiModal({currentTarget: {dataset: {
           text: "I haven't found any accounts for tracking.<br/><br/>Uncheck When box if you don't want me to help you track your spending."
         }}})
       }
@@ -25,13 +25,14 @@ App.Views.BudgetTracking = Backbone.View.extend({
   },
 
   onNextClick: function(event){
-    let dataChecked = !this.model.get('notify_period')
+    let dataChecked = this.model.get('notify_period')
     if (dataChecked && !this.haveAccounts){
       event.preventDefault();
       this.connectAccounts();
       return false;
     }
-    if (this.forceNext || dataChecked){
+    const whoChecked = this.$el.find('input[name=who_1]')[0].checked || this.$el.find('input[name=who_0]')[0].checked
+    if (this.forceNext || dataChecked || !whoChecked){
       this.forceNext = false;
       this.haveAccounts = false; // to show Import page again
       return true;

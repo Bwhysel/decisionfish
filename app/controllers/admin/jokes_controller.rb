@@ -21,7 +21,7 @@ class Admin::JokesController < Admin::BaseController
 
     respond_to do |format|
       if @joke.save
-        format.html { redirect_to [:admin, @joke], notice: 'Joke was successfully created.' }
+        format.html { redirect_to admin_jokes_path, notice: 'Joke was successfully created.' }
         format.json { render :show, status: :created, location: @joke }
       else
         format.html { render :new }
@@ -33,7 +33,7 @@ class Admin::JokesController < Admin::BaseController
   def update
     respond_to do |format|
       if @joke.update(joke_params)
-        format.html { redirect_to [:admin, @joke], notice: 'Joke was successfully updated.' }
+        format.html { redirect_to admin_jokes_path, notice: 'Joke was successfully updated.' }
         format.json { render :show, status: :ok, location: @joke }
       else
         format.html { render :edit }
@@ -59,6 +59,8 @@ class Admin::JokesController < Admin::BaseController
     end
 
     def joke_params
-      params.require(:joke).permit(:content)
+      ps = params.require(:joke).permit(:content)
+      ps[:content] =  ActionController::Base.helpers.sanitize(ps[:content])
+      ps
     end
 end

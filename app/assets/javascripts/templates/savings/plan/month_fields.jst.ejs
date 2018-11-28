@@ -1,12 +1,18 @@
-<% _.each(fields, (attrs, field) => {%>
+<% if (_.isEmpty(fields)) { %>
   <div class='form-group form-group-horizontal'>
-    <label>
-      <%= attrs.title %>
-    </label>
-
-    <span class='columned'>
-      <input type='text' name='<%= field %>'/>
-    </span>
-    <span class='static-number'></span>
+    <p>Congratulations on being debt-free!</p>
   </div>
-<% }) %>
+<% } else { %>
+  <% _.each(fields, (attrs, field) => {%>
+    <div class='form-group form-group-horizontal'>
+      <label>
+        <%= attrs.title %>
+      </label>
+
+      <span class='columned'>
+        <input type='text' name='<%= field %>'/>
+      </span>
+      <span class='static-number'></span>
+    </div>
+  <% }) %>
+<% } %>

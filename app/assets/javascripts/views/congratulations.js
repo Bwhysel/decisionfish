@@ -1,5 +1,5 @@
 App.Views.Congratulations = Backbone.View.extend({
-  container: 'body > .container',
+  container: '#page-content > .container',
   mainTpl: JST['templates/simple_pages/congratulations'],
   diplomaFrameTpl: JST['templates/simple_pages/diploma_frame'],
   retirementTpl: JST['templates/future/diploma'],
@@ -51,7 +51,7 @@ App.Views.Congratulations = Backbone.View.extend({
     // generating the image
     html2canvas($diploma.find('#diploma')[0], {
       onrendered: (canvas) => {
-        console.log('html2canvas: image generated')
+        //console.log('html2canvas: image generated')
         // canvas.toBlob - is not supported by all browsers, so we need to take DIY way
         const data = canvas.toDataURL("image/png")
         this.blobData = this.base64toBlob(data.substr(22, data.length), 'image/png');
@@ -110,6 +110,27 @@ App.Views.Congratulations = Backbone.View.extend({
 
   getSavingsParams: function(){
     App.investments.calcOpportunities();
+    let data = App.investments.getThisMonth();
+
+    let sum401 = 0;
+    for(var i=0; i<data.investments.length; i++){
+      let x = data.investments[i];
+      if (x.title.indexOf('401k')<0) { continue }
+      sum401 = sum401 + x.thisMonth;
+    }
+    if (sum401>0){
+      let p401 = sum401 / App.family.at(0).get('income') * 12 * 100;
+      p401 = VMasker.toPercent(p401)
+      sum401 = App.utils.toMoneyWithCents(sum401)
+      data.msg401 = `This includes a total 401(k) contribution of ${sum401}, which is ${p401} of your salary. Make sure the correct amount is being deferred from your paycheck to your 401(k).`
+    }else{
+      data.msg401 = false
+    }
+
+    const curDate = new Date();
+    data.period = curDate.toLocaleDateString('en-us', {month: 'long'});
+    data.period += ', ' + curDate.getFullYear();
+
     return {
       links: {
         back: '/savings_month_plan',
@@ -121,7 +142,7 @@ App.Views.Congratulations = Backbone.View.extend({
       diplomaTpl: this.savingsTpl,
       fn: 'resetSavingsValues',
       downloadTitle: 'Investment Plan.png',
-      data: App.investments.getThisMonth()
+      data: data
     }
   },
 

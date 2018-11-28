@@ -1,7 +1,9 @@
 class ApplicationController < ActionController::Base
-  protect_from_forgery with: :null_session
+  protect_from_forgery with: :exception
   helper_method :current_user_session, :current_user, :authorized?
+  before_action :set_raven_context
   layout 'home'
+
 
   def user_logged_in
     if !current_user
@@ -23,6 +25,10 @@ class ApplicationController < ActionController::Base
   end
 
 private
+
+  def set_raven_context
+    Raven.user_context(id: current_user&.id, env: Rails.env.to_s) # or anything else in session
+  end
 
   def current_user_session
     return @current_user_session if defined?(@current_user_session)

@@ -1,7 +1,10 @@
 <%# 1. Successful send. %>
 <div class='wrapper-container centered-container'>
   <% if @error %>
-    <p><%= @error.html_safe %></p>
+    <p>
+      Some problem with sending PIN code:<br/>
+      <%= @error %>
+    </p>
     <p>Try again later.</p>
     <%# 4. Not send. Other status. Some problem with sending. Try again this page later or change your phone.%>
   <% else %>
@@ -32,8 +35,8 @@
       <% end %>
     <% end %>
 
-    <% unless current_user.phone_verified? %>
-      <p><%= link_to 'Oops, I need to change number', 'javscript:void(0);', role: 'change-phone-number' %></p>
-    <% end %>
+  <% end %>
+  <% unless current_user.phone_verified? %>
+    <p><%= link_to 'Oops, I need to change number', 'javscript:void(0);', role: 'change-phone-number' %></p>
   <% end %>
 </div>

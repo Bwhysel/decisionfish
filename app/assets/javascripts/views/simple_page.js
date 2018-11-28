@@ -1,5 +1,5 @@
 App.Views.SimplePage = Backbone.View.extend({
-  el: 'body > .container-original',
+  el: '#page-content > .container-original',
   templates: {},
   desiModalTpl: JST['templates/simple_pages/desi_modal'],
   confirmModalTpl: JST['templates/simple_pages/confirm_modal'],
@@ -27,18 +27,16 @@ App.Views.SimplePage = Backbone.View.extend({
     if (this.templates[page_slug]){
       App.transitPage(this.templates[page_slug]({}));
       App.utils.setPageHeight(this.el);
+      tippy('.icon-question', {arrow: true, interactive: true, theme: 'light'});
     }else {
-      console.log(`NOT IMPLEMENTED PAGE: ${page_slug}`)
+      App.router.navigate('/hello', {trigger: true})
+      //console.log(`NOT IMPLEMENTED PAGE: ${page_slug}`)
     }
 
   },
 
   gotoLink: function(event){
-    event.preventDefault();
-    let target = event.currentTarget;
-    App.backAction = target.className && (target.className.indexOf('icon-back') >= 0);
-    App.router.navigate(target.getAttribute('href'), {trigger: true})
-    return false;
+    return App.inAppNavigateEvent(event);
   },
 
   gotoBack: function(event){
@@ -50,10 +48,15 @@ App.Views.SimplePage = Backbone.View.extend({
       let prevFragment = oldPages[lastIndex-2];
       let curFragment = oldPages[lastIndex];
       let safePath = event ? event.currentTarget.dataset.safePath : null;
-      if (countPages <= 2 || (prevFragment == curFragment)){
+
+      if (countPages < 2 || (prevFragment == curFragment)){
+        // [] || [..., 'route1', 'route2', 'route1']
         Backbone.history.length -= 0;
         App.router.navigate(safePath || 'menu', {trigger: true})
-      }else {
+      //}else if (countPages==2 && safePath){
+      }else if (countPages < 2){
+        App.router.navigate(safePath, {trigger: true})
+      }else{
         Backbone.history.length -= 2;
         window.history.back();
       }
@@ -122,14 +125,19 @@ App.Views.SimplePage = Backbone.View.extend({
 
   openSectionModal: function(data, okFunc, cancelFunc){
     if (!data.btnTitle) { data.btnTitle = 'OK'}
+    if (!data.helpBtn) { data.helpBtn = false }
     if (!data.cancelTitle) { data.cancelTitle = null }
     if (!data.title) { data.title = false }
     const modal = App.utils.createModal(
       'section-modal', { afterClose: cancelFunc }, this.sectionModalTpl, data
     )
-    $('[role=submit-modal]', modal.dialog).on('click', (evenet) => {
+    $('[role=help-link]', modal.dialog).on('click', (event)=>{
+      App.router.navigate('/ask', {trigger: true})
       modal.close();
+    })
+    $('[role=submit-modal]', modal.dialog).on('click', (event) => {
       if (okFunc) { okFunc(); }
+      modal.close();
     })
     return modal;
   },
@@ -141,35 +149,46 @@ App.Views.SimplePage = Backbone.View.extend({
 
   clickLogoutLink: function(event){
     $.ajax({
-      type: 'POST', url: '/logout',
-      headers: {'X-CSRF-Token': $('meta[name=csrf-token]').attr('content')},
-      success: (xhr, status) => {
-        App.storage.logout();
+      type: 'POST', url: '/logout', dataType: 'JSON',
+      data: {pos: location.pathname},
+      complete: () => {
+        reloadFn();
       }
     })
+    let reloadFn = App.storage.logout({delayReload: true});
   },
 
-  sendConfirmationLink: function(email, from_signup){
+  sendConfirmationLink: function(email, from_signup, oldPath){
     $.ajax({
       type: 'POST', url: '/login', data: {
         email: email,
-        from_signup: from_signup
+        from_signup: from_signup,
+        return_to: oldPath
       },
       complete: (xhr, status) => {
         let msg, data;
+        let closeFn = null;
         if (xhr.status == 200){
           data = JSON.parse(xhr.response);
           msg = data.msg;
-          App.storage.set('email_sent');
+          if(data.result == 'ok'){
+            App.storage.set('email_sent');
+            closeFn = ()=>{ location.href = "http://decisionfish.com/almost-there" }
+          }else if (data.result == 'whitelist'){
+            App.storage.setItem('initial_email', email)
+            App.router.navigate('/future_intro', {trigger: true})
+            return;
+          }
         }else{
           msg = 'Something whent wrong.'
         }
-        App.simplePage.openDesiModal(msg)
+
+        App.simplePage.openDesiModal(msg, closeFn)
       }
     })
   },
 
-  openLogin: function(email, approved){
+  openLogin: function(email, oldPath){
     let with_email = email && email.length
     let opts = {};
     let emailRegexp = Backbone.Validation.patterns.email;
@@ -183,9 +202,10 @@ App.Views.SimplePage = Backbone.View.extend({
       opts.cancelTitle = 'CANCEL';
       opts.reversedFooterBtns = true;
     }
+
     let modal = App.simplePage.openConfirmationDialog(opts,
       () => { // submit fn
-        this.sendConfirmationLink(email, with_email);
+        this.sendConfirmationLink(email, with_email, oldPath);
       },
       null, // cancel fn
       ()=> { // validate fn
@@ -264,8 +284,8 @@ App.Views.SimplePage = Backbone.View.extend({
 
   showRandomText: function(kind, delayFn, opts){
     if (!opts) { opts = {} }
-    let bal = $('.random-text-holder');
-    if (bal.length > 0){
+    const encRow = $('#encouragments-row')
+    if (!encRow.hasClass('hidden')){
       if (delayFn) {
         this.debug(`interupt '${kind}'; other hint is shown`)
         delayFn(0.5);
@@ -273,35 +293,41 @@ App.Views.SimplePage = Backbone.View.extend({
       return false;
     }
     const txt = this.parseContent(this.getRandomText(kind));
-    $('body').append($(this.randomTextTpl({text: txt})));
+    encRow.append($(this.randomTextTpl({text: txt})));
+    encRow.removeClass('hidden')
     this.debug(`show '${kind}'`);
-    bal = $('.random-text-holder');
-    setTimeout(()=>{ bal.css('opacity', '1'); }, 1000)
+    //bal = $('.random-text-holder');
+    //setTimeout(()=>{ bal.css('opacity', '1'); }, 1000)
     // HIDING PROCEDURE
-    bal.on('click', (event)=>{
+    encRow.on('click', (event)=>{
+      encRow.slideUp()
+      setTimeout(()=>{
+        encRow.html('').addClass('hidden').attr('style', '')
+      }, 1000)
       if (this.autoHide){
-        bal.css('opacity', '0');
         if (delayFn && opts.cyclic) {
           this.debug(`delay '${kind}'`)
           delayFn();
         }
         clearTimeout(this.autoHide);
         this.autoHide = null;
-        setTimeout(()=>{ bal.remove(); }, 1000);
       }
       if (opts.afterRun){ opts.afterRun() };
     })
-    this.autoHide = setTimeout(()=>{
-      this.debug(`auto-hide '${kind}'`)
-      bal.trigger('click');
-      this.autoHide = null;
-    }, Math.max(txt.split(' ').length * 800, 10000));
+    if (!opts.permanent){
+      this.autoHide = setTimeout(()=>{
+        this.debug(`auto-hide '${kind}'`)
+        encRow.trigger('click');
+        this.autoHide = null;
+      }, Math.max(txt.split(' ').length * 800, 10000));
+    }
   },
 
-  delayShowJoke: function(delayMinutes){
+  delayShowJoke: function(delayMinutes, onetime){
     if (!delayMinutes) { delayMinutes = 5 }
+    this.debug('start joke')
     setTimeout(()=>{
-      this.showRandomText('jokes', (delayFactor)=>{ this.delayShowJoke(delayFactor); }, {cyclic: true});
+      this.showRandomText('jokes', (delayFactor)=>{ this.delayShowJoke(delayFactor); }, {cyclic: !onetime});
     }, delayMinutes * 60000)
   },
 

@@ -2,9 +2,11 @@
   <span class='icon-back' role='goto-link' href='/budget'></span>
   <div class='wrapper'>
     <h1>
-      How Do You Think You<br/>Should Spend Your Money
+      How Have You Been<br/>Spending Your Money?
+      <span class='icon ask-desi' data-desi='says' data-content='budget_expenses'></span>
     </h1>
     <div class='wrapper-container'>
+      <p class='text-center'>Estimate your spending and enter the figures below. Scroll down to get more categories.</p>
        <div class='retirement-safety-row wide-row hidden' role='safe-state'>
         <span class='img-fish-retirement-safe'></span>
         <span>
@@ -17,7 +19,7 @@
       <div class='retirement-safety-row wide-row' role='unsafe-state'>
         <span class='img-fish-retirement-unsafe'></span>
         <span class='text-center'>
-          <span>I see that your take-home pay is <span role='take-home-pay'></span>. Tell me how you'd like to be spending it in each category, monthly, on average.</span>
+          <span>I see that your take-home pay is <span role='take-home-pay'></span>. Tell me roughly how you've been spending it in each category, monthly, on average.</span>
           <br/><br/>
           <span class='error-msg text-center'></span>
         </span>
@@ -35,9 +37,12 @@
           <div class='form-group form-group-horizontal'>
             <div class='label-group'>
             <% if (field == 'fun'){ %>
-              <label class='selectable'>
-                <span role='fun-need-select'></span>
-              </label>
+              <div class='flexed no-margin'>
+                <label class='selectable'>
+                  <span role='fun-need-select'></span>
+                </label>
+                <span class='icon-dropdown-arrow'></span>
+              </div>
             <% } else { %>
               <label>
                 <%= attrs.title %>

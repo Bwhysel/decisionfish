@@ -18,8 +18,8 @@ App.Views.Menu = Backbone.View.extend({
   },
 
   checkSquares: function(){
-    this.$el.find('[data-menu=budget]').toggleClass('square-locked', !App.isBudgetOpened())
-    this.$el.find('[data-menu=savings]').toggleClass('square-locked', !App.isSavingsOpened())
+    this.$el.find('[data-menu=budget]').toggleClass('square-disabled', !App.isBudgetOpened())
+    this.$el.find('[data-menu=savings]').toggleClass('square-disabled', !App.isSavingsOpened())
   },
 
   onSquareClick: function(event){

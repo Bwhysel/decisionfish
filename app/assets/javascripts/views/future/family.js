@@ -30,9 +30,7 @@ App.Views.Family = Backbone.View.extend({
         this.forceNext = false;
         return true
       }else{
-        let v = this.relatedViews[0];
-        console.log('there')
-        v.submitEmailPhone();
+        this.submitEmailPhone();
         return false;
       }
     }
@@ -72,7 +70,7 @@ App.Views.Family = Backbone.View.extend({
   },
 
   resetAdults: function(models, options){
-    console.log('resetAdults')
+    //console.log('resetAdults')
     options.previousModels.forEach((prevModel) => {
       this.removePerson(prevModel)
     });
@@ -82,6 +80,11 @@ App.Views.Family = Backbone.View.extend({
   },
 
   addOne: function(person, collection, opts){
+    const initialEmail = App.storage.getItem('initial_email')
+    if (initialEmail){
+      person.set('email', initialEmail)
+      App.storage.removeItem('initial_email')
+    }
     const personForm = new App.Views.PersonForm({model: person, parentView: this})
     personForm.render({validate: opts.validate})
 
@@ -214,8 +217,69 @@ App.Views.Family = Backbone.View.extend({
 
   checkNextNavigation: function(opts){
     App.utils.timeout(this, () => {
-      this.nextBtn.disabled = opts ? opts.disabled : this.$el.find('.error-msg').length || this.$el.find('.form-group.unfilled:not(.hidden)').length;
+      let disabled = opts && opts.disabled;
+      if (!opts){
+        let unfilledCount = this.$el.find('.form-group.unfilled:not(.hidden)').length
+        _.each(App.family.models, (m, i)=>{
+          if ((i>0) && (!m.get('email'))){
+            unfilledCount -= 1;
+          }
+        })
+        disabled = unfilledCount || this.$el.find('.error-msg').length;
+      }
+      this.nextBtn.disabled = disabled;
     }, 30, 'familyNextBtn')
-  }
+  },
+
+  submitEmailPhone: function(){
+    if (this.submitBlocked) return;
+    let user = App.family.at(0);
+    let person2 = App.family.at(1);
+
+    let btn = $('#next-btn')[0];
+    this.submitBlocked = true;
+    btn.disabled = true
+    $.ajax({
+      url: '/signup', type: 'POST', dataType: 'json',
+      data: {
+        email: user.get('email'),
+        phone: user.get('phone'),
+        secondary_email: person2 ? person2.get('email') : '',
+        years: this.collection.childrenYears,
+        person1: user.getSyncData(),
+        person2: person2 ? person2.getSyncData() : null
+      },
+      error: (xhr, errorType, error) => {
+        App.simplePage.openDesiModal('Something whent wrong.')
+      },
+      success: (data, status, xhr) => {
+        if (data.already_registered){
+          //[Send me another link] | [Change my email address]
+          let modal = App.simplePage.openConfirmationDialog({
+            content: data.msg,
+              btnTitle: 'SEND LINK', cancelTitle: 'CANCEL',
+              reversedFooterBtns: true
+            }, () => {
+              App.simplePage.sendConfirmationLink(user.get('email'));
+            });
+          $('[role=close-modal]', modal.dialog).on('click', ()=>{
+            let inp = this.$el.find('input[name=email]')[0]
+            inp.focus();
+            inp.select();
+          })
+
+
+        } else {
+          if (data.result == 'ok'){ App.storage.set('email_sent'); }
+          App.simplePage.openDesiModal(data.msg, ()=>{ location.href = "http://decisionfish.com" })
+        }
+      },
+      complete: () => {
+        this.submitBlocked = false;
+        btn.disabled = false;
+      }
+    })
+  },
+
 
 })

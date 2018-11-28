@@ -13,8 +13,13 @@
 #   rake "some:great:rake:task"
 # end
 #
-every 1.day, :at => '7:00 pm' do
+set :bundle_command, 'rvm 2.4.2@df_rails5 do bundle exec'
+set :output, "/var/www/df/shared/log/cron.log"
+
+every 1.day, at: '01:00' do
   runner "BudgetTrackingEntity.task"
 end
 
-# Learn more: http://github.com/javan/whenever
+every :tuesday, at: '00:30' do
+  rake "mx:import_net_worth"
+end

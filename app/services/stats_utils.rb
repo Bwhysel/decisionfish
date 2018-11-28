@@ -18,35 +18,36 @@ class StatsUtils
   }
 
   TAX_RATES_SINGLE = {
-    0      => 0.10,
-    9275   => 0.15,
-    37650  => 0.25,
-    91150  => 0.28,
-    190150 => 0.33,
-    413350 => 0.35,
-    415050 => 0.396
+    0        => 0.10,
+    9_525    => 0.12,
+    38_700   => 0.22,
+    82_500   => 0.24,
+    157_500  => 0.32,
+    200_000  => 0.35,
+    500_000  => 0.37
   }
 
   TAX_RATES = {
-    0      => 0.10,
-    18550  => 0.15,
-    75300  => 0.25,
-    151900 => 0.28,
-    231450 => 0.33,
-    413350 => 0.35,
-    466950 => 0.396
+    0       => 0.10,
+    19_050  => 0.12,
+    77_400  => 0.22,
+    165_000 => 0.24,
+    315_000 => 0.32,
+    400_000 => 0.35,
+    600_000 => 0.37
   }
 
   # https://trends.collegeboard.org/college-pricing/figures-tables/net-price-public-two-year-institutions-dependency-status-income-2011-12
+  # https://trends.collegeboard.org/college-pricing/figures-tables/average-net-price-by-income
   # U1 = Private Nonprofit 4Yr
-  # U2 = Public 4Yr In-State
-  # U3 = Public 4Yr
-  # U4 = Public 2Yr
+  # U2 = Public 4Yr
+  # U3 = Public 2Yr
   COLLEGE_PRICING = {
-    0      => [ 20720, 11020, 20750, 8070 ],
-    30000  => [ 24650, 14970, 24060, 10940 ],
-    65000  => [ 29950, 18940, 28340, 13290 ],
-    106000 => [ 34020, 20530, 31410, 13790 ]
+    0       => [ 19_340, 11_820, 10_710 ],
+    30_001  => [ 20_390, 12_970, 11_420 ],
+    48_001  => [ 23_160, 16_560, 13_550 ],
+    75_001  => [ 26_860, 20_700, 15_680 ],
+    110_001 => [ 34_140, 22_030, 16_450 ]
   }
 
   def life_expectancy(sex, age, risk)

@@ -18,12 +18,18 @@ App.Views.FinanceDetails = Backbone.View.extend({
   },
 
   render: function(step){
-    let stepIndex = this.steps.indexOf(step)
-    if (stepIndex < 0) { step = this.steps[stepIndex = 0] };
+    let steps = _.clone(this.steps);
+    const withoutChildren = App.family.childrenYears.length == 0;
+    if (withoutChildren){
+      steps.splice(1,1) // remove college_savings
+    }
+    let stepIndex = steps.indexOf(step)
+    if (stepIndex < 0) { step = steps[stepIndex = 0] };
     this.step = step;
-    this.onLastPage = stepIndex == (this.steps.length - 1);
-    const prevStep = stepIndex == 0 ? 'family' : 'finance_details/' + this.steps[stepIndex-1]
-    const nextStep = this.onLastPage ? 'big_decision' : 'finance_details/' + this.steps[stepIndex+1]
+    this.onLastPage = stepIndex == (steps.length - 1);
+    const prevStep = stepIndex == 0 ? 'family' : 'finance_details/' + steps[stepIndex-1]
+    const nextStep = this.onLastPage ? 'big_decision' : 'finance_details/' + steps[stepIndex+1]
+
 
     App.transitPage(this.mainTemplate({
       prevStep: prevStep,
@@ -35,12 +41,16 @@ App.Views.FinanceDetails = Backbone.View.extend({
     this.setElement($(this.elementSelector))
     this.nextBtn = document.getElementById('next-btn');
 
+    if (step == 'total'){
+      $('.icon-back').attr('role', 'goto-back').attr('data-safe-path', prevStep)
+    }
+
     if (this.onLastPage){
-      this.$el.find('[role=partial-placeholder]').replaceWith(this.sumTemplate())
+      this.$el.find('[role=partial-placeholder]').replaceWith(this.sumTemplate({withoutChildren: withoutChildren}))
     }else{
       this.$el.find('[data-source=steps-progress]').html(App.simplePage.circleProgressTpl({
         stepIndex: stepIndex,
-        stepsCount: this.steps.length-1
+        stepsCount: steps.length-1
       }))
     }
 

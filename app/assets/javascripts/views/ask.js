@@ -1,5 +1,5 @@
 App.Views.Ask = Backbone.View.extend({
-  el: 'body > .container',
+  elSelector: '#page-content > .container',
   template: JST['templates/ask/index'],
 
   initialize: function(options){
@@ -16,7 +16,9 @@ App.Views.Ask = Backbone.View.extend({
     let email = App.family.at(0);
     email = email ? email.get('email') : null;
 
-    this.$el.html(this.template({email: email}))
+    App.transitPage(this.template({email: email}));
+    this.setElement($(this.elSelector));
+
     this.btn = $('#ask-screen .send-to-desi')
     this.data = { input: email != null, textarea: false }
     App.utils.setPageHeight(this.el);

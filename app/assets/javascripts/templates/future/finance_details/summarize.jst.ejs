@@ -13,12 +13,14 @@
     </label>
     <input type='text' name='cash'/>
   </div>
+  <% if (!withoutChildren) { %>
   <div class='form-group form-group-horizontal'>
     <label><%= this.stepsData['college_savings'].title %>
       &nbsp;<span class='icon-question' title="<%= this.stepsData['college_savings'].hint %>"></span>
     </label>
     <input type='text' name='college_savings'/>
   </div>
+  <% } %>
   <div class='form-group form-group-horizontal'>
     <label><%= this.stepsData['retirement_savings'].title %>
       &nbsp;<span class='icon-question' title="<%= this.stepsData['retirement_savings'].hint %>"></span>

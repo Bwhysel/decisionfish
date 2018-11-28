@@ -14,16 +14,21 @@ App.Views.BudgetSpend = Backbone.View.extend({
     'keyup input': 'keyUpInput',
     'click [role=increase]': 'onIncreaseParam',
     'click [role=decrease]': 'onDecreaseParam',
+    'click #next-btn': 'onNextClick'
   },
 
   render: function(){
     let captions = _.clone(this.model.captions);
     captions.fun.title = this.model.getFunData().title;
     _.each(captions, (attrs, category) => {
-      if (category == 'credit_card') {return;}
+      if ((category == 'credit_card') || (category == 'savings')) {return;}
       if (category == 'savings'){
         attrs.suggestKlass = 'spend-more';
         attrs.suggestion = 'SAVE<br/>MORE!';
+        attrs.disabled = true
+      }else if (category == 'everything'){
+        attrs.suggestKlass = 'spend-less';
+        attrs.suggestion = 'SPEND<br/>LESS';
         attrs.disabled = true
       }else if (this.model.get(`${category}_spend`)){
         let need = category == 'fun' ? this.model.getNeed(category) : attrs.need
@@ -48,6 +53,14 @@ App.Views.BudgetSpend = Backbone.View.extend({
 
     this.setElement($(this.elementSelector));
 
+    this.nextBtn = this.$el.find('#next-btn').addClass('disabled')
+
+    const prevAction = Backbone.history.pastFragments[Backbone.history.pastFragments.length - 1]
+    //console.log(prevAction, Backbone.history.pastFragments)
+    if (!prevAction || prevAction == 'budget_walkthrough'){
+      App.simplePage.openDesiModal("Here's where we design your budget for happiness! Consider each category carefully: decide whether to spend less, spend more, or leave it unchanged (\"protect\"), based on what you need to be happier.")
+    }
+
     const scrollableArea = $('.scrollable-area');
     const scrollableHeight = document.documentElement.clientHeight - ($('.wrapper').height() - scrollableArea.height());
     scrollableArea.css('maxHeight', ''+scrollableHeight+'px');
@@ -59,19 +72,38 @@ App.Views.BudgetSpend = Backbone.View.extend({
     this.savingsValue = this.$el.find('[role=savings-value]');
     this.safeState = this.$el.find('[role=safe-state]');
     this.unsafeState = this.$el.find('[role=unsafe-state]');
-    this.nextBtn = this.$el.find('#next-btn')[0];
-    this.nextBtn.disabled = true;
 
     tippy('.icon-question', {arrow: true, interactive: true, theme: 'light'});
 
     this.resetInputs();
     this.savingsUpdate();
 
-    if (!this.model.hasEnoughSavings()){
+    if (!this.model.areBalanced()){
       setTimeout(()=>{
         App.simplePage.openDesiModal("You're ready to make your budget happier! Just add and subtract spending from categories to meet your needs.")
       }, 20);
     }
+  },
+
+  onNextClick: function(){
+    let diff = this.savingsAboveGoal();
+    if (diff >= 0) return true;
+
+    event.preventDefault();
+
+    let msg = `You are so close to done! Please reduce your spending by ${App.utils.toMoney(-diff)} so that you can meet your monthly savings goal of ${App.utils.toMoney(this.savingsGoal)}. Need some help? Try "Give and Get Ideas", below or ask for me for help. You can also return to the Retirement chapter to change your savings goal.`
+    App.simplePage.openSectionModal({
+      btnTitle: 'RETIREMENT',
+      cancelTitle: 'OK',
+      helpBtn: true,
+      content: msg
+    }, ()=>{
+      App.router.navigate('/family', {trigger: true})
+    }, ()=>{
+      console.log('cancel')
+    })
+
+    return false;
   },
 
   resetInputs: function(){
@@ -79,7 +111,11 @@ App.Views.BudgetSpend = Backbone.View.extend({
     this.$el.find('input[type=text]').forEach((input) => {
       VMasker(input).maskMoney({precision: 0, delimiter: ',', unit: '$'});
       input.value = attrs[input.name];
-      if (input.value) { $(input).trigger('keyup', true); }
+      const $input = $(input)
+      //if (input.value) { $input.trigger('keyup', true); }
+      $input.trigger('keyup', true);
+
+      $input.siblings('.spend-suggest').toggleClass('spend-zero', input.value==0)
     })
     this.savingsValue.text(App.utils.toMoney(attrs.savings))
     this.$el.find('[role=credit-card-value]').text(App.utils.toMoney(attrs.credit_card))
@@ -98,7 +134,7 @@ App.Views.BudgetSpend = Backbone.View.extend({
   keyUpInput: function(event, manual){
     const target = event.currentTarget;
     if (manual){ return };
-    const curValue = App.utils.parseMoney(target.value);
+    const curValue = App.utils.parseMoney(target.value || 0);
     const prevValue = this.model.get(target.name);
     const newSavings = this.model.get('savings') - (curValue - prevValue);
     //console.log(this.model.get('savings'),'; ', curValue, ' <= ', prevValue);
@@ -148,16 +184,19 @@ App.Views.BudgetSpend = Backbone.View.extend({
     this.savingsProgress.css('width', `${gradientPos}%`);
   },
 
+  savingsAboveGoal: function(){
+    return this.model.get('savings') - this.savingsGoal;
+  },
+
   checkNextState: function() {
-    let r = this.model.get('savings') >= this.savingsGoal;
-    if (r){
+    if (this.savingsAboveGoal() >= 0){
       this.safeState.removeClass('hidden');
       this.unsafeState.addClass('hidden');
-      this.nextBtn.disabled = false;
+      this.nextBtn.removeClass('disabled');
     }else{
       this.unsafeState.removeClass('hidden');
       this.safeState.addClass('hidden');
-      this.nextBtn.disabled = true;
+      this.nextBtn.addClass('disabled');
     }
     this.model.recalcNeeds();
   },

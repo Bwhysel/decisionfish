@@ -58,6 +58,10 @@
   font-family: "Birch", Georgia, serif;
   font-size: 3.5rem;
 }
+.diploma-subheading {
+  font-family: "Birch", Georgia, serif;
+  font-size: 1.8rem;
+}
 
 .diploma-small-heading {
   font-family: Georgia, serif;
@@ -164,62 +168,80 @@
 }
 
 @media (max-device-width: $screen-sm) {
+  #diploma {
+    margin-bottom: 0;
+  }
   .diploma-outer-frame {
-    background-size: 100% 2.6rem;
-    padding: 5rem 5.6rem 4rem;
+    background-size: 100% 1.2rem;
+    padding: 9.5% 10.5% 8%;
   }
 
   .diploma-roof {
-    height: 6.6rem;
+    height: 8%;
+    background-size: 100% 3rem;
   }
 
   .diploma-heading {
-    font-size: 4.5rem;
+    font-size: 1.5rem;
+  }
+  .diploma-subheading {
+    font-size: 1.25rem;
+
   }
 
   .diploma-container {
-    padding: 2rem 5.4rem 11rem;
+    padding: 1rem 0.4rem 2rem;
   }
 
   .diploma-stamp {
-    width: 17rem;
-    height: 22rem;
-    left: 30%;
-    bottom: -11rem;
+    width: 5rem;
+    height: 6.5rem;
+    bottom: -3.5rem;
+    left: 36%;
   }
 
   .diploma-branch {
-    margin: 1rem auto 3rem;
-    width: 11rem;
-    height: 4rem;
+    margin: 0.1rem auto 0.5rem;
+    width: 3.5rem;
+    height: 1.4rem;
   }
 
   .diploma-data-row {
-    margin-bottom: 2rem;
+    //margin-bottom: 2rem;
+    margin-right: 0;
+    margin-left: 0;
   }
 
   .diploma-value {
-    font-size: 3.4rem;
+    font-size: 1.2rem;
     &.diploma-main-value {
-      font-size: 6rem;
-      margin-top: 2rem;
+      font-size: 1.8rem;
+      margin-top: 0.5rem;
     }
   }
 
   .diploma-small-heading {
-    font-size: 2.1rem;
-    margin-bottom: 1rem;
+    font-size: 0.7rem;
+    //margin-bottom: 1rem;
   }
 
   #budget-final-screen .diploma-container {
-    padding-left: 2.5rem;
-    padding-right: 2.5rem;
+    //padding-left: 2.5rem;
+    //padding-right: 2.5rem;
   }
 
   #savings-final-screen {
     .diploma-value.diploma-main-value {
-      margin-top: 0;
-      margin-bottom: 2rem;
+      //margin-top: 0;
+      //margin-bottom: 2rem;
     }
+  }
+
+  .diploma-footer {
+    height: 2.6rem;
+  }
+
+  .col-23 {
+    flex-basis: 50%;
   }
 }

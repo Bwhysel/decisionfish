@@ -54,11 +54,11 @@ App.utils = {
   },
   parseMoney: function(value){
     value = value.replace(/\$|\,/g, '');
-    return value.length ? parseInt(value) : 0;
+    return value.length ? parseInt(value) || 0 : 0;
   },
   parsePercent: function(value){
     value = value.replace(/\s|\%/g, '');
-    return value.length ? parseFloat(value) : 0;
+    return value.length ? parseFloat(value) || 0 : 0;
   },
 
   getPageHeight: function(){
@@ -124,7 +124,7 @@ App.utils = {
 
 App.fakeStorage = {}
 App.storage = {
-  available: true,
+  available: false,
 
   checkAvailability: function(){
     const mod = 'checkLocalStorage';
@@ -136,7 +136,8 @@ App.storage = {
     } catch (e) {
       x = false;
     }
-    this.available = x;
+    //this.available = x;
+    this.localStorageEnabled = x;
     return x;
   },
 
@@ -144,34 +145,68 @@ App.storage = {
     if (this.available){
       localStorage.setItem(key, value)
     }else {
+      App.fakeStorage[key] = value
       return false;
     }
   },
 
+  getItem: function(key){
+    return this.available ? localStorage.getItem(key) : App.fakeStorage[key];
+  },
+
+  getPersistentItem: function(key){
+    return this.localStorageEnabled ? localStorage.getItem(key) : App.fakeStorage[key];
+  },
+
+  setPersistentItem: function(key, value){
+    if (this.localStorageEnabled){
+      localStorage.setItem(key, value)
+    }else {
+      App.fakeStorage[key] = value
+      return false;
+    }
+  },
+
+  removeItem: function(key) {
+    this.available ? localStorage.removeItem(key) : delete App.fakeStorage[key]
+  },
+
   is: function(item){
-    return (localStorage.getItem(item) == 'true') || App.fakeStorage[item];
+    return this.getItem(item) == 'true';
   },
 
   set: function(item){
-    this.setItem(item, true)
-    App.fakeStorage[item] = true // workaround for browsers w/o storage
+    this.setItem(item, 'true')
     return true;
   },
 
   clear: function(item){
-    this.setItem(item, false)
-    App.fakeStorage[item] = false
+    this.available ? this.setItem(item, false) : delete App.fakeStorage[item]
     return true;
   },
 
-  logout: function(){
-    localStorage.clear();
-    App.storage.setItem('logoutText', 'You were logged out.')
-    location.href = '/menu'; // to reinit instanse variables
+  clearAll: function(){
+    this.available ? localStorage.clear() : App.fakeStorage = {}
+  },
+
+  logout: function(opts){
+    if (!opts) opts = {};
+    this.clearAll()
+    //console.log('logout');
+    App.authorized = false;
+    this.setItem('logoutText', 'You were logged out.')
+    let reloadFn = ()=>{
+      location.href = opts.redirectTo || '/hello'
+    }
+    if (opts.delayReload){
+      return reloadFn;
+    }else{
+      reloadFn();
+    }
   },
 
   reset: function(webStorage){
-    localStorage.clear();
+    this.clearAll()
 
     this.set('sync_mode');
 
@@ -223,23 +258,27 @@ App.storage = {
       App.loans.set(webStorage.loans).saveLocal();
     }
 
-    if (webStorage.investements){
+    if (webStorage.investments){
       webStorage.investments.synced = true;
       App.investments.set(webStorage.investments).saveLocal();
     }
 
+    if (webStorage.income_stats){
+      App.incomeStats = webStorage.income_stats;
+    }
+
     if (App.retirementFunding.isSafe()){ App.storage.set('budget_opened') }
-    if (App.budgetCategories.hasEnoughSavings()){ App.storage.set('investment_opened') }
+    if (App.budgetCategories.areBalanced()){ App.storage.set('investment_opened') }
     if (App.investments.isFilled()){ App.storage.set('housing_opened') }
     App.bigDecision.trigger('imported');
 
-    console.log('Data imported')
+    //console.log('Data imported')
   },
 
   export: function(){
     this.set('sync_mode')
 
-    App.family.restoreFromStorage();
+    //App.family.restoreFromStorage();
 
     App.family.forEach((person) => {
       if (!person.isEmpty()){
@@ -253,13 +292,7 @@ App.storage = {
       App.finances.trigger('reset');
     }
 
-    if (App.retirementFunding.isSafe() !== undefined){
-      console.error('TODO: export bigDecision & finAssumptions');
-    }
-
-    console.error('TODO: export budget entries');
-
-    console.log('LocalStorage exported')
+    //console.log('LocalStorage exported')
   }
 }
 
@@ -267,16 +300,29 @@ App.syncOn = function(){
   return this.authorized && this.storage.is('sync_mode');
 }
 
-App.initData = function(){
-  // Check if account is verified
-  this.authorized = document.getElementById('uid') != null;
+App.checkAuth = function(){
+  let uid = document.getElementById('uid')
+  this.authorized = uid != null;
+  this.companyName = uid ? uid.dataset.company : 'Visitor';
+}
+App.checkReminder = function(){
+  if (this.authorized){
+    let reminderEl = document.getElementById('reminder')
+    let nextTime = reminderEl.getAttribute('data-next')
+    App.reminder = {
+      isNew: reminderEl.getAttribute('data-new') == 'true',
+      next: nextTime.length ? parseInt(nextTime) : null,
+      period: parseInt(reminderEl.getAttribute('data-period'))
+    }
+  }
+}
 
+App.initData = function(callback){
   // do not request data if account is not verified
   if (!this.authorized) return false;
 
   // do not request data if storage already has sync mode
   if (this.storage.is('sync_mode')) {return false; }
-
   $.ajax({
     url: '/user/profile', type: 'GET', dataType: 'json',
     success: (data) => {
@@ -288,8 +334,10 @@ App.initData = function(){
           App.storage.export();
           break;
         default:
-          console.log(data)
+          //console.log(data)
       }
+    }, complete: () => {
+      callback()
     }
   })
   return true;
@@ -302,14 +350,18 @@ App.isSavingsOpened = function(){
   return App.retirementFunding.isSafe() && this.storage.is('investment_opened')
 }
 
+App.isHousingOpened = function(){
+  return App.retirementFunding.isSafe() && this.storage.is('housing_opened')
+}
+
 App.transitPage = function(html){
-  const origin = $('body > .container-original');
+  const origin = $('#page-content > .container-original');
   if (!origin.html().trim().length) {
     origin.html(html)
     App.simplePage.setElement(origin);
     App.utils.smoothScroll($(window), 0, 200);
   }else {
-    const newContainer = $('<div class="container"></div>').prependTo('body');
+    const newContainer = $('<div class="container"></div>').insertBefore(origin);
     newContainer.html(html);
     App.simplePage.setElement(newContainer);
     let newWasMoved = false;
@@ -346,23 +398,34 @@ App.transitPage = function(html){
 }
 
 App.savePosition = function(callback){
-  $.ajax({
-    url: '/position', type: 'POST', dataType: 'json',
-    data: { pos: location.pathname },
-    complete: () => { if (callback) callback(); }
-  })
+  if (App.authorized){
+    $.ajax({
+      url: '/position', type: 'POST', dataType: 'json',
+      data: { pos: location.pathname },
+      complete: () => { if (callback) callback(); }
+    })
+  }
 }
 
-App.restorePosition = function(fallback){
-  if (!App.authorized){
+App.inAppNavigateEvent = function(event){
+  event.preventDefault();
+  let target = event.currentTarget;
+  App.backAction = target.className && (target.className.indexOf('icon-back') >= 0);
+  App.router.navigate(target.getAttribute('href'), {trigger: true})
+  return false;
+}
+
+App.restorePosition = function(fallback, currentPath){
+  //console.log('restore position')
+  if (!App.authorized || App.positionRestored){
     if (fallback) fallback();
     return false;
   }
   $.ajax({
     url: '/position', type: 'GET', dataType: 'json',
     success: (data) => {
-      if ((location.pathname != data.pos) && data.pos){
-        console.log('forceRedirectionTo', data.pos);
+      App.positionRestored = true;
+      if ((currentPath != data.pos) && data.pos){
         App.router.navigate(data.pos, {trigger: true});
       }else{
         if (fallback) fallback();

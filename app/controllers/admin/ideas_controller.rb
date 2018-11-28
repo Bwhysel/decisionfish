@@ -80,6 +80,8 @@ class Admin::IdeasController < Admin::BaseController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def idea_params
-      params.require(:idea).permit(:need, :user_id, :approved, :reported, :user_name, :user_email, :saves_money, :content)
+      ps = params.require(:idea).permit(:need, :user_id, :approved, :reported, :user_name, :user_email, :saves_money, :content)
+      ps[:content] =  ActionController::Base.helpers.sanitize(ps[:content]).gsub('"','\'')
+      ps
     end
 end

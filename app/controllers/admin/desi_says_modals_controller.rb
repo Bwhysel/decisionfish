@@ -2,7 +2,7 @@ class Admin::DesiSaysModalsController < Admin::BaseController
   before_action :set_desi_says_modal, only: [:show, :edit, :update]
 
   def index
-    @desi_says_modals = DesiSaysModal.all
+    @desi_says_modals = DesiSaysModal.all.order('id desc')
   end
 
   def show
@@ -20,7 +20,7 @@ class Admin::DesiSaysModalsController < Admin::BaseController
 
     respond_to do |format|
       if @desi_says_modal.save
-        format.html { redirect_to [:admin, @desi_says_modal], notice: 'Bubble was successfully created.' }
+        format.html { redirect_to admin_desi_says_modals_path, notice: 'Bubble was successfully created.' }
         format.json { render :show, status: :created, location: @desi_says_modal }
       else
         format.html { render :new }
@@ -32,7 +32,7 @@ class Admin::DesiSaysModalsController < Admin::BaseController
   def update
     respond_to do |format|
       if @desi_says_modal.update(desi_says_modal_params)
-        format.html { redirect_to [:admin, @desi_says_modal], notice: 'Bubble was successfully updated.' }
+        format.html { redirect_to admin_desi_says_modals_path, notice: 'Bubble was successfully updated.' }
         format.json { render :show, status: :ok, location: @desi_says_modal }
       else
         format.html { render :edit }
@@ -47,6 +47,8 @@ class Admin::DesiSaysModalsController < Admin::BaseController
     end
 
     def desi_says_modal_params
-      params.require(:desi_says_modal).permit(:module, :slug, :content)
+      ps = params.require(:desi_says_modal).permit(:module, :slug, :content)
+      ps[:content] =  ActionController::Base.helpers.sanitize(ps[:content]).gsub('"','\'')
+      ps
     end
 end

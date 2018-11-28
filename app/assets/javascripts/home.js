@@ -4,6 +4,7 @@
 //= require rmodal
 //= require zepto
 //= require rails-ujs
+//= require atrium
 
 //= require underscore-1.8.3
 //= require backbone-1.3.3
@@ -26,6 +27,13 @@
 //= require d3/d3-shape
 //= require d3/d3-timer
 //= require d3/d3-transition
+// require flatpickr
+//= require moment
+//= require draggabilly.pkgd
+//= require mdDateTimePicker
+//= require zepto-slide-transitions
+
+
 // Not used D3 libs: brush, chord, geo, dsv, hierarhy,
 // quadtree, queue, random, request, voronoi, zoom
 //= require tippy
@@ -43,6 +51,10 @@
 'use strict';
 
 (function(){
+  if (location.port != '3000'){
+    Raven.config('https://634c584367ba4d848a1849612a1c66b7@sentry.io/1255504').install()
+  }
+
   App.simplePage = new App.Views.SimplePage(); // determine basic events
   App.importPage = new App.Views.Import(); // import pseudo-page
   App.router = new App.Router();
@@ -59,41 +71,13 @@
   App.investments = new App.Models.Investments();
   App.idea = new App.Models.Idea();
 
-
   $.ajaxSettings.headers = {
     'X-CSRF-Token': $('meta[name=csrf-token]').attr('content')
   };
 
   App.storage.checkAvailability();
-
-  if (!App.initData()){
-    App.family.restoreFromStorage();
-  }
-
-  Backbone.history.length = 0;
-  Backbone.history.pastFragments = [];
-  Backbone.history.on('route', function (opts, a) {
-    ++this.length;
-    Backbone.history.pastFragments.push(a);
-  });
-
-  Backbone.history.start({pushState: true});
-  if (location.port != '3000'){
-    Raven.config('https://a3fa0c40103f43d98f1dedfe962fa8e1@sentry.io/195972').install()
-  }
-
-  $.ajax({
-    type: 'GET',
-    url: '/additional_content',
-    dataType: 'json',
-    success: function(data){
-      App.jokes = _.map(data.jokes, (x) => { return x.content; })
-      App.encouragments = _.map(data.encouragments, (x) => { return x.content; })
-      App.bubbles = {}
-      _.each(data.bubbles, (x) => { App.bubbles[x.path] = x.content; })
-      App.simplePage.delayShowJoke();
-    }
-  })
+  App.checkAuth();
+  App.checkReminder();
 
   let $menu = $('#menu-panel');
   let $startModulLink = $('.module-start', $menu)
@@ -101,6 +85,8 @@
   let $helpLink = $('.help-link', $menu)
   let $privacyLink = $('.privacy-link', $menu)
   let $resetLink = $('.reset-link', $menu)
+  let $dashboardLink = $('.dashboard-link', $menu)
+
   let $ham = $('#hamburger').on('click', (event)=>{
     $ham.toggleClass('open');
     $menu.toggleClass('open');
@@ -118,12 +104,16 @@
           !$(event.target).closest('#hamburger').length &&
           $menu.hasClass('open')
         ){
-        console.log('wow')
-        $ham.trigger('click')
+        //$ham.trigger('click')
       }
       return true;
     })
   })
+  $('a', $menu).on('click', (event)=> { $ham.trigger('click') });
+  $startModulLink.on('click', App.inAppNavigateEvent);
+  $dashboardLink.on('click', App.inAppNavigateEvent);
+  $('.home-link', $menu).on('click', App.inAppNavigateEvent);
+
   $loginLink.on('click', (event)=>{
     event.preventDefault();
     if (App.authorized){
@@ -136,7 +126,6 @@
   $helpLink.on('click', (event)=>{
     event.preventDefault();
     App.simplePage.gotoLink(event);
-    $ham.trigger('click');
     return false;
   })
   $privacyLink.on('click', (event)=>{
@@ -156,18 +145,58 @@
       $.ajax({
         url: '/reset', type: 'POST', dataType: 'json',
         success: (xhr, status) => {
-          App.storage.logout();
+          App.storage.logout({redirectTo: 'http://decisionfish.com'});
         }
       })
     });
-
     return false;
   })
 
-  let msg = localStorage.getItem('logoutText');
+  const fnStart = () =>{
+    Backbone.history.length = 0;
+    Backbone.history.pastFragments = [];
+    Backbone.history.on('route', function (opts, a) {
+      ++this.length;
+      Backbone.history.pastFragments.push(a);
+    });
+    let page = location.pathname
+    Backbone.history.start({pushState: true});
+    if (!App.authorized && (['/', '/hello', '/ask', '/menu', '/verify', '/future_intro', '/family'].indexOf(page) < 0)){
+      App.router.navigate('/hello', {trigger: true, replace: true})
+      App.simplePage.openLogin(null, page)
+    }
+    if (App.isHousingOpened()) { $dashboardLink.removeClass('hidden') }
+    $ham.removeClass('hidden')
+  }
+
+  const lastVisitedTime = () => {
+    return App.storage.getPersistentItem('recentPageClosedAt') || new Date().getTime();
+  }
+  const logoutDelay = 15 * 60 * 1000;
+  let absentTooLong = (new Date().getTime() - lastVisitedTime()) > logoutDelay;
+  //console.log(App.authorized, absentTooLong);
+  if (!App.authorized || absentTooLong || !App.initData(fnStart)){
+    //App.family.restoreFromStorage();
+    fnStart();
+  }
+
+  $.ajax({
+    type: 'GET',
+    url: '/additional_content',
+    dataType: 'json',
+    success: function(data){
+      App.jokes = _.map(data.jokes, (x) => { return x.content; })
+      App.encouragments = _.map(data.encouragments, (x) => { return x.content; })
+      App.bubbles = {}
+      _.each(data.bubbles, (x) => { App.bubbles[x.path] = x.content; })
+      App.simplePage.delayShowJoke(5);
+    }
+  })
+
+  let msg = App.storage.getItem('logoutText');
   if (msg){
     App.simplePage.openDesiModal(msg);
-    localStorage.removeItem('logoutText');
+    App.storage.removeItem('logoutText');
   }
 
   var inactivityTime = function () {
@@ -186,26 +215,33 @@
       App.simplePage.clickLogoutLink();
     }
 
-    function resetTimer() {
+    function resetTimer(event) {
         clearTimeout(t);
-        t = setTimeout(logout, 30*60*1000)
-        // 1000 milisec = 1 sec
+        //console.log('reset timer', event)
+        t = setTimeout(logout, logoutDelay)
     }
+
+    let lastTime = lastVisitedTime();
+    const onSleepLogout = function() {
+      let currentTime = new Date().getTime();
+      if ((currentTime-lastTime) > logoutDelay) {
+        //console.log('onSleepLogout', (currentTime-lastTime) / 1000 / 60)
+        logout();
+      }
+      lastTime = currentTime;
+    }
+    lastTime ? onSleepLogout() : lastTime = new Date().getTime();
+    setInterval(onSleepLogout, 2000);
   };
   if (App.authorized){
     inactivityTime();
   }
   window.onbeforeunload = function(){
-    App.savePosition();
-  }
-  /*
-  $.ajax({
-    url: '/save_position', type: 'POST', dataType: 'json',
-    data: {pos: location.pathname},
-    success: (xhr, status) => {
-      console.log('wow')
+    if (App.authorized){
+      App.savePosition();
     }
-  })
-  */
+    App.storage.setPersistentItem('recentPageClosedAt', new Date().getTime());
+  }
+
 })()
 

@@ -8,6 +8,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn" role='submit-modal'><%= btnTitle %></button>
+        <% if (helpBtn) {%><button class="btn" role="help-link">HELP</button><% } %>
         <% if (cancelTitle) {%><button class="btn" role='close-modal'><%= cancelTitle %></button><% } %>
       </div>
     </div>

@@ -7,6 +7,12 @@ App.Views.PersonForm = Backbone.View.extend({
     Backbone.Validation.bind(this, {
       model: this.model
     });
+    this.model.bind('validated', (isValid, model, errors) =>{
+      if (!errors.income){
+        //console.log('validate income')
+        this.validateInput(this.$incomeInput);
+      }
+    })
   },
 
   events: {
@@ -46,7 +52,8 @@ App.Views.PersonForm = Backbone.View.extend({
   },
 
   showEmailPhoneFields: function(){
-    this.$el.find('input[name=email], input[name=phone]').parent().removeClass('hidden')
+    //this.$el.find('input[name=email], input[name=phone]').parent().removeClass('hidden')
+    this.$el.find('input[name=phone]').parent().removeClass('hidden')
   },
 
   render: function(options){
@@ -64,7 +71,8 @@ App.Views.PersonForm = Backbone.View.extend({
       }
     })
 
-    VMasker(this.$el.find('input[name=income]')).maskMoney({
+    this.$incomeInput = this.$el.find('input[name=income]');
+    VMasker(this.$incomeInput).maskMoney({
       precision: 0,
       delimiter: ',',
       unit: '$ '
@@ -151,9 +159,18 @@ App.Views.PersonForm = Backbone.View.extend({
     let inputName = $input[0].name;
 
     let val = $input[0].value;
-    if (inputName == 'income'){ val = val.replace(/\$|\s|\,/g, '')}
+    if (inputName == 'income'){ val = App.utils.parseMoney(val) }
 
     this.model.updateParam(inputName, val);
+
+    if ((inputName == 'income') && result){
+      //console.log('on deselect')
+      App.family.each((p)=>{
+        if (p.get('id') != this.model.get('id')){
+          p.validate();
+        }
+      })
+    }
 
     if (result && (inputName == 'phone') && App.storage.is('wrong_phone')){
       this.updatePhoneOnVerify();
@@ -173,53 +190,10 @@ App.Views.PersonForm = Backbone.View.extend({
     })
   },
 
-  submitEmailPhone: function(){
-    if (this.submitBlocked ||
-      !this.model.isValid('email') ||
-      !this.model.isValid('phone')) return;
-
-    this.submitBlocked = true;
-    $.ajax({
-      url: '/signup', type: 'POST', dataType: 'json',
-      data: {
-        email: this.model.get('email'),
-        phone: this.model.get('phone')
-      },
-      error: (xhr, errorType, error) => {
-        App.simplePage.openDesiModal('Something whent wrong.')
-      },
-      success: (data, status, xhr) => {
-        if (data.already_registered){
-          //[Send me another link] | [Change my email address]
-          let modal = App.simplePage.openConfirmationDialog({
-            content: data.msg,
-              btnTitle: 'SEND AGAIN', cancelTitle: 'CHANGE ADDRESS',
-              reversedFooterBtns: true
-            }, () => {
-              App.simplePage.sendConfirmationLink(this.model.get('email'), true);
-            });
-          $('[role=close-modal]', modal.dialog).on('click', ()=>{
-            let inp = this.$el.find('input[name=email]')[0]
-            inp.focus();
-            inp.select();
-          })
-
-
-        } else {
-          if (data.result == 'ok'){ App.storage.set('email_sent'); }
-          App.simplePage.openDesiModal(data.msg)
-        }
-      },
-      complete: () => {
-        this.submitBlocked = false;
-      }
-    })
-  },
-
   validateInput: function($input, silent){
     let name = $input[0].name;
     let value = $input.val();
-    if (name=='income') value = value.replace(/\$\s|\,/g, '')
+    if (name=='income') value = App.utils.parseMoney(value);
     let errorMessage = this.model.preValidate(name, value)
     let result = errorMessage.length == 0;
     if (silent){
@@ -258,11 +232,15 @@ App.Views.PersonForm = Backbone.View.extend({
     if (newValue.length){
       $block.removeClass('unfilled')
     }else{
-      $block.addClass('unfilled')
+      App.utils.timeout(this, ()=>{
+        if (!$input.val().length){
+          $block.addClass('unfilled')
+        }
+      }, 1200, 'input_unfill_long_check')
     }
     if ($input.hasClass('error')){
       this.validateInput($input);
-    }else if (event.keyCode != 9 && (newValue.length > 1)){ // Tab pressed
+    } else if (event.keyCode != 9 && (newValue.length > 1)){ // Tab pressed
       App.utils.timeout(this, ()=>{
         this.validateInput($input, true);
       }, 100, 'person_input_check')

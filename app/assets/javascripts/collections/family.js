@@ -5,11 +5,11 @@ App.Collections.Family = Backbone.Collection.extend({
   childrenYears: [],
 
   restoreFromStorage: function(){
-    let personIds = localStorage.getItem('persons')
+    let personIds = App.storage.getItem('persons')
     if (personIds) {
       let persons = [];
       JSON.parse(personIds).forEach((id) => {
-        let storedObj = localStorage.getItem('person_'+id);
+        let storedObj = App.storage.getItem('person_'+id);
         if (storedObj){
           persons.push(JSON.parse(storedObj))
         }
@@ -18,7 +18,7 @@ App.Collections.Family = Backbone.Collection.extend({
         this.reset(persons);
       }
     }
-    let children = localStorage.getItem('children');
+    let children = App.storage.getItem('children');
     if (children){
       this.childrenYears = JSON.parse(children);
     }
@@ -34,7 +34,7 @@ App.Collections.Family = Backbone.Collection.extend({
     App.loans.restoreLocal();
     App.investments.restoreLocal();
 
-    console.log('Data restored from localStorage');
+    //console.log('Data restored from localStorage');
   },
 
   resetChildren: function(years){
@@ -72,11 +72,17 @@ App.Collections.Family = Backbone.Collection.extend({
         years: this.childrenYears
       },
       success: (data) => {
-        console.log(data)
+        //console.log(data)
       },
       error: (xhr, errorStatus, error) => {
         console.log(error)
       }
+    })
+  },
+
+  isValid: function(){
+    return (this.length > 0) && _.all(this.models, (person) =>{
+      return person.get('age') && (person.get('income') != null)
     })
   },
 

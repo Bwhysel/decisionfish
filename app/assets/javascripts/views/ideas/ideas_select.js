@@ -4,6 +4,7 @@ App.Views.IdeasSelect = Backbone.View.extend({
 
   events: {
     'click .square': 'onSquareClick',
+    'click .blue-button': 'onNextClick'
   },
 
   unmetKlass: 'square-disabled',
@@ -14,6 +15,14 @@ App.Views.IdeasSelect = Backbone.View.extend({
     App.transitPage(this.template({}));
     this.setElement($(this.elementSelector));
     App.utils.setPageHeight(this.el);
+    this.nextBtns = this.$el.find('.blue-button').addClass('disabled')
+  },
+
+  onNextClick: function(event){
+    if (this.prevSelected) { return true; }
+    event.preventDefault();
+    App.simplePage.openDesiModal('Please select one need first. Thanks.');
+    return false;
   },
 
   onSquareClick: function(event){
@@ -25,10 +34,16 @@ App.Views.IdeasSelect = Backbone.View.extend({
     if (this.prevSelected && (this.prevSelected != square)){
       $(this.prevSelected).addClass(this.unmetKlass).removeClass(this.activeKlass);
     }
-    this.prevSelected = square;
+
 
     if ($square.hasClass(this.activeKlass)){
+      this.prevSelected = square;
+      this.nextBtns.removeClass('disabled');
       this.model.set('need', square.dataset.need);
+    }else{
+      this.prevSelected = null;
+      this.nextBtns.addClass('disabled');
+      this.model.set('need', null);
     }
   },
 

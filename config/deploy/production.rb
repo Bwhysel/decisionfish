@@ -1,5 +1,7 @@
-#server '34.208.213.175', user: 'deploy', roles: %w{web app db}
-server '34.215.33.231', user: 'deploy', roles: %w{web app db}
+server '34.237.33.71', user: 'deploy', roles: %w{web app db}
+
+set :linked_files, fetch(:linked_files) + ['config/secrets.yml.key', 'config/secrets.yml.enc']
+set :branch, 'master'
 
 # server-based syntax
 # ======================

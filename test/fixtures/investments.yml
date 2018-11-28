@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  efund_months: 1
+  efund_current: 1
+  p401_percent_income_1: 9.99
+  p401_percent_income_2: 9.99
+  p401_percent_match_1: 9.99
+  p401_percent_match_2: 9.99
+  your_amounts: 
+  new_charges: 
+
+two:
+  efund_months: 1
+  efund_current: 1
+  p401_percent_income_1: 9.99
+  p401_percent_income_2: 9.99
+  p401_percent_match_1: 9.99
+  p401_percent_match_2: 9.99
+  your_amounts: 
+  new_charges: 

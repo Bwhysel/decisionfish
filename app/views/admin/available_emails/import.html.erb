@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Importing Whilte-listed Emails</h1>
+
+
+<%= form_tag bulk_upload_admin_available_emails_path, multipart: true do |form| %>
+  <p>
+    <%= file_field_tag :file, accept: 'text/csv' %>
+    <%= submit_tag "Import CSV" %>
+  </p>
+<% end %>
+
+<h3>Instruction</h3>
+<p>Table should starts from the first row. Only CSV file is acceptable.</p>
+<table>
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Company</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>email1@domain1.com</td>
+      <td>company name 1</td>
+    </tr>
+    <tr>
+      <td>email2@domain2.com</td>
+      <td>company name 2</td>
+    </tr>
+  </tbody>
+</table>
+
+<%= link_to 'Back', admin_available_emails_path %>

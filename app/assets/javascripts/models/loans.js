@@ -2,15 +2,15 @@ App.Models.Loans = Backbone.Model.extend({
   key: 'loans',
 
   defaults: {
-    credit_cards:        [0],
-    student_loans:       [0],
-    other_debts:         [0, 0],
-    credit_cards_names:  ['Card 1'],
-    student_loans_names: ['Loan 1'],
-    other_debts_names:   ['Car 1', 'Other Loan'],
-    credit_cards_rates:  [0],
-    student_loans_rates: [0],
-    other_debts_rates:   [0, 0],
+    credit_cards:        [],
+    student_loans:       [],
+    other_debts:         [],
+    credit_cards_names:  [],
+    student_loans_names: [],
+    other_debts_names:   [],
+    credit_cards_rates:  [],
+    student_loans_rates: [],
+    other_debts_rates:   []
   },
 
   addLoan: function(kind){
@@ -24,6 +24,7 @@ App.Models.Loans = Backbone.Model.extend({
     this.get(kind).push(data.value);
     this.get(`${kind}_names`).push(data.label);
     this.get(`${kind}_rates`).push(data.rate);
+    this.set('synced', undefined); // required for proper record update
     this.saveLocal();
     this.syncParams();
     return data
@@ -33,23 +34,25 @@ App.Models.Loans = Backbone.Model.extend({
     let suffix = attr == 'balance' ? '' : attr == 'label' ? '_names' : '_rates'
     attr = `${kind}${suffix}`;
     let data = { synced: false };
+    const isNewRecord = this.get('synced') === undefined;
+
     data[attr] = this.get(attr);
     const prevVal = data[attr][index];
-    //if (index >= data[attr].length || prevVal == value) return false;
-    if (prevVal == value) return false;
+    if ((prevVal == value) && !isNewRecord) return false;
 
     data[attr][index] = value;
     this.set(data);
     this.saveLocal();
-    this.syncParams([attr]);
+    this.syncParams(isNewRecord ? null : [attr]);
   },
 
   removeLoan: function(kind, index){
     this.get(kind).splice(index, 1);
     this.get(`${kind}_names`).splice(index, 1);
     this.get(`${kind}_rates`).splice(index, 1);
+    this.set('synced', false)
     this.saveLocal();
-    this.syncParams();
+    this.syncParams([kind, `${kind}_names`, `${kind}_rates`]);
   },
 
   getByKey: function(key){
@@ -70,7 +73,7 @@ App.Models.Loans = Backbone.Model.extend({
   },
 
   restoreLocal: function(){
-    let details = localStorage.getItem(this.key);
+    let details = App.storage.getItem(this.key);
     if (details){
       details = JSON.parse(details);
       this.set(details)
@@ -83,6 +86,11 @@ App.Models.Loans = Backbone.Model.extend({
     let data = this.attributes;
     fields ? data = _.pick(data, fields) : delete data.synced;
 
+    _.each(data, (value, key)=>{
+      if (_.isEqual(value, [])){
+        data[key] = [null]
+      }
+    })
     $.ajax({
       url: '/loans', type: 'PATCH', dataType: 'json',
       data: data,

@@ -9,6 +9,9 @@ App.Router = Backbone.Router.extend({
     'menu' : 'menu',
     'family' : 'family',
     'verify' : 'verify',
+    'all_completed' : 'all_completed',
+    'welcome_back' : 'welcome_back',
+    'dashboard' : 'dashboard',
     'big_decision' : 'big_decision',
     'projected_net_worth' : 'projected_net_worth',
     'finance_details/:step': 'finance_details',
@@ -45,6 +48,7 @@ App.Router = Backbone.Router.extend({
 
   gaTrack: function(){
     ga('set', 'page', location.pathname)
+    ga('set', 'dimension1', App.companyName);
     ga('send', 'pageview');
   },
 
@@ -63,6 +67,10 @@ App.Router = Backbone.Router.extend({
         valid = App.isSavingsOpened();
         if (!valid) { redirectTo = '/budget_final' }
         break;
+      case 'all_completed':
+        App.currentModule = 'savings';
+        valid = App.isHousingOpened();
+        if (!valid) { redirectTo = '/savings_final' }
     }
     if (valid){
       this.gaTrack();
@@ -70,6 +78,7 @@ App.Router = Backbone.Router.extend({
     }else{
       App.router.navigate(redirectTo, {trigger: true, replace: true})
     }
+    App.positionRestored = true
   },
 
   meta_final: function(kind){
@@ -87,13 +96,17 @@ App.Router = Backbone.Router.extend({
         redirectTo = '/big_decision';
         break;
       case 'budget':
-        valid = App.budgetCategories.hasEnoughSavings()
+        valid = App.budgetCategories.areBalanced()
         if (valid) { App.storage.set('investment_opened') }
         redirectTo = '/budget_spend';
         break;
       case 'savings':
-        valid = App.investments.isFilled();
-        if (valid) { App.storage.set('housing_opened') }
+        valid = App.investments.isFilled()
+        if (valid) {
+          App.storage.set('housing_opened')
+          // It's awful to change view right there, but it was the fastest way for me
+          $('#menu-panel .dashboard-link').removeClass('hidden')
+        }
         redirectTo = '/savings_plan'
         break;
     }
@@ -116,6 +129,7 @@ App.Router = Backbone.Router.extend({
         collection: opts.collection
       });
       this.gaTrack();
+      App.positionRestored = true;
       App.screens[opts.view].render(opts.renderParams)
     }
   },
@@ -130,6 +144,20 @@ App.Router = Backbone.Router.extend({
     this.meta({ module: null, view: 'Ask', restriction: false});
   },
 
+  all_completed: function(page){
+    this.meta({ module: 'savings', view: 'AllCompleted', renderParams: page,
+      restriction: !App.isHousingOpened(), restrictionURL: '/savings_final'});
+  },
+
+  welcome_back: function(){
+    this.all_completed('welcome_back')
+  },
+
+  dashboard: function(page){
+    this.meta({ module: 'savings', view: 'Dashboard',
+      restriction: !App.isHousingOpened(), restrictionURL: '/savings_final'});
+  },
+
   menu: function(){
     this.meta({ module: null, view: 'Menu', restriction: false});
   },
@@ -138,17 +166,17 @@ App.Router = Backbone.Router.extend({
     // as it landing page for verify_pin action
     App.restorePosition(()=>{
       this.meta({ module: 'future', view: 'Family', collection: App.family, restriction: false});
-    })
+    }, '/family')
   },
 
   finance_details: function(step) {
     this.meta({ module: 'future', view: 'FinanceDetails', model: App.finances, renderParams: step,
-                restriction: (App.family.length == 0), restrictionURL: '/future_intro'})
+                restriction: !App.family.isValid(), restrictionURL: '/future_intro'})
   },
 
   big_decision: function() {
     this.meta({ module: 'future', view: 'BigDecision', model: App.bigDecision,
-                restriction: (App.family.length == 0), restrictionURL: '/finance_details/total'})
+                restriction: !App.family.isValid(), restrictionURL: '/finance_details/total'})
   },
 
   future_history: function(step){
@@ -203,17 +231,17 @@ App.Router = Backbone.Router.extend({
 
   budget_finalize: function() {
     this.meta({ module: 'budget', view: 'BudgetMeetPlans', model: App.budgetNeeds, renderParams: true,
-                restriction: !App.budgetCategories.hasEnoughSavings(), restrictionURL: '/budget_spend'})
+                restriction: !App.budgetCategories.areBalanced(), restrictionURL: '/budget_spend'})
   },
 
   budget_congratulations: function() {
     this.meta({ module: 'budget', view: 'Congratulations', renderParams: 'budget',
-                restriction: !App.budgetCategories.hasEnoughSavings(), restrictionURL: '/budget_spend'})
+                restriction: !App.budgetCategories.areBalanced(), restrictionURL: '/budget_spend'})
   },
 
   budget_tracking: function() {
     this.meta({ module: 'budget', view: 'BudgetTracking', model: App.budgetTracking, renderParams: true,
-                restriction: !App.budgetCategories.hasEnoughSavings(), restrictionURL: '/budget_spend'})
+                restriction: !App.budgetCategories.areBalanced(), restrictionURL: '/budget_spend'})
   },
 
   ideas_select: function() {
@@ -268,7 +296,6 @@ App.Router = Backbone.Router.extend({
 
   redirectIF: (restricted, route) => {
     if (restricted){
-      //console.log('force redirect to ', route)
       App.router.navigate(route, {trigger: true, replace: true})
     }
     return restricted;

@@ -12,8 +12,13 @@ App.Views.BudgetWalkthrough = Backbone.View.extend({
   clickCheckbox: function(event){
     const target = event.target;
     const $block = $(target).closest('.ios-styled-checkbox')
-    target.checked ? $block.addClass('checked') : $block.removeClass('checked');
+    target.checked ? $block.addClass('yes-checked').removeClass('no-checked') : $block.addClass('no-checked').removeClass('yes-checked');
     App.budgetCategories.updateParam(target.name, target.checked);
+    if (this.clickedCategories.indexOf(target.name)<0){
+      this.clickedCategories.push(target.name)
+      if (this.clickedCategories.length == this.allCount) { this.nextBtn.disabled = false }
+    }
+    return true
   },
 
   clickCheckboxSpace: function(event){
@@ -65,15 +70,21 @@ App.Views.BudgetWalkthrough = Backbone.View.extend({
 
     App.utils.setPageHeight(this.el);
 
+    this.nextBtn = this.$el.find('#next-btn')[0]
+    this.nextBtn.disabled = true
+    this.clickedCategories = []
+
     this.setChanges(data.categories);
   },
 
   setChanges(categoriesData){
-    let categories = App.budgetCategories;
+    let categories = App.budgetCategories
+    this.allCount = _.keys(categoriesData).length
     _.each(categoriesData, (attrs, category) => {
-      let name = `${category}_spend`;
-      const $input = this.$el.find(`input[type=checkbox][name=${name}]`);
-      $input[0].checked = attrs.spend_change;
+      let name = `${category}_spend`
+      const $input = this.$el.find(`input[type=checkbox][name=${name}]`)
+      if (attrs.spend_change === null){ return ; }
+      $input[0].checked = attrs.spend_change
       $input.trigger('change')
     })
   }

@@ -6,7 +6,7 @@
   <thead>
     <tr>
       <th>Email pattern</th>
-      <th>Used count</th>
+      <th>Company</th>
       <th colspan="2"></th>
     </tr>
   </thead>
@@ -15,7 +15,7 @@
     <% @available_emails.each do |available_email| %>
       <tr>
         <td><%= available_email.email_pattern %></td>
-        <td><%= available_email.used_count %></td>
+        <td><%= available_email.company %></td>
         <td><%= link_to 'Edit', edit_admin_available_email_path(available_email) %></td>
         <td><%= link_to 'Destroy', [:admin, available_email], method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
@@ -26,3 +26,6 @@
 <br>
 
 <%= link_to 'New White-listed Email', new_admin_available_email_path %>
+
+<br>
+<%= link_to 'Import', import_admin_available_emails_path %>

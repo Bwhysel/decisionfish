@@ -1,4 +1,5 @@
 class Admin::AvailableEmailsController < Admin::BaseController
+  require 'csv'
   before_action :set_available_email, only: [:show, :edit, :update, :destroy]
 
   # GET /available_emails
@@ -61,6 +62,30 @@ class Admin::AvailableEmailsController < Admin::BaseController
     end
   end
 
+  def import
+  end
+
+  def bulk_upload
+    file = params[:file]
+    i = 0
+    unless file
+      redirect_to import_admin_available_emails_url, notice: "Please, choose import file."
+      return
+    end
+
+    today_company = "Batch imported #{Date.today}"
+    CSV.foreach(file.path) do |row|
+      email = row[0]
+      company = row[1] || today_company
+      next if email.blank? || !email.include?('@')
+      x = email.downcase
+      next if AvailableEmail.where(email_pattern: x).exists?
+      AvailableEmail.create(email_pattern: x, company: company)
+      i += 1
+    end
+    redirect_to import_admin_available_emails_url, notice: "#{i} records were imported."
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_available_email
@@ -69,6 +94,6 @@ class Admin::AvailableEmailsController < Admin::BaseController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def available_email_params
-      params.require(:available_email).permit(:email_pattern, :used_count)
+      params.require(:available_email).permit(:email_pattern, :company)
     end
 end

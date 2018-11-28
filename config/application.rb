@@ -13,12 +13,13 @@ module Df
     config.active_job.queue_adapter = :delayed_job
 
     config.autoload_paths += %W(#{config.root}/app/services)
+    config.action_view.sanitized_allowed_attributes = ['href', 'target']
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
 
-    config.session_store :cookie_store, key: '_interslice_session'
+    config.session_store :cookie_store, key: '_interslice_session', expire_after: 30.minutes
     config.middleware.use ActionDispatch::Cookies # Required for all session management
     config.middleware.use ActionDispatch::Session::CookieStore, config.session_options
   end

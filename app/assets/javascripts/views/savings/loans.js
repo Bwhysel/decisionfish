@@ -28,6 +28,7 @@ App.Views.Loans = Backbone.View.extend({
     let stepIndex = this.steps.indexOf(step)
     if (stepIndex < 0) { step = this.steps[stepIndex = 0] };
 
+
     this.step = step;
     const prevStep = stepIndex == 0 ? 'savings_intro' : 'savings_loans/' + this.steps[stepIndex-1]
     const nextStep = stepIndex == (this.steps.length - 1) ? 'savings_401k' : 'savings_loans/' + this.steps[stepIndex+1]
@@ -47,6 +48,19 @@ App.Views.Loans = Backbone.View.extend({
     this.nextBtn = document.getElementById('next-btn');
     this.panel = this.$el.find('[role=loans]');
     this.totalInput = this.$el.find('[role=total-amount]')
+
+    let listedAccounts = this.model.getByKey(this.step)
+    if (this.targetValue == 0){
+      if (listedAccounts.length){
+        _.each(listedAccounts, (x) => {
+          this.model.removeLoan(this.step, x.index);
+        })
+      }
+    }else{
+      if (!listedAccounts.length){
+        this.model.addLoan(this.step)
+      }
+    }
 
     App.utils.setPageHeight(this.el);
     this.resetLoanDom()
@@ -160,13 +174,12 @@ App.Views.Loans = Backbone.View.extend({
       title: 'Car & Other Debts',
       hint: 'savings_loans_other_debts', //"Did you know that there is now $1.2 TRILLION of auto loan debt, record high? I'm developing a tool to help people manage their student loan debt. Enter auto and personal loans amounts you owe and the interest rates from recent bills."
     },
-
   },
 
   onImportClick: function(event){
     App.importPage.render('loans', event.currentTarget, (data)=>{
       if (data.credit_cards){
-        console.log(data);
+        //console.log(data);
         this.model.set(data);
         this.resetLoanDom();
       }

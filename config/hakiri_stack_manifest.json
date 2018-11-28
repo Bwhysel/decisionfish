@@ -1,0 +1,7 @@
+{
+    "linux-kernel": { "command": "", "version": "4.4.0-1038-aws" },
+    "nginx": { "command": "", "version": "1.10.3" },
+    "postgres": { "command": "", "version": "9.5" },
+    "ruby": { "command": "", "version": "2.4.2" },
+    "ruby-on-rails": { "command": "", "version": "5.1.4" }
+}

@@ -16,7 +16,7 @@
 
 <p>
   <strong>Content:</strong>
-  <%= @idea.content.html_safe %>
+  <%= sanitize(@idea.content).html_safe %>
 </p>
 
 <p>

@@ -1,10 +1,10 @@
 <p class='diploma-heading text-center'><%= name_pair %>'s Investment Plan</p>
+<p class='diploma-subheading text-center'>For <%= period %></p>
 <div class='diploma-branch'></div>
 
 <p class='diploma-value diploma-subheader'><span>DEBT REPAYMENT</span>&nbsp;<span class='icon ask-desi inline' data-desi='says' data-content='savings_congratulations_debt'></span></p>
-<div class='diploma-form-row'>
-  <span class='col-1'></span>
-  <span class='col-23 diploma-small-heading'>This Month's Payment</span>
+<div class='diploma-form-row' style="justify-content: flex-end;">
+  <span class='diploma-small-heading' >This Month's Payment</span>
 </div>
 
 <% debts.forEach(function(attrs){ %>
@@ -32,3 +32,10 @@
   <span class='diploma-value diploma-main-value col-1'>Total</span>
   <span class='diploma-value diploma-main-value col-23'><%= App.utils.toMoneyWithCents(totalInvest) %></span>
 </div>
+
+<% if (msg401){ %>
+  <div class='diploma-form-row'>
+    <span class='diploma-small-heading'><%= msg401 %></span>
+  </div>
+<% } %>
+

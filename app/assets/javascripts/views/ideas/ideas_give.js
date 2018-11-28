@@ -43,7 +43,7 @@ App.Views.IdeasGive = Backbone.View.extend({
       });
       event.currentTarget.disabled = false;
     }else {
-      console.log('there')
+      //console.log('there')
       let data = _.pick(this.model.attributes, ['need', 'saves_money']);
       data.user_email = App.family.at(0).get('email');
       data.user_name = App.family.at(0).get('name');

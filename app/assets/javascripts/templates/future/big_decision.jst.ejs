@@ -1,4 +1,4 @@
-<span class='icon-back' role='goto-link' href='/finance_details/total'></span>
+<span class='icon-back' role='goto-back' data-safe-path='/finance_details/total'></span>
 <div id='big-decision-screen' class='wrapper'>
   <h1>Let's make the Big<br/>Decisions together:</h1>
   <div class='wrapper-container'>
@@ -11,11 +11,13 @@
         </div>
       </div>
       <!--<h3 style='margin-bottom: 0; margin-top: 0;'><span class="icon ask-desi" data-desi='says' data-content="big_decision" style='z-index: 1;'></span></h3>-->
-      <p class='text-hint flexed no-margin' style='justify-content: baseline; flex-wrap: wrap;'  role='retirement-funded'>Money lasts until age<% if (name2) { %>s<% } %>:&nbsp;
-        <span role='age1'><%= age1 %></span><% if (name2) { %> (<%= name1 %>),&nbsp;<span role='age2'><%= age2 %></span> (<%= name2 %>)<% } %>&nbsp;
+      <p class='text-hint flexed no-margin'  role='retirement-funded'>  <span>
+          Money lasts until age<% if (name2) { %>s<% } %>:&nbsp;
+          <span role='age1'><%= age1 %></span><% if (name2) { %> (<%= name1 %>),&nbsp;<span role='age2'><%= age2 %></span> (<%= name2 %>)<% } %>&nbsp;
+        </span>
         <span class="icon ask-desi inline" data-desi='says' data-content="big_decision" style='z-index: 1;'></span>
       </p>
-      <p class='text-hint flexed no-margin hidden' style='justify-content: baseline; flex-wrap: wrap;' role='retirement-overfunded'>
+      <p class='text-hint flexed no-margin hidden' role='retirement-overfunded'>
         Overfunded! Spend More/Retire Earlier?&nbsp;
         <span class="icon ask-desi inline" data-desi='says' data-content="big_decision" style='z-index: 1;'></span>
       </p>
@@ -41,7 +43,7 @@
     </div>
     <div class='panel panel-wide'>
       <p class='text-hint'><span role='savings-percent'>0</span>% of after-tax income.<span role='savings-percent-warning'>You sure you can save this much?</span></p>
-      <h3>Future Monthly Savings<span class="icon ask-desi" data-desi='says' data-content="big_decision_savings"></span></h3>
+      <h3 class="flexed">Future Monthly Savings<span class="icon ask-desi" data-desi='says' data-content="big_decision_savings"></span></h3>
       <div class='goals-row' data-target='monthly_savings'>
         <input class='goal-value' role='monthly_savings' value='$<%= decisions.monthly_savings %>'/>
         <span class='flexed no-margin'>

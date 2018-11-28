@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171004084633) do
+ActiveRecord::Schema.define(version: 20180822195505) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,6 +28,7 @@ ActiveRecord::Schema.define(version: 20171004084633) do
     t.integer "used_count", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "company"
   end
 
   create_table "big_decisions", force: :cascade do |t|
@@ -129,6 +130,7 @@ ActiveRecord::Schema.define(version: 20171004084633) do
     t.integer "notify_period"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "unsubscribe_hash"
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -175,7 +177,7 @@ ActiveRecord::Schema.define(version: 20171004084633) do
     t.integer "yearly_pension_benefit_begins_at_age1"
     t.decimal "yearly_pension_benefit2"
     t.integer "yearly_pension_benefit_begins_at_age2"
-    t.integer "retirement_expence_change"
+    t.decimal "retirement_expence_change"
     t.decimal "rt_avg"
     t.decimal "rt_re"
     t.decimal "rt_loan"
@@ -238,6 +240,21 @@ ActiveRecord::Schema.define(version: 20171004084633) do
     t.index ["user_id"], name: "index_ideas_on_user_id"
   end
 
+  create_table "investments", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "efund_months", default: 6
+    t.integer "efund_current", default: 0
+    t.decimal "p401_percent_income_1", default: "3.0"
+    t.decimal "p401_percent_income_2", default: "3.0"
+    t.decimal "p401_percent_match_1", default: "50.0"
+    t.decimal "p401_percent_match_2", default: "50.0"
+    t.jsonb "your_amounts", default: {}
+    t.jsonb "new_charges", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_investments_on_user_id"
+  end
+
   create_table "jokes", force: :cascade do |t|
     t.text "content"
     t.datetime "created_at", null: false
@@ -250,31 +267,13 @@ ActiveRecord::Schema.define(version: 20171004084633) do
     t.integer "student_loans", default: [], array: true
     t.integer "other_debts", default: [], array: true
     t.string "credit_cards_names", default: [], array: true
-    t.string "sudent_loans_names", default: [], array: true
+    t.string "student_loans_names", default: [], array: true
     t.string "other_debts_names", default: [], array: true
     t.decimal "credit_cards_rates", default: [], array: true
-    t.decimal "sudent_loans_rates", default: [], array: true
+    t.decimal "student_loans_rates", default: [], array: true
     t.decimal "other_debts_rates", default: [], array: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "mx_transactions", force: :cascade do |t|
-    t.string "guid"
-    t.integer "user_id"
-    t.integer "mx_user_id"
-    t.decimal "amount"
-    t.string "our_category"
-    t.string "top_level_category"
-    t.string "category"
-    t.string "status"
-    t.date "date"
-    t.datetime "transacted_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["guid"], name: "index_mx_transactions_on_guid"
-    t.index ["mx_user_id"], name: "index_mx_transactions_on_mx_user_id"
-    t.index ["user_id"], name: "index_mx_transactions_on_user_id"
   end
 
   create_table "mx_users", force: :cascade do |t|
@@ -287,37 +286,77 @@ ActiveRecord::Schema.define(version: 20171004084633) do
     t.index ["user_id"], name: "index_mx_users_on_user_id"
   end
 
-  create_table "people", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "age"
-    t.integer "income"
-    t.string "name"
-    t.string "sex"
+  create_table "net_worth_infos", force: :cascade do |t|
+    t.bigint "user_id"
+    t.decimal "amount"
+    t.date "when"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_net_worth_infos_on_user_id"
+  end
+
+  create_table "people", force: :cascade do |t|
+    t.integer "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "zzz_name"
+    t.string "zzz_name_iv"
+    t.string "zzz_age"
+    t.string "zzz_age_iv"
+    t.string "zzz_income"
+    t.string "zzz_income_iv"
+    t.string "zzz_sex"
+    t.string "zzz_sex_iv"
     t.index ["user_id"], name: "index_people_on_user_id"
+  end
+
+  create_table "return_reminders", force: :cascade do |t|
+    t.bigint "user_id"
+    t.integer "notify_period", default: 1
+    t.datetime "next_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "job_id"
+    t.index ["user_id"], name: "index_return_reminders_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
     t.string "email"
-    t.string "phone"
-    t.string "pin_code"
-    t.datetime "pin_code_generated_at"
-    t.integer "pin_code_sms_attempts", default: 0
-    t.datetime "pin_code_last_sent_at"
-    t.integer "pin_code_fail_attempts", default: 0
-    t.datetime "pin_code_last_fail_attempt_at"
     t.string "persistence_token"
     t.string "perishable_token"
-    t.string "last_request_at"
-    t.string "last_login_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "phone_verified", default: false
-    t.integer "children", default: [], array: true
-    t.string "last_position_at"
+    t.string "zzz_phone"
+    t.string "zzz_phone_iv"
+    t.string "zzz_pin_code"
+    t.string "zzz_pin_code_iv"
+    t.string "zzz_pin_code_generated_at"
+    t.string "zzz_pin_code_generated_at_iv"
+    t.string "zzz_pin_code_sms_attempts"
+    t.string "zzz_pin_code_sms_attempts_iv"
+    t.string "zzz_pin_code_last_sent_at"
+    t.string "zzz_pin_code_last_sent_at_iv"
+    t.string "zzz_pin_code_fail_attempts"
+    t.string "zzz_pin_code_fail_attempts_iv"
+    t.string "zzz_pin_code_last_fail_attempt_at"
+    t.string "zzz_pin_code_last_fail_attempt_at_iv"
+    t.string "zzz_last_request_at"
+    t.string "zzz_last_request_at_iv"
+    t.string "zzz_last_login_at"
+    t.string "zzz_last_login_at_iv"
+    t.string "zzz_children"
+    t.string "zzz_children_iv"
+    t.string "zzz_last_position_at"
+    t.string "zzz_last_position_at_iv"
+    t.string "zzz_email2"
+    t.string "zzz_email2_iv"
+    t.string "zzz_login_ip"
+    t.string "zzz_login_ip_iv"
     t.index ["perishable_token"], name: "index_users_on_perishable_token", unique: true
     t.index ["persistence_token"], name: "index_users_on_persistence_token", unique: true
   end
 
+  add_foreign_key "net_worth_infos", "users"
+  add_foreign_key "return_reminders", "users"
 end

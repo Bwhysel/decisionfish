@@ -6,7 +6,7 @@ App.Models.RetirementFunding = Backbone.Model.extend({
   },
 
   isEmpty: function(){
-    return localStorage.getItem(this.key) == undefined;
+    return App.storage.getItem(this.key) == undefined;
   },
 
   isSafe: function(){
@@ -18,7 +18,7 @@ App.Models.RetirementFunding = Backbone.Model.extend({
   },
 
   restoreLocal: function(){
-    const temp = localStorage.getItem(this.key);
+    const temp = App.storage.getItem(this.key);
     if (temp){ this.set(JSON.parse(temp)); }
   }
 

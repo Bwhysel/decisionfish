@@ -2,24 +2,53 @@
   <div class='hello-top-wave'></div>
   <div class='wrapper'>
     <div class='header-fish'></div>
-    <h1>Hi! I'm DESI the Decision Fish.</h1>
+    <h1>Hi! I'm DESI the Decision Fish.<span class='h1-suffix'>BETA</span></h1>
     <div class='wrapper-container'>
-    <p style='margin-bottom: 0;' class='text-center'><span style='width: 100%;'>I'm here to help you make wise<br/> money decisions!</span></p>
-    <ul>
+    <p style='margin-bottom: 0;' class='text-center'><span style='width: 100%;'>Let's get financially well, together!</span></p>
+    <div class='flexed wide-row' style='align-items: baseline; margin-top: 2rem;'>
+      <div class='image-card'>
+        <span class='image-noun img-noun-wheel'></span>
+        <span class='image-card-description'>Control Your Monthly Expenses</span>
+      </div>
+
+      <div class='image-card'>
+        <span class='image-noun img-noun-unexpected'></span>
+        <span class='image-card-description'>Handle Unexpected Expenses</span>
+      </div>
+
+      <div class='image-card'>
+        <span class='image-noun img-noun-longterm-goals'></span>
+        <span class='image-card-description'>Get on Track to Meet Long Term Goals</span>
+      </div>
+
+      <div class='image-card'>
+        <span class='image-noun img-noun-flexibility'></span>
+        <span class='image-card-description'>Have Flexibility to Enjoy Life</span>
+      </div>
+    </div>
+    <p class='text-center flexed' style='justify-content: center;'>
+      <span>I'm here&nbsp;</span>
+      <span class='icon ask-desi inline' data-desi='says' data-content='hello'></span>
+      <span>&nbsp;if you need help</span>
+    </p>
+    <!--<ul>
       <li>Step-by-step help</li>
       <li>Relevant, bite-sized education</li>
       <li>I do the math for you</li>
       <li>I'm on your side</li>
       <li style='display:flex;align-items:center;'>Tap &nbsp;<span class='icon ask-desi inline' data-desi='says' data-content='hello'></span>&nbsp; if you need help</li>
-    </ul>
+    </ul>-->
     <p class='justified-footer'>
-      <button class='blue-button' role='goto-link' href='/menu'>NEXT</button>
+      <button class='blue-button' role='goto-link' href='/menu'>LET'S GO!</button>
 
       <% if (App.authorized){ %>
         <button class='green-button' role='logout-link' href='javascrtip:void(0);'>LOGOUT</button>
       <% } else { %>
         <button class='green-button' role='login-link' href='javascrtip:void(0);'>LOGIN</button>
       <% } %>
+    </p>
+    <p class='copyright'>
+      Decision Fish is for education purposes only—it provides you with information that empowers you to make more informed decisions.  It does not make recommendations or decisions, and thus cannot accept any responsibility for your decisions or outcomes. By using Decision Fish, you are agreeing to our <a href="http://www.decisionfish.com/terms-of-use" target="_blank">Terms of Use</a>. &copy; 2018 Decision Fish LLC
     </p>
     </div>
   </div>

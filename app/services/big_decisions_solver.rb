@@ -6,20 +6,20 @@ class BigDecisionsSolver
 
     @assumptions = opts[:assumptions] || FinanceAssumption::DEFAULTS.clone
 
-    @age1 = opts[:age1]
+    @age1 = opts[:age1] || 40
     @age2 = opts[:age2]
-    @sex1 = opts[:sex1]
+    @sex1 = opts[:sex1] || 'Male'
     @sex2 = opts[:sex2]
     @children_years = opts[:children_years] || []
 
     @soc_sec_original1 = @assumptions[:soc_sec1]
     @soc_sec_original2 = @assumptions[:soc_sec2]
 
-    @income1 = opts[:income1]
+    @income1 = opts[:income1] || 0
     @income2 = opts[:income2] || 0
-    @home_value = opts[:home_value]
-    @mortgage = opts[:mortgage]
-    @liquid_net_worth = opts[:liquid_net_worth]
+    @home_value = opts[:home_value] || 0
+    @mortgage = opts[:mortgage] || 0
+    @liquid_net_worth = opts[:liquid_net_worth] || 0
 
     @liquidity_events = opts[:liquidity_events] || {}
 
@@ -60,7 +60,7 @@ class BigDecisionsSolver
 
     @tax_rate_data = @num_adults == 1 ? StatsUtils::TAX_RATES_SINGLE : StatsUtils::TAX_RATES
 
-    years = 1..75
+    years = 1..105
     today_year = Date.today.year
 
     arr = []
@@ -110,11 +110,8 @@ class BigDecisionsSolver
       row[:mortgage_interest] = row[:mortgage_principal] < 0 ? -@mortgage_payment-row[:mortgage_principal] : 0
 
       row[:home_value] = @home_value * (1 + @assumptions[:rt_re]) ** year
-      row[:mortgage_bal] = row[:mortgage_principal] + (prev_row ? prev_row[:mortgage_bal] : mortgage_original_bal)
+      row[:mortgage_bal] = row[:mortgage_principal] + (prev_row ? prev_row[:mortgage_bal] : @mortgage)
       row[:home_equity] = row[:home_value] - row[:mortgage_bal]
-
-      # will be recalculated on simulation
-      row[:taxable_income] = row[:pension1] + row[:pension2] + row[:mortgage_interest]
 
       row[:events] = 0
       # Events = SUMIFS(Future!D313:D317,Future!B313:B317,"="&[Year])
@@ -123,7 +120,7 @@ class BigDecisionsSolver
       end
 
       # will be recalculated on simulation
-      row[:net_income] = row[:events] + row[:mortgage_principal]
+      row[:taxable_income] = row[:pension1] + row[:pension2] + row[:events]
 
       arr.push(row)
 
@@ -147,7 +144,7 @@ class BigDecisionsSolver
   end
 
   def ss_income_formula(age, soc_sec_starts, soc_sec_benefit)
-    if (age > soc_sec_starts) && (age > @retire_age)
+    if soc_sec_benefit && (age > soc_sec_starts) && (age > @retire_age)
       soc_sec_benefit * @inflation_koef**(age - soc_sec_starts)
     else
       0
@@ -194,8 +191,10 @@ class BigDecisionsSolver
     @year_money_runs_out = nil
     @year_college_starts = nil
     # TODO: second part of table
+
     @tbl_NW.each do |row|
       year = row[:year]
+
 
       row[:ss_income1] = ss_income_formula(row[:age1], @soc_sec_starts, @soc_sec1)
       row[:ss_income2] = ss_income_formula(row[:age2], @soc_sec_starts, @soc_sec2)
@@ -209,21 +208,25 @@ class BigDecisionsSolver
                               row[:investment_income]
       row[:tax_rate] = @utils.tax_rate(row[:taxable_income] / row[:inflation], @tax_rate_data)
       row[:taxes] = - row[:tax_rate] * row[:taxable_income]
-
-      row[:net_income] += row[:taxable_income] + row[:taxes] + row[:interest_expense]
-      row[:adj_net_income] = row[:net_income] - row[:investment_income] * (1 - row[:tax_rate])
+      row[:mabs] = row[:taxable_income] - row[:investment_income] + row[:taxes]
 
       unless prev_row
-        # first row calculation
-        # =IFERROR(IF(Monthly_Savings=0,0,Monthly_Savings/AT_Income*12),"NA")
-        @at_income = row[:adj_net_income]
-        @savings_rate = @monthly_savings / @at_income * 12
+        @at_income = row[:mabs]
+        @savings_rate = @monthly_savings / row[:mabs] * 12
         @college_cost = @assumptions[:net_college_cost] || @utils.college_cost(row[:taxable_income], @assumptions[:college_type])
       end
 
-      row[:base_expenses] = year <= @retire_year ? row[:adj_net_income] * (1 - @savings_rate) : 0
+      row[:savings_commit] = year <= @retire_year ? row[:mabs] * @savings_rate : 0
+
+      expenses = row[:interest_expense] + row[:mortgage_principal] + row[:mortgage_interest]
+      row[:base_expenses] = if year <= @retire_year
+        row[:mabs] + expenses - row[:savings_commit]
+      else
+        0
+      end
+
       row[:retirement_exp] = if year == @retire_year + 1
-        ((prev_row ? prev_row[:base_expenses] : 0) + @assumptions[:retirement_expence_change] * 12) * @inflation_koef
+        (prev_row ? prev_row[:base_expenses] : 0) * (1 + @assumptions[:retirement_expence_change]) * @inflation_koef
       elsif year <= @retire_year
         0
       else
@@ -238,10 +241,10 @@ class BigDecisionsSolver
           0
       end
 
-      row[:total_expense] = row[:base_expenses] + row[:retirement_exp] + row[:college_cost]
-      row[:saving] = row[:net_income] - row[:total_expense]
+      row[:total_expense] = row[:base_expenses] + row[:retirement_exp] + row[:college_cost] - row[:taxes] - expenses
+      row[:saving_reinvest] = row[:taxable_income] - row[:total_expense]
 
-      row[:liquid_net_worth] = prev_liquid_net_worth + row[:saving]
+      row[:liquid_net_worth] = prev_liquid_net_worth + row[:saving_reinvest]
       row[:total_net_worth] = row[:liquid_net_worth] + row[:home_equity]
 
       if year > @retire_year
@@ -270,32 +273,34 @@ class BigDecisionsSolver
   def solve_save
     result_before = success_f
 
-    @at_income_r = @at_income / 12  # Budget!O90
+    @at_income_r = @at_income.abs / 12  # Budget!O90
     inc = (@at_income_r / 200).round # Future!AC106 // Increment
 
     #puts "AT INCOME: #{@at_income_r.round}"
-    save_interval = 0 .. (@at_income_r * 0.5).round # Future!T106
+    save_interval = 0 .. (@at_income_r * 0.8).round # Future!T106
 
     @monthly_savings = [@monthly_savings, save_interval.max].min
     #puts @tbl_NW[0].inspect
 
     puts [ @monthly_savings, result_before, save_interval.inspect, inc, @at_income.round ].join("\t\t")
-    keep_going = true
-    while keep_going do
-      adj = result_before ? -inc : inc
-      @monthly_savings += adj
-      @monthly_savings = @monthly_savings * 1.0
-      keep_going = @monthly_savings.in?(save_interval)
-      result_now = success_f
-      keep_going &&= result_now == result_before
-      #puts [ @monthly_savings, result_now, keep_going ].join("\t\t")
-      result_now = result_before
+    if inc > 0
+      keep_going = true
+      while keep_going do
+        adj = result_before ? -inc : inc
+        @monthly_savings += adj
+        @monthly_savings = @monthly_savings * 1.0
+        keep_going = @monthly_savings.in?(save_interval)
+        result_now = success_f
+        keep_going &&= result_now == result_before
+        #puts [ @monthly_savings, result_now, keep_going ].join("\t\t")
+        result_now = result_before
 
-      #keep_going = false if @monthly_savings.round == 1055
+        #keep_going = false if @monthly_savings.round == 1055
+      end
+      @monthly_savings -= adj if adj < 0
     end
-    @monthly_savings -= adj if adj < 0
     # Range("Save_Scrollval").Value = @monthly_savings / inc
-    solve_fail unless result_now
+    #solve_fail unless result_now
 
     [ @monthly_savings.round, solve_fail ]
   end
@@ -328,11 +333,12 @@ class BigDecisionsSolver
   end
 
   def income_stats
-    @at_income_r ||= @at_income / 12
+    at_income = @at_income_r ||= @at_income / 12
     inc = [(@at_income_r / 200).round, 10].max
+
     {
       increment: inc,
-      savings_rate: @at_income_r == 0 ? 0 : (@monthly_savings / @at_income_r * 100).round,
+      savings_rate: at_income == 0 ? 0 : (@monthly_savings / at_income * 100 ).round,
       too_much: (@monthly_savings > 0) && (@monthly_savings > (0.2 * @at_income_r))
     }
   end
@@ -353,22 +359,31 @@ class BigDecisionsSolver
 
     total_row = get_total_row
 
-    overfunded_treshold = 10 # overfunded Threshold
+    overfunded_treshold = 10
     retirement_expenses = @tbl_NW[@retire_year][:retirement_exp]
-    end_NW = last_row[:total_net_worth]
+    end_NW = @tbl_NW[@last_retirement_year-1][:total_net_worth]
     overfunded = (end_NW > 0) && ((end_NW / retirement_expenses) > overfunded_treshold)
-    #Rails.logger.info [end_NW, retirement_expenses].join("\t\t")
+    #Rails.logger.info ["OVERFUNDED", end_NW.to_f, retirement_expenses].join("\t\t")
 
     req_retire = (total_row[:retirement_exp] - total_row[:ss_income1] - total_row[:ss_income2]).round
 
     @at_income_r ||= @at_income / 12
     persons_count = (@age2 ? 2 : 1) + @children_years.length
-    second_koef = persons_count == 1 ? 0 : first_row[:net_income] / first_row[:taxable_income]
+
+
+
+    ins_replace = @assumptions[:income_replacement]
+    tax_rate = first_row[:tax_rate]
+    second_koef = persons_count == 1 ? 0 : (1-tax_rate)*ins_replace
+
     pv1 = @utils.pv(@assumptions[:rt_avg], @retire_age - @age1, -@assumptions[:value_of_housework])
-    insurance1 = [pv1, total_row[:income1]*second_koef].max * @assumptions[:income_replacement]
+    min_insurance1 = pv1 * ins_replace
+
+    insurance1 = [min_insurance1, total_row[:income1]*second_koef].max
     if @age2
       pv2 = @utils.pv(@assumptions[:rt_avg], @retire_age - @age2, -@assumptions[:value_of_housework])
-      insurance2 = [pv2, total_row[:income2]*second_koef].max * @assumptions[:income_replacement]
+      min_insurance2 = pv2 * ins_replace
+      insurance2 = [min_insurance2, total_row[:income2]*second_koef].max
     end
 
     {
@@ -377,6 +392,8 @@ class BigDecisionsSolver
       success_liquid:       @year_liquid_money_runs_out > @last_retirement_year,
       until_age1:           until_age1, # person1's age when money runs out
       until_age2:           until_age2, # person2's age when money runs out
+      life_exp1:            @life_exp1,
+      life_exp2:            @life_exp2,
       until_age_liquid:     until_age_liquid,
       last_retirement_age:  @age1 + @last_retirement_year,
       money_runs_out_age:   get_money_runs_out_age,
@@ -395,7 +412,8 @@ class BigDecisionsSolver
       college_cost_level:   @utils.college_cost_level(first_row[:taxable_income]),
       tax_rate:             first_row[:tax_rate],
       retirement_tax_rate:  @tbl_NW[@retire_year-1][:tax_rate],
-      mortgage_payment:     @mortgage_payment / 12
+      mortgage_payment:     @mortgage_payment / 12,
+      end_nw:               end_NW
     }
   end
 
@@ -418,8 +436,16 @@ class BigDecisionsSolver
   def get_projected_net_worth_data
     xs, ys = [[], []]
     data = {}
+    until_age = @age1 + @year_money_runs_out
     @tbl_NW.each do |row|
-      data[row[:age1]] = [row[:total_net_worth].round, 0].max
+      age = row[:age1]
+      data[age] = if age < until_age
+        row[:total_net_worth].round
+      elsif age == until_age
+        0
+      else
+        nil
+      end
     end
      #data.merge!({
      #  p1: @soc_sec_starts,
@@ -434,8 +460,8 @@ class BigDecisionsSolver
     #NPV(RT_Avg, [College Cost] - firstRow.college_cost)
     fields = [
       :income1, :income2, :ss_income1, :ss_income2,
-      :taxable_income, :taxes, :net_income, :base_expenses,
-      :retirement_exp, :college_cost, :total_expense, :saving
+      :taxable_income, :taxes, :taxable_income, :base_expenses,
+      :retirement_exp, :college_cost, :total_expense, :saving_reinvest
     ]
     first_row = @tbl_NW.first
     total_row = {}
@@ -443,9 +469,23 @@ class BigDecisionsSolver
 
     r = k = 1+@assumptions[:rt_avg]
     @tbl_NW.each do |row|
-      fields.each{|f| total_row[f] += row[f]/r }
+      fields.each do |field|
+        add_it = case field
+        when :ss_income1
+          row[:age1] <= @life_exp1
+        when :ss_income2
+          row[:age2] <= @life_exp2
+        when :retirement_exp
+          row[:year] <= @last_retirement_year
+        else
+          true
+        end
+        if add_it
+          total_row[field] += row[field]/r
+        end
+      end
       r *= k
-    end
+    end; 0
     total_row
   end
 

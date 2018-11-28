@@ -1,0 +1,19 @@
+Hi, <%= @names %>!
+
+<p>You asked me to remind you to return to <a href="https://app.decisionfish.com">Decision Fish</a>. Come back to:</p>
+
+<p>
+<% @links.each do |path, title| %>
+- <a href="https://<%= @host %>/<%= path %>"><%= title %></a><br>
+<% end %>
+</p>
+
+<p>I can’t wait to see you again!</p>
+
+<p>
+  Regards,<br>
+  Desi<br>
+  <%= image_tag attachments['fish.png'].url, width: 50 %>
+</p>
+
+

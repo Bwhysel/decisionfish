@@ -54,7 +54,7 @@ Rails.application.configure do
 
   # Use the lowest log level to ensure availability of diagnostic information
   # when problems arise.
-  config.log_level = :debug
+  config.log_level = :info
 
   # Prepend all log lines with the following tags.
   config.log_tags = [ :request_id ]
@@ -67,7 +67,7 @@ Rails.application.configure do
   # config.active_job.queue_name_prefix = "df_#{Rails.env}"
   config.action_mailer.perform_caching = false
 
-  config.action_mailer.default_url_options = { host: 'df.re-mondes.com' }
+  config.action_mailer.default_url_options = { host: 'app.decisionfish.com' }
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
@@ -95,12 +95,4 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
-
-  config.middleware.use ExceptionNotification::Rack,
-  :email => {
-    :deliver_with => :deliver, # Rails >= 4.2.1 do not need this option since it defaults to :deliver_now
-    :email_prefix => "[Exception] ",
-    :sender_address => %{"Desi Bugs" <no-reply@decisionfish.com>},
-    :exception_recipients => %w{ilya@re-mondes.com}
-  }
 end

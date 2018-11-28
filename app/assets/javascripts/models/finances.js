@@ -39,7 +39,7 @@ App.Models.Finances = Backbone.Model.extend({
   },
 
   restoreLocal: function(){
-    let details = localStorage.getItem('finance_details');
+    let details = App.storage.getItem('finance_details');
     if (details){
       details = JSON.parse(details);
       _.each(details, (value, key) => {

@@ -1,0 +1,157 @@
+<span class='icon-back' role='goto-back'></span>
+<div class='wrapper'>
+  <h1>Your Financial Wellness Dashboard</h1>
+  <div class='wrapper-container'>
+    <p class='text-center'>
+      <span>
+        Your progress towards financial wellness as of <%= month %> <%= year %>
+        <br>
+        <span class='loading-indicator hidden'>Please wait a sec. I'm getting your data.</span>
+      </span>
+    </p>
+
+    <div>
+      <p class='flexed'>
+        <strong style='width: 93%;'>1. Control over your daily & monthly finances:</strong>
+        <span class='icon ask-desi' data-desi='says' data-content="dashboard_control"></span>
+      </p>
+      <p class='text-center'>Spending vs. Budget</p>
+      <div class='budget-rows'>
+        <div class='budget-block flexed'>
+          <span class='label'>Income</span>
+          <div class='budget-bar'>
+            <div class='budget-bar-scaled'>
+              <div class='date-stick'>
+                <span class='date-stick-content'><%= month %>&nbsp;<%= day %></span>
+              </div>
+              <div class='income-progress budget-bar-progress'></div>
+            </div>
+          </div>
+        </div>
+        <div class='budget-block flexed'>
+          <span class='label'>Expenses</span>
+          <div class='budget-bar'>
+            <div class='budget-bar-scaled'>
+              <div class='expenses-progress budget-bar-progress'></div>
+            </div>
+          </div>
+        </div>
+        <div class='budget-block flexed'>
+          <span class='label'>Saving</span>
+          <div class='budget-bar'>
+            <div class='budget-bar-scaled'>
+              <div class='saving-progress budget-bar-progress' style='position: absolute;'></div>
+              <div style='height: 100%;'></div>
+              <span class='x-axis-legend x-axis-legend-0 hidden'>0%</span>
+              <span class='x-axis-legend x-axis-legend-100'>100%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      </svg>
+
+    </div>
+
+    <br>
+    <div class='pinked-block'>
+      <p class='flexed'>
+        <strong style='width: 93%;'>2. Security to handle unexpected expenses:</strong>
+        <span class='icon ask-desi' data-desi='says' data-content="dashboard_security"></span>
+      </p>
+      <p class='text-center'>Emergency Fund Progress<br>to your <%= efund_target %> Months Goal</p>
+
+      <div class='donut-area text-center'>
+        <svg class='donut-chart'>
+        </svg>
+        <span class='donut-text'>
+          <span role='efund-progress'></span><br/>Months<br/>Saved</span>
+        </span>
+      </div>
+
+    </div>
+    <br>
+
+    <div>
+      <p class='flexed'>
+        <strong style='width: 93%;'>3. Freedom to make choices to enjoy life</strong>
+        <span class='icon ask-desi' data-desi='says' data-content="dashboard_freedom"></span>
+      </p>
+      <p class='text-center'>Spending vs. Budget</p>
+
+      <div class='dashboard-needs-cards'>
+        <div class='squares-container'>
+          <div class='square' data-need='basics'>
+            <span class='insquare-icon icon-basics'></span>
+            <span class='menu-text'>Basics</span>
+            <span class='square-progress'></span>
+          </div>
+          <div class='square' data-need='love'>
+            <span class='insquare-icon icon-love'></span>
+            <span class='menu-text'>Love & Friendship</span>
+            <span class='square-progress'></span>
+          </div>
+          <div class='square' data-need='expert'>
+            <span class='insquare-icon icon-expert'></span>
+            <span class='menu-text'>Being Good at Something</span>
+            <span class='square-progress'></span>
+          </div>
+          <div class='square' data-need='control'>
+            <span class='insquare-icon icon-helm'></span>
+            <span class='menu-text'>In Control Of Your Life</span>
+            <span class='square-progress'></span>
+          </div>
+        </div>
+        <div class='squares-container'>
+          <div class='square' data-need='helping'>
+            <span class='insquare-icon icon-ribbon'></span>
+            <span class='menu-text'>Helping Others</span>
+            <span class='square-progress'></span>
+          </div>
+          <div class='square' data-need='fun'>
+            <span class='insquare-icon icon-kite'></span>
+            <span class='menu-text'>Leisure & Fun</span>
+            <span class='square-progress'></span>
+          </div>
+          <div class='square' data-need='respect'>
+            <span class='insquare-icon icon-handshake'></span>
+            <span class='menu-text'>Respect & Pride</span>
+            <span class='square-progress'></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <br>
+    <div class='pinked-block'>
+      <p class='flexed'>
+        <strong style='width: 93%;'>4. Confidence to meet long-term goals</strong>
+        <span class='icon ask-desi' data-desi='says' data-content="dashboard_confidence"></span>
+      </p>
+      <p class='text-center'>Your Net Worth</p>
+
+      <div class='text-center'>
+        <svg class='net-chart' width="100%">
+        </svg>
+      </div>
+    </div>
+    <br>
+
+    <div>
+      <br>
+      <p class='flexed'>
+        <strong style='width: 91%;'>Your next visit with me is scheduled for:</strong>
+        <span class='icon ask-desi' data-desi='says' data-content="dashboard_next_visit"></span>
+      </p>
+      <div class='text-center'><div id="reminder-placeholder"></div></div>
+
+    </div>
+
+    <div>
+      <p class='wide-row justified-footer'>
+        <button class='blue-button' role='goto-link' href='/welcome_back'>NEXT</button>
+        <button class='blue-button' id='import-btn'>IMPORT</button>
+      </p>
+    </div>
+  </div>
+</div>

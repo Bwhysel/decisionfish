@@ -13,6 +13,7 @@ App.Views.BudgetExpenses = Backbone.View.extend({
     'focusin input': 'selectInput',
     'keyup input': 'keyUpInput',
     'click [role=fun-need-select]': 'selectFunNeed',
+    'click .icon-dropdown-arrow': 'selectFunNeed',
     'click [role=increase]': 'onIncreaseParam',
     'click [role=decrease]': 'onDecreaseParam',
     'click #next-btn': 'onNextClick'
@@ -83,7 +84,7 @@ App.Views.BudgetExpenses = Backbone.View.extend({
     })
     this.funCategory.text(this.model.getFunData().title);
 
-    App.simplePage.openDesiModal(`I see that your take-home pay is ${takeHomePay}. Tell me how you'd like to be spending it in each category, monthly, on average. Focus more on the future than past spending. This may help you save more easily!`)
+    App.simplePage.openDesiModal(`I see that your take-home pay is ${takeHomePay}. Tell me roughly how much you have been spending it in each category, monthly, on average.`)
     this.updatePanelTotal()
   },
 
@@ -158,15 +159,21 @@ App.Views.BudgetExpenses = Backbone.View.extend({
       this.unsafeState.addClass('hidden');
       this.nextBtn.removeClass('disabled');
     }
-    const scrollableHeight = document.documentElement.clientHeight - ($('.wrapper').height() - this.scrollableArea.height() - this.scrollableArea.siblings().height()+50);
-    this.scrollableArea.css('maxHeight', ''+scrollableHeight+'px');
+    //const scrollableHeight =  - ($('.wrapper').height() - this.scrollableArea.height() - this.scrollableArea.siblings().height()+50);
+    if (screen.height > 450){
+      const scrollableHeight = document.documentElement.clientHeight - ($('.wrapper').height() - this.scrollableArea.height() - this.scrollableArea.siblings().height());
+      this.scrollableArea.css('maxHeight', ''+scrollableHeight+'px');
+    }else{
+      this.scrollableArea.css('overflow', 'inherit');
+    }
   },
 
   selectFunNeed: function(event){
+    const target = this.$('[role=fun-need-select]')
     const modalId = 'fun-need-modal';
     App.simplePage.selectModal('fun-need-modal',
       this.funVariants, this.model.get('fun_mx_category'), (selectedId) => {
-        event.target.textContent = this.model.mx_categories[selectedId].title;
+        target.text(this.model.mx_categories[selectedId].title);
         this.model.updateParam('fun_mx_category', selectedId);
         this.model.updateParam('fun_spend', App.budgetNeeds.isMet(this.model.getNeed('fun')));
         this.model.recalcNeeds();

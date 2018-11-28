@@ -85,7 +85,7 @@ App.Models.BudgetNeeds = Backbone.Model.extend({
   },
 
   restoreLocal: function(){
-    let temp = localStorage.getItem(this.key);
+    let temp = App.storage.getItem(this.key);
     if (!temp) return;
     this.set(JSON.parse(temp));
   },
@@ -100,18 +100,10 @@ App.Models.BudgetNeeds = Backbone.Model.extend({
     this.syncParams([field]);
   },
 
-  updateNeed: function(need, value){
-    this.updateParam(need, 'met', value);
-    if (App.budgetNeeds.hasChanged(`${need}_met`)){
-      App.budgetCategories.resetSpendingByNeed(need, value)
-    }
-  },
-  updateValue: function(need, value){
-    this.updateParam(need, 'value', value);
-  },
-
   isMet: function(need){
-    return this.get(`${need}_met`) === true;
+    let r = this.get(`${need}_met`)
+    if (r === null) { return r }
+    return r === true;
   },
 
   getValue: function(need){
