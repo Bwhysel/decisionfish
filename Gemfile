@@ -7,7 +7,7 @@ end
 
 gem 'rails', '~> 5.1.1'
 gem 'pg'
-gem 'puma', '~> 3.7'
+gem 'puma', '~> 3.12'
 
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
